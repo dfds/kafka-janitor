@@ -8,4 +8,10 @@ steps:
       make release BUILD_NUMBER=$(Build.BuildId)
     env:
       AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
-    displayName: 'Build a deployment artifact'
+    displayName: 'Build, create and upload container image'
+
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish Artifact: k8s manifests"
+    inputs:
+      PathtoPublish: k8s
+      ArtifactName: manifests
