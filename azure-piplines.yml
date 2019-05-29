@@ -4,12 +4,6 @@ trigger:
   - master
 
 steps:
-  - task: InstallSSHKey@0
-    inputs:
-      hostName: vs-ssh.visualstudio.com,40.68.97.137 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7Hr1oTWqNqOlzGJOfGJ4NakVyIzf1rXYd4d7wo6jBlkLvCA4odBlL0mDUyZ0/QUfTTqeu+tm22gOsv+VrVTMk6vwRU75gY/y9ut5Mb3bR5BV58dKXyq9A9UeB5Cakehn5Zgm6x1mKoVyf+FFn26iYqXJRgzIZZcZ5V6hrE0Qg39kZm4az48o0AUbf6Sp4SLdvnuMa2sVNwHBboS7EJkm57XQPVU3/QpyNLHbWDdzwtrlS+ez30S3AdYhLKEOxAG8weOnyrtLJAUen9mTkol8oII1edf7mWWbWVf0nBmly21+nZcmCTISQBtdcyPaEno7fFQMDD26/s0lfKob4Kw8H
-      sshPublicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJvkc/+VOISY9AND8Mu5VM+gDWHFQWp48DqHwtpATNyy02CdVwopZhLW8zFIJuuzMdnrvQ3KVCS9PUXy29xmQvTlqW+z7Z7t8uRoOXJ5+1jCBDOOtm7dFluoUXcvn5qKy3AMvCJLG7B6CeVG005tnS5ydifrkQZ0BmWoDGb1AW8c958Qugv9YM1R+QaRwQMIjKo5m2rgiESSbyH2sF3lJor88bsDdf2JspxBaw6yUpEgol/jJu3VV13zlGdqqW9ovFfp3K7MyK/j0Tp8LvukG1nXXvAOaM0DGeUjLvkQ1oiRAymRnSLPonqn6xBbLK6xdr6hkVX7zw6WvWoY5QZtf1 DFDS
-      sshKeySecureFile: id_rsa
-
   - bash: |
       make release BUILD_NUMBER=$(Build.BuildId)
     env:
