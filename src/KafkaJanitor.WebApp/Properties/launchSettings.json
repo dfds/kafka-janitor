@@ -7,7 +7,7 @@
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "KAFKA_BOOTSTRAP_SERVERS": "localhost:29092"
+        "KAFKA_JANITOR_BOOTSTRAP_SERVERS": "localhost:29092"
       }
     }
   }
