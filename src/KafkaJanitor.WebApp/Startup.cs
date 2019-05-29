@@ -1,4 +1,5 @@
-﻿using KafkaJanitor.WebApp.Infrastructure.Messaging;
+﻿using KafkaJanitor.WebApp.Infrastructure.Http;
+using KafkaJanitor.WebApp.Infrastructure.Messaging;
 using KafkaJanitor.WebApp.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +21,7 @@ namespace KafkaJanitor.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddTransient<ForwardedHeaderBasePath>();
 
             services.AddTransient<ITopicRepository, TopicRepository>();
             services.AddSingleton<KafkaConfiguration>();
@@ -31,11 +33,9 @@ namespace KafkaJanitor.WebApp
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-            }
 
+            app.UseForwardedHeadersAsBasePath();
+            app.UseStaticFiles();
             app.UseMvc();
         }
     }
