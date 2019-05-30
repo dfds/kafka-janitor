@@ -25,6 +25,9 @@ namespace KafkaJanitor.WebApp
 
             services.AddTransient<ITopicRepository, TopicRepository>();
             services.AddSingleton<KafkaConfiguration>();
+            services.AddTransient<MessageHandler>();
+
+            services.AddHostedService<TopicSubscriber>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
