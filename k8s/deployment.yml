@@ -42,7 +42,7 @@ spec:
         - name: KAFKA_JANITOR_BOOTSTRAP_SERVERS
           value: $(KAFKA_BOOTSTRAP_SERVERS)
         - name: KAFKA_JANITOR_GROUP_ID
-          value: kafka_janitor
+          value: build.selfservice.kafka-janitor-consumer
         - name: KAFKA_JANITOR_BROKER_VERSION_FALLBACK
           value: "0.10.0.0"
         - name: KAFKA_JANITOR_API_VERSION_FALLBACK_MS
