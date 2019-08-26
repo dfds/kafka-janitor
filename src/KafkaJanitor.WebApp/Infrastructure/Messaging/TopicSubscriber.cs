@@ -43,7 +43,7 @@ namespace KafkaJanitor.WebApp.Infrastructure.Messaging
 
             using (var consumer = new ConsumerBuilder<string, string>(kafkaConfiguration).Build())
             {
-                consumer.Subscribe("build.topics");
+                consumer.Subscribe("build.selfservice.events.topics");
                 Console.WriteLine($"Now listening to topic(s): {string.Join(", ", consumer.Subscription)}");
 
                 while (!stoppingToken.IsCancellationRequested)
