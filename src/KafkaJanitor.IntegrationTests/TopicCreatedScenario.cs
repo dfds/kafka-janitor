@@ -14,6 +14,7 @@ namespace KafkaJanitor.IntegrationTests
     {
         private readonly ITopicRepository _topicRepository;
 
+        [Fact]
         public async Task TopicCreatedScenarioRecipe()
         {
             await When_a_topic_creation_is_requested();

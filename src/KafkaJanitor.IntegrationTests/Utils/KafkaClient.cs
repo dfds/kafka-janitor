@@ -14,7 +14,7 @@ namespace KafkaJanitor.IntegrationTests.Utils
             var httpClient = new HttpClient();
 
 
-            var uri = new Uri("http://localhost:8082/topics/build.selfservice.events.capabilities");
+            var uri = new Uri("http://localhost:8082/topics/build.selfservice.events.topics");
 
             var messageInEnvelopes = PutInKafkaEnvelope(PutInOurEnvelope(message));
             
@@ -44,7 +44,7 @@ namespace KafkaJanitor.IntegrationTests.Utils
         {
             return new ExternalEvent(
                 version: "v1",
-                eventName: "capability_created",
+                eventName: "topic_added",
                 xCorrelationId: "theFirstOne",
                 xSender: "me",
                 payload);
