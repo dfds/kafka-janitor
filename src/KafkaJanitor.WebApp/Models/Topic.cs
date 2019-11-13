@@ -2,7 +2,7 @@ namespace KafkaJanitor.WebApp.Models
 {
     public class Topic
     {
-        private const int DefaultPartitionCount = 12;
+        private const int DefaultPartitionCount = 3;
 
         public Topic(string name, int partitions = DefaultPartitionCount)
         {

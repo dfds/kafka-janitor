@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaJanitor.WebApp", "Kafk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaJanitor.Tests", "KafkaJanitor.Tests\KafkaJanitor.Tests.csproj", "{F6277C7C-1C8A-48D0-BB24-29DE725EA483}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaJanitor.IntegrationTests", "KafkaJanitor.IntegrationTests\KafkaJanitor.IntegrationTests.csproj", "{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{F6277C7C-1C8A-48D0-BB24-29DE725EA483}.Release|x64.Build.0 = Release|Any CPU
 		{F6277C7C-1C8A-48D0-BB24-29DE725EA483}.Release|x86.ActiveCfg = Release|Any CPU
 		{F6277C7C-1C8A-48D0-BB24-29DE725EA483}.Release|x86.Build.0 = Release|Any CPU
+		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Debug|x64.Build.0 = Debug|Any CPU
+		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Debug|x86.Build.0 = Debug|Any CPU
+		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Release|x64.ActiveCfg = Release|Any CPU
+		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Release|x64.Build.0 = Release|Any CPU
+		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Release|x86.ActiveCfg = Release|Any CPU
+		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
