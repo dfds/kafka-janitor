@@ -48,9 +48,15 @@ spec:
         - name: KAFKA_JANITOR_API_VERSION_FALLBACK_MS
           value: "0"
         - name: KAFKA_JANITOR_SASL_USERNAME
-          value: $(KAFKA_SASL_USERNAME)
+          valueFrom:
+            secretKeyRef:
+              name: kafka-janitor
+              key: SASL_USERNAME
         - name: KAFKA_JANITOR_SASL_PASSWORD
-          value: $(KAFKA_SASL_PASSWORD)
+          valueFrom:
+            secretKeyRef:
+              name: kafka-janitor
+              key: SASL_PASSWORD
         - name: KAFKA_JANITOR_SASL_MECHANISMS
           value: "PLAIN"
         - name: KAFKA_JANITOR_SECURITY_PROTOCOL
