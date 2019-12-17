@@ -61,3 +61,23 @@ spec:
           value: "PLAIN"
         - name: KAFKA_JANITOR_SECURITY_PROTOCOL
           value: "SASL_SSL"
+      - name: tika
+        image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/tika:209887
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        env:
+        - name: TIKA_CC_USER
+          valueFrom:
+            secretKeyRef:
+              name: tika-confluent
+              key: TIKA_CC_USER
+        - name: TIKA_CC_PASS
+          valueFrom:
+            secretKeyRef:
+              name: tika-confluent
+              key: TIKA_CC_PASS
