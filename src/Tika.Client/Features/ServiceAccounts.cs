@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using Tika.Client.Enablers;
 using Tika.Client.Models;
 
 namespace Tika.Client
 {
     public class ServiceAccounts
     {
+        private Uri _uri = new Uri("/service-accounts", UriKind.Relative);
         private readonly HttpClient _httpClient;
 
         public ServiceAccounts(HttpClient httpClient)
@@ -19,25 +19,13 @@ namespace Tika.Client
 
         public async Task<ServiceAccount> CreateAsync(string name, string description)
         {
-            var serializedContent = JsonConvert.SerializeObject(new {name = name, description = description});
-            var stringContent = new StringContent(serializedContent, Encoding.UTF8, "application/json");
+                var serviceAccount = await HttpRequest.Post<ServiceAccount>(
+                    _httpClient,
+                    _uri,
+                    new {name = name, description = description}
+                );
 
-            var request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("/service-accounts", UriKind.Relative),
-                Content = stringContent
-            };
-
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-
-            var content = await response.Content.ReadAsStringAsync();
-
-
-            var serviceAccount = JsonConvert.DeserializeObject<ServiceAccount>(content);
-
-            return serviceAccount;
+                return serviceAccount;
         }
 
         public async Task<IEnumerable<ServiceAccount>> GetAsync()
@@ -45,18 +33,14 @@ namespace Tika.Client
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri("/service-accounts", UriKind.Relative)
+                RequestUri = _uri
             };
 
             var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            
+            var deserializedObject = await HttpResponse.ToTypeAsync<IEnumerable<ServiceAccount>>(response);
 
-            var content = await response.Content.ReadAsStringAsync();
-
-
-            var serviceAccounts = JsonConvert.DeserializeObject<IEnumerable<ServiceAccount>>(content);
-
-            return serviceAccounts;
+            return deserializedObject;
         }
 
         public async Task DeleteAsync(int id)
