@@ -16,7 +16,7 @@ namespace Tika.Client.IntegrationTests.Features.ServiceAccounts
                   Given_a_tika_client();
             await When_a_service_account_is_created();
             await Then_it_should_be_in_the_service_accounts_list();
-            When_a_service_account_is_deleted();
+            await When_a_service_account_is_deleted();
             await Then_it_should_not_be_in_the_service_accounts_list();
         }
 
