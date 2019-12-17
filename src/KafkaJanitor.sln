@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaJanitor.Tests", "Kafka
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaJanitor.IntegrationTests", "KafkaJanitor.IntegrationTests\KafkaJanitor.IntegrationTests.csproj", "{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tika.Client", "Tika.Client\Tika.Client.csproj", "{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +60,17 @@ Global
 		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Release|x64.Build.0 = Release|Any CPU
 		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Release|x86.ActiveCfg = Release|Any CPU
 		{D1B658BC-821C-486E-BEF8-0FE6CAE1EDEF}.Release|x86.Build.0 = Release|Any CPU
+		{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}.Debug|x64.Build.0 = Debug|Any CPU
+		{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}.Debug|x86.Build.0 = Debug|Any CPU
+		{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}.Release|x64.ActiveCfg = Release|Any CPU
+		{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}.Release|x64.Build.0 = Release|Any CPU
+		{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}.Release|x86.ActiveCfg = Release|Any CPU
+		{599B00E7-8CC5-4864-9E41-8E9BF5E3E8F0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
