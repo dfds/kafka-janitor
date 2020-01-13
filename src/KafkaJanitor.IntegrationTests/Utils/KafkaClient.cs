@@ -8,7 +8,7 @@ namespace KafkaJanitor.IntegrationTests.Utils
 {
     public class KafkaClient
     {
-        public async Task SendMessageAsync(object message)
+        public async Task SendMessageAsync(object message, string eventName)
         {
             
             var httpClient = new HttpClient();
@@ -16,7 +16,7 @@ namespace KafkaJanitor.IntegrationTests.Utils
 
             var uri = new Uri("http://localhost:8082/topics/build.selfservice.events.topics");
 
-            var messageInEnvelopes = PutInKafkaEnvelope(PutInOurEnvelope(message));
+            var messageInEnvelopes = PutInKafkaEnvelope(PutInOurEnvelope(message, eventName));
             
             var jsonSerializer = new JsonSerializer();
             var payload = jsonSerializer.Serialize(messageInEnvelopes);
@@ -40,11 +40,11 @@ namespace KafkaJanitor.IntegrationTests.Utils
            }
         }
 
-        private dynamic PutInOurEnvelope(object payload)
+        private dynamic PutInOurEnvelope(object payload, string eventName)
         {
             return new ExternalEvent(
                 version: "v1",
-                eventName: "topic_added",
+                eventName: eventName,
                 xCorrelationId: "theFirstOne",
                 xSender: "me",
                 payload);

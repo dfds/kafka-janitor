@@ -30,7 +30,7 @@ namespace KafkaJanitor.IntegrationTests
             {
                 TopicName = "devex-integrationtest"
             };
-            await kafkaClient.SendMessageAsync(message);
+            await kafkaClient.SendMessageAsync(message, "topic_added");
         }
 
         private async Task Then_a_topic_is_created()
