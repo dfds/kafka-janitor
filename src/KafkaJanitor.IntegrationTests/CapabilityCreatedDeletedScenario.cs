@@ -1,14 +1,19 @@
+using System.Net.Http;
 using System.Threading.Tasks;
 using KafkaJanitor.IntegrationTests.Utils;
 using KafkaJanitor.WebApp.Infrastructure.Tika;
 using KafkaJanitor.WebApp.Infrastructure.Tika.Model;
 using KafkaJanitor.WebApp.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Xunit;
 
 namespace KafkaJanitor.IntegrationTests
 {
     public class CapabilityCreatedDeletedScenario
     {
+        private IConfiguration _configuration;
+        
         [Fact]
         public async Task CapabilityCreatedDeletedScenarioRecipe()
         {
@@ -17,7 +22,7 @@ namespace KafkaJanitor.IntegrationTests
             And_acls_to_create_read_write_to_topics_under_prefix();
             await When_a_capability_is_deleted();
             Then_the_connected_acls_are_deleted();
-            And_the_connected_service_account_is_removed(serviceAccount);
+            await And_the_connected_service_account_is_removed(serviceAccount);
         }
 
         private async Task<Capability> When_a_capability_is_created()
@@ -41,8 +46,8 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task<ServiceAccount> Then_a_service_account_is_created(Capability capability)
         {
-            var tikaClient = new TikaClient();
-            return await tikaClient.CreateServiceAccount();
+            var tikaClient = new TikaClient(new HttpClient(), new TikaOptions(_configuration));
+            return await tikaClient.CreateServiceAccount($"{capability.Name}_sa", "Creating during CapabilityCreatedDeletedScenario");
         }
 
         private void And_acls_to_create_read_write_to_topics_under_prefix()
@@ -75,8 +80,16 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task And_the_connected_service_account_is_removed(ServiceAccount serviceAccount)
         {
-            var tikaClient = new TikaClient();
+            var tikaClient = new TikaClient(new HttpClient(), new TikaOptions(_configuration));
             await tikaClient.DeleteServiceAccount(serviceAccount.Id);
+        }
+
+        public CapabilityCreatedDeletedScenario()
+        {
+            _configuration = new ConfigurationBuilder()
+                .Add(new EnvironmentVariablesConfigurationSource())
+                .Build();
+            
         }
     }
 }

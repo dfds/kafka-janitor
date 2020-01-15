@@ -13,7 +13,7 @@ namespace KafkaJanitor.WebApp.Infrastructure.Tika
         
         // Service accounts
         Task<IEnumerable<ServiceAccount>> GetServiceAccounts();
-        Task<ServiceAccount> CreateServiceAccount();
+        Task<ServiceAccount> CreateServiceAccount(string name, string description = null);
         Task DeleteServiceAccount(string id);
         
         // Topics

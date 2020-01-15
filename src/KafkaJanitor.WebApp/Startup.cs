@@ -1,5 +1,7 @@
-﻿using KafkaJanitor.WebApp.Infrastructure.Http;
+﻿using System;
+using KafkaJanitor.WebApp.Infrastructure.Http;
 using KafkaJanitor.WebApp.Infrastructure.Messaging;
+using KafkaJanitor.WebApp.Infrastructure.Tika;
 using KafkaJanitor.WebApp.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,12 +22,23 @@ namespace KafkaJanitor.WebApp
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<TikaOptions>(Configuration);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddTransient<ForwardedHeaderBasePath>();
 
             services.AddTransient<ITopicRepository, TopicRepository>();
             services.AddSingleton<KafkaConfiguration>();
             services.AddTransient<MessageHandler>();
+
+            services.AddHttpClient<ITikaClient, TikaClient>(cfg =>
+            {
+                var baseUrl = Configuration["TIKA_API_ENDPOINT"];
+                if (baseUrl != null)
+                {
+                    cfg.BaseAddress = new Uri(baseUrl);
+                }
+            });
+            services.AddTransient<ITikaClient, TikaClient>();
 
             services.AddHostedService<TopicSubscriber>();
         }
