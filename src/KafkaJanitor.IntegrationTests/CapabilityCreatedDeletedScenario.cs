@@ -19,9 +19,9 @@ namespace KafkaJanitor.IntegrationTests
         {
             var capability = await When_a_capability_is_created();
             var serviceAccount = await Then_a_service_account_is_created(capability);
-            And_acls_to_create_read_write_to_topics_under_prefix();
+            await And_acls_to_create_read_write_to_topics_under_prefix(capability, serviceAccount);
             await When_a_capability_is_deleted();
-            Then_the_connected_acls_are_deleted();
+            await Then_the_connected_acls_are_deleted(capability, serviceAccount);
             await And_the_connected_service_account_is_removed(serviceAccount);
         }
 
@@ -50,9 +50,10 @@ namespace KafkaJanitor.IntegrationTests
             return await tikaClient.CreateServiceAccount($"{capability.Name}_sa", "Creating during CapabilityCreatedDeletedScenario");
         }
 
-        private void And_acls_to_create_read_write_to_topics_under_prefix()
+        private async Task And_acls_to_create_read_write_to_topics_under_prefix(Capability capability, ServiceAccount serviceAccount)
         {
-            throw new System.NotImplementedException();
+            var tikaClient = new TikaClient(new HttpClient(), new TikaOptions(_configuration));
+            await tikaClient.CreateAcl(serviceAccount.Id, true, "WRITE", capability.Name, capability.Name);
         }
 
         private async Task When_a_capability_is_deleted()
@@ -73,9 +74,10 @@ namespace KafkaJanitor.IntegrationTests
             await kafkaClient.SendMessageAsync(message, "capability_deleted");
         }
 
-        private void Then_the_connected_acls_are_deleted()
+        private async Task Then_the_connected_acls_are_deleted(Capability capability, ServiceAccount serviceAccount)
         {
-            throw new System.NotImplementedException();
+            var tikaClient = new TikaClient(new HttpClient(), new TikaOptions(_configuration));
+            await tikaClient.DeleteAcl(serviceAccount.Id, true, "WRITE", capability.Name, capability.Name);
         }
 
         private async Task And_the_connected_service_account_is_removed(ServiceAccount serviceAccount)

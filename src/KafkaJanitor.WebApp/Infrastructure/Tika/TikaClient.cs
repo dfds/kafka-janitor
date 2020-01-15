@@ -52,8 +52,8 @@ namespace KafkaJanitor.WebApp.Infrastructure.Tika
         {
             var result = await _httpClient.PostAsync($"{_options.TIKA_API_ENDPOINT}/service-accounts", await PayloadToJson(new
             {
-                Name = name,
-                Description = description
+                name = name,
+                description = description
             }));
 
             return await Parse<ServiceAccount>(result);
@@ -91,11 +91,11 @@ namespace KafkaJanitor.WebApp.Infrastructure.Tika
         {
             var result = await _httpClient.PostAsync($"{_options.TIKA_API_ENDPOINT}/access-control-lists", await PayloadToJson(new
             {
-                ServiceAccountId = serviceAccountId,
-                Allow = allow,
-                Operation = operation,
-                TopicPrefix = topicPrefix,
-                ConsumerGroupPrefix = consumerGroupPrefix
+                serviceAccountId = serviceAccountId,
+                allow = allow,
+                operation = operation,
+                topicPrefix = topicPrefix,
+                consumerGroupPrefix = consumerGroupPrefix
             }));
 
             result.EnsureSuccessStatusCode();
@@ -105,11 +105,11 @@ namespace KafkaJanitor.WebApp.Infrastructure.Tika
         {
             var result = await _httpClient.PostAsync($"{_options.TIKA_API_ENDPOINT}/access-control-lists/delete", await PayloadToJson(new
             {
-                ServiceAccountId = serviceAccountId,
-                Allow = allow,
-                Operation = operation,
-                TopicPrefix = topicPrefix,
-                ConsumerGroupPrefix = consumerGroupPrefix
+                serviceAccountId = serviceAccountId,
+                allow = allow,
+                operation = operation,
+                topicPrefix = topicPrefix,
+                consumerGroupPrefix = consumerGroupPrefix
             }));
 
             result.EnsureSuccessStatusCode();
