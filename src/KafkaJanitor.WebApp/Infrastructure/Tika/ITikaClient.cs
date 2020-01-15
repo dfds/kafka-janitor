@@ -7,9 +7,9 @@ namespace KafkaJanitor.WebApp.Infrastructure.Tika
     public interface ITikaClient
     {
         // Api keys
-        Task GetApiKeys();
-        Task CreateApiKey(object payload);
-        Task DeleteApiKey(object payload);
+        Task<IEnumerable<ApiKey>> GetApiKeys();
+        Task<ApiKey> CreateApiKey(string serviceAccountId, string description = "");
+        Task DeleteApiKey(string key);
         
         // Service accounts
         Task<IEnumerable<ServiceAccount>> GetServiceAccounts();
@@ -22,8 +22,8 @@ namespace KafkaJanitor.WebApp.Infrastructure.Tika
         Task DeleteTopic();
         
         // ACL
-        Task GetAcls();
-        Task CreateAcl();
-        Task DeleteAcl();
+        Task<IEnumerable<Acl>> GetAcls();
+        Task CreateAcl(string serviceAccountId, bool allow, string operation, string topicPrefix, string consumerGroupPrefix);
+        Task DeleteAcl(string serviceAccountId, bool allow, string operation, string topicPrefix, string consumerGroupPrefix);
     }
 }
