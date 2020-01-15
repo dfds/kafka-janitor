@@ -1,25 +1,135 @@
-using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Tika.Client.Models;
 
 namespace Tika.Client
 {
-    public class TikaClient
+    public class TikaClient : ITikaClient
     {
-        public ServiceAccounts ServiceAccounts { get; }
-        public ApiKeys ApiKeys { get; }
-        private readonly HttpClient _httpClient;
+        private HttpClient _httpClient;
+        private TikaOptions _options;
 
-        private TikaClient(HttpClient httpClient)
+        public TikaClient(HttpClient httpClient = null, TikaOptions options = null)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClient ?? new HttpClient() {BaseAddress = new System.Uri(options?.TIKA_API_ENDPOINT, System.UriKind.Absolute)};
+            _options = options;
+        }
+        public async Task<IEnumerable<ApiKey>> GetApiKeys()
+        {
+            var result = await _httpClient.GetAsync($"{_options.TIKA_API_ENDPOINT}/api-keys");
 
-            ServiceAccounts = new ServiceAccounts(_httpClient);
-            ApiKeys = new ApiKeys(_httpClient);
+            return await Parse<IEnumerable<ApiKey>>(result);
         }
 
-        public static TikaClient FromBaseUri(Uri uri)
+        public async Task<ApiKey> CreateApiKey(string serviceAccountId, string description = null)
         {
-            return new TikaClient(new HttpClient {BaseAddress = uri});
+            var result = await _httpClient.PostAsync($"{_options.TIKA_API_ENDPOINT}/api-keys", await PayloadToJson(new
+            {
+                ServiceAccountId = serviceAccountId,
+                Description = description
+            }));
+
+            return await Parse<ApiKey>(result);
+        }
+
+        public async Task DeleteApiKey(string key)
+        {
+            var result = await _httpClient.DeleteAsync($"{_options.TIKA_API_ENDPOINT}/api-keys/{key}");
+            result.EnsureSuccessStatusCode();
+        }
+
+        public async Task<IEnumerable<ServiceAccount>> GetServiceAccounts()
+        {
+            var result = await _httpClient.GetAsync($"{_options.TIKA_API_ENDPOINT}/service-accounts");
+
+            return await Parse<IEnumerable<ServiceAccount>>(result);
+        }
+
+        public async Task<ServiceAccount> CreateServiceAccount(string name, string description = null)
+        {
+            var result = await _httpClient.PostAsync($"{_options.TIKA_API_ENDPOINT}/service-accounts", await PayloadToJson(new
+            {
+                name = name,
+                description = description
+            }));
+
+            return await Parse<ServiceAccount>(result);
+        }
+
+        public async Task DeleteServiceAccount(string id)
+        {
+            var result = await _httpClient.DeleteAsync($"{_options.TIKA_API_ENDPOINT}/service-accounts/{id}");
+            result.EnsureSuccessStatusCode();
+        }
+
+        public async Task GetTopics()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public async Task CreateTopic()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public async Task DeleteTopic()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public async Task<IEnumerable<Acl>> GetAcls()
+        {
+            var result = await _httpClient.GetAsync($"{_options.TIKA_API_ENDPOINT}/access-control-lists");
+
+            return await Parse<IEnumerable<Acl>>(result);
+        }
+
+        public async Task CreateAcl(string serviceAccountId, bool allow, string operation, string topicPrefix, string consumerGroupPrefix)
+        {
+            var result = await _httpClient.PostAsync($"{_options.TIKA_API_ENDPOINT}/access-control-lists", await PayloadToJson(new
+            {
+                serviceAccountId = serviceAccountId,
+                allow = allow,
+                operation = operation,
+                topicPrefix = topicPrefix,
+                consumerGroupPrefix = consumerGroupPrefix
+            }));
+
+            result.EnsureSuccessStatusCode();
+        }
+
+        public async Task DeleteAcl(string serviceAccountId, bool allow, string operation, string topicPrefix, string consumerGroupPrefix)
+        {
+            var result = await _httpClient.PostAsync($"{_options.TIKA_API_ENDPOINT}/access-control-lists/delete", await PayloadToJson(new
+            {
+                serviceAccountId = serviceAccountId,
+                allow = allow,
+                operation = operation,
+                topicPrefix = topicPrefix,
+                consumerGroupPrefix = consumerGroupPrefix
+            }));
+
+            result.EnsureSuccessStatusCode();
+        }
+
+        private async Task<HttpContent> PayloadToJson(object input)
+        {
+            return new StringContent(
+                content: JsonConvert.SerializeObject(input),
+                encoding: Encoding.UTF8,
+                mediaType: "application/json");
+        }
+        
+        private async Task<T> Parse<T>(HttpResponseMessage response)
+        {
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var data = JsonConvert.DeserializeObject<T>(content);
+            return data;
         }
     }
 }

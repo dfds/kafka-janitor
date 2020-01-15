@@ -1,11 +1,11 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using KafkaJanitor.IntegrationTests.Utils;
-using KafkaJanitor.WebApp.Infrastructure.Tika;
-using KafkaJanitor.WebApp.Infrastructure.Tika.Model;
 using KafkaJanitor.WebApp.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
+using Tika.Client;
+using Tika.Client.Models;
 using Xunit;
 
 namespace KafkaJanitor.IntegrationTests

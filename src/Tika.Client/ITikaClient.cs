@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using KafkaJanitor.WebApp.Infrastructure.Tika.Model;
+using Tika.Client.Models;
 
-namespace KafkaJanitor.WebApp.Infrastructure.Tika
+namespace Tika.Client
 {
     public interface ITikaClient
     {

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 
-namespace KafkaJanitor.WebApp.Infrastructure.Tika
+namespace Tika.Client
 {
     public class TikaOptions
     {

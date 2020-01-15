@@ -1,13 +1,13 @@
 ﻿using System;
 using KafkaJanitor.WebApp.Infrastructure.Http;
 using KafkaJanitor.WebApp.Infrastructure.Messaging;
-using KafkaJanitor.WebApp.Infrastructure.Tika;
 using KafkaJanitor.WebApp.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Tika.Client;
 
 namespace KafkaJanitor.WebApp
 {

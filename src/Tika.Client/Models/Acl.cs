@@ -1,4 +1,4 @@
-namespace KafkaJanitor.WebApp.Infrastructure.Tika.Model
+namespace Tika.Client
 {
     public class Acl
     {
