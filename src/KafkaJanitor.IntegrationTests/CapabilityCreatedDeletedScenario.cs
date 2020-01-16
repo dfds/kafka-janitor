@@ -31,7 +31,7 @@ namespace KafkaJanitor.IntegrationTests
             var capability = new Capability
             {
                 Id = "1e0a8f85-de38-42ef-a4f4-87c3b4f9a5f9",
-                Name = "CapabilityCreatedDeletedScenario"
+                Name = "devx-acltest4"
             };
 
             var message = new
@@ -53,7 +53,23 @@ namespace KafkaJanitor.IntegrationTests
         private async Task And_acls_to_create_read_write_to_topics_under_prefix(Capability capability, ServiceAccount serviceAccount)
         {
             var tikaClient = new TikaClient(new HttpClient(), new TikaOptions(_configuration));
-            await tikaClient.CreateAcl(serviceAccount.Id, true, "WRITE", capability.Name, capability.Name);
+            
+            // Topic
+            await tikaClient.CreateAcl(serviceAccount.Id, true, "WRITE", capability.Name);
+            await tikaClient.CreateAcl(serviceAccount.Id, true, "CREATE", capability.Name);
+            await tikaClient.CreateAcl(serviceAccount.Id, true, "READ", capability.Name);
+            await tikaClient.CreateAcl(serviceAccount.Id, true, "CONSUME", capability.Name);
+            
+            // ConsumerGroup
+            await tikaClient.CreateAcl(serviceAccount.Id, true, "WRITE", "", capability.Name);
+            await tikaClient.CreateAcl(serviceAccount.Id, true, "CREATE", "", capability.Name);
+            await tikaClient.CreateAcl(serviceAccount.Id, true, "READ", "", capability.Name);
+            
+            // DENY
+            await tikaClient.CreateAcl(serviceAccount.Id, false, "alter");
+            await tikaClient.CreateAcl(serviceAccount.Id, false, "alter-configs");
+            await tikaClient.CreateAcl(serviceAccount.Id, false, "cluster-action");
+            await tikaClient.CreateAcl(serviceAccount.Id, false, "create", "'*'");
         }
 
         private async Task When_a_capability_is_deleted()
@@ -62,7 +78,7 @@ namespace KafkaJanitor.IntegrationTests
             var capability = new Capability
             {
                 Id = "1e0a8f85-de38-42ef-a4f4-87c3b4f9a5f9",
-                Name = "CapabilityCreatedDeletedScenario"
+                Name = "devx-acltest4"
             };
 
             var message = new
@@ -77,7 +93,23 @@ namespace KafkaJanitor.IntegrationTests
         private async Task Then_the_connected_acls_are_deleted(Capability capability, ServiceAccount serviceAccount)
         {
             var tikaClient = new TikaClient(new HttpClient(), new TikaOptions(_configuration));
-            await tikaClient.DeleteAcl(serviceAccount.Id, true, "WRITE", capability.Name, capability.Name);
+            
+            // Topic
+            await tikaClient.DeleteAcl(serviceAccount.Id, true, "WRITE", capability.Name);
+            await tikaClient.DeleteAcl(serviceAccount.Id, true, "CREATE", capability.Name);
+            await tikaClient.DeleteAcl(serviceAccount.Id, true, "READ", capability.Name);
+            await tikaClient.DeleteAcl(serviceAccount.Id, true, "CONSUME", capability.Name);
+            
+            // ConsumerGroup
+            await tikaClient.DeleteAcl(serviceAccount.Id, true, "WRITE", "", capability.Name);
+            await tikaClient.DeleteAcl(serviceAccount.Id, true, "CREATE", "", capability.Name);
+            await tikaClient.DeleteAcl(serviceAccount.Id, true, "READ", "", capability.Name);
+            
+            // DENY
+            await tikaClient.DeleteAcl(serviceAccount.Id, false, "alter");
+            await tikaClient.DeleteAcl(serviceAccount.Id, false, "alter-configs");
+            await tikaClient.DeleteAcl(serviceAccount.Id, false, "cluster-action");
+            await tikaClient.DeleteAcl(serviceAccount.Id, false, "create", "'*'");
         }
 
         private async Task And_the_connected_service_account_is_removed(ServiceAccount serviceAccount)

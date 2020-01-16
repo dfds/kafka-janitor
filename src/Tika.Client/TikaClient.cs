@@ -87,7 +87,7 @@ namespace Tika.Client
             return await Parse<IEnumerable<Acl>>(result);
         }
 
-        public async Task CreateAcl(string serviceAccountId, bool allow, string operation, string topicPrefix, string consumerGroupPrefix)
+        public async Task CreateAcl(string serviceAccountId, bool allow, string operation, string topicPrefix = "", string consumerGroupPrefix = "")
         {
             var result = await _httpClient.PostAsync($"{_options.TIKA_API_ENDPOINT}/access-control-lists", await PayloadToJson(new
             {
@@ -101,7 +101,7 @@ namespace Tika.Client
             result.EnsureSuccessStatusCode();
         }
 
-        public async Task DeleteAcl(string serviceAccountId, bool allow, string operation, string topicPrefix, string consumerGroupPrefix)
+        public async Task DeleteAcl(string serviceAccountId, bool allow, string operation, string topicPrefix = "", string consumerGroupPrefix = "")
         {
             var result = await _httpClient.PostAsync($"{_options.TIKA_API_ENDPOINT}/access-control-lists/delete", await PayloadToJson(new
             {
