@@ -58,7 +58,8 @@ namespace KafkaJanitor.IntegrationTests
             await tikaClient.CreateAcl(serviceAccount.Id, true, "WRITE", capability.Name);
             await tikaClient.CreateAcl(serviceAccount.Id, true, "CREATE", capability.Name);
             await tikaClient.CreateAcl(serviceAccount.Id, true, "READ", capability.Name);
-            await tikaClient.CreateAcl(serviceAccount.Id, true, "CONSUME", capability.Name);
+            await tikaClient.CreateAcl(serviceAccount.Id, true, "DESCRIBE", capability.Name);
+            await tikaClient.CreateAcl(serviceAccount.Id, true, "DESCRIBE-CONFIGS", capability.Name);
             
             // ConsumerGroup
             await tikaClient.CreateAcl(serviceAccount.Id, true, "WRITE", "", capability.Name);
@@ -98,7 +99,8 @@ namespace KafkaJanitor.IntegrationTests
             await tikaClient.DeleteAcl(serviceAccount.Id, true, "WRITE", capability.Name);
             await tikaClient.DeleteAcl(serviceAccount.Id, true, "CREATE", capability.Name);
             await tikaClient.DeleteAcl(serviceAccount.Id, true, "READ", capability.Name);
-            await tikaClient.DeleteAcl(serviceAccount.Id, true, "CONSUME", capability.Name);
+            await tikaClient.DeleteAcl(serviceAccount.Id, true, "DESCRIBE", capability.Name);
+            await tikaClient.DeleteAcl(serviceAccount.Id, true, "DESCRIBE-CONFIGS", capability.Name);
             
             // ConsumerGroup
             await tikaClient.DeleteAcl(serviceAccount.Id, true, "WRITE", "", capability.Name);
