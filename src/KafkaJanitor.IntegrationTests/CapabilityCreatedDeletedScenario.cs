@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Tika.Client;
 using Tika.Client.Models;
 using Xunit;
+using ServiceAccount = Tika.Client.Models.ServiceAccount;
 
 namespace KafkaJanitor.IntegrationTests
 {

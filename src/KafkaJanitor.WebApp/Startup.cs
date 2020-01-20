@@ -28,7 +28,6 @@ namespace KafkaJanitor.WebApp
 
             services.AddTransient<ITopicRepository, TopicRepository>();
             services.AddSingleton<KafkaConfiguration>();
-            services.AddTransient<MessageHandler>();
 
             services.AddHttpClient<ITikaClient, TikaClient>(cfg =>
             {
@@ -40,6 +39,7 @@ namespace KafkaJanitor.WebApp
             });
             services.AddTransient<ITikaClient, TikaClient>();
 
+            services.AddTransient<MessageHandler>();
             services.AddHostedService<TopicSubscriber>();
         }
 
