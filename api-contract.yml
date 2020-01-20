@@ -6,21 +6,28 @@ consumes:
   - application/json
 produces:
   - application/json
-schemes: 
+schemes:
   - http
 basePath: /api/
 paths:
-  /topics: 
+  /topics:
     get:
       summary: Returns a list of topics
       responses:
-        200:
+        '200':
           description: OK
           schema:
-            $ref: '#/definitions/topic'
+            type: object
+            properties:
+              name:
+                type: string
+                example: build.capabilities
+              partitions:
+                type: number
+                example: 12
     post:
       summary: Create a new topic
-      parameters: 
+      parameters:
         - in: body
           name: body
           required: true
@@ -30,12 +37,22 @@ paths:
               name:
                 type: string
                 example: capability-name.aggregate-name-in-plural
+              partitions:
+                type: string
+          description: ''
       responses:
-        200:
+        '200':
           description: OK
           schema:
-            $ref: '#/definitions/topic'
-        409:
+            type: object
+            properties:
+              name:
+                type: string
+                example: build.capabilities
+              partitions:
+                type: number
+                example: 12
+        '409':
           description: Conflict
           schema:
             type: object
@@ -43,7 +60,6 @@ paths:
               message:
                 type: string
                 example: Topic already exists.
-                
 definitions:
   topic:
     type: object
@@ -54,4 +70,3 @@ definitions:
       partitions:
         type: number
         example: 12
-    
