@@ -65,19 +65,28 @@ namespace Tika.Client
             result.EnsureSuccessStatusCode();
         }
 
-        public async Task GetTopics()
+        public async Task<IEnumerable<string>> GetTopics()
         {
-            throw new System.NotImplementedException();
+            var result = await _httpClient.GetAsync($"{_options.TIKA_API_ENDPOINT}/topics");
+
+            return await Parse<IEnumerable<string>>(result);
         }
 
-        public async Task CreateTopic()
+        public async Task CreateTopic(string name, string partitionCount)
         {
-            throw new System.NotImplementedException();
+            var result = await _httpClient.PostAsync($"{_options.TIKA_API_ENDPOINT}/topics", await PayloadToJson(new
+            {
+                name = name,
+                partitionCount = partitionCount
+            }));
+
+            result.EnsureSuccessStatusCode();
         }
 
-        public async Task DeleteTopic()
+        public async Task DeleteTopic(string name)
         {
-            throw new System.NotImplementedException();
+            var result = await _httpClient.DeleteAsync($"{_options.TIKA_API_ENDPOINT}/topics/{name}");
+            result.EnsureSuccessStatusCode();
         }
 
         public async Task<IEnumerable<Acl>> GetAcls()

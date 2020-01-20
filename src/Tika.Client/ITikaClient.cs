@@ -17,9 +17,9 @@ namespace Tika.Client
         Task DeleteServiceAccount(string id);
         
         // Topics
-        Task GetTopics();
-        Task CreateTopic();
-        Task DeleteTopic();
+        Task<IEnumerable<string>> GetTopics();
+        Task CreateTopic(string name, string partitionCount);
+        Task DeleteTopic(string name);
         
         // ACL
         Task<IEnumerable<Acl>> GetAcls();
