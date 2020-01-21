@@ -19,9 +19,9 @@ namespace KafkaJanitor.WebApp.Infrastructure.Messaging
         public async Task<ApiKey> Add(string description, string serviceAccountId)
         {
             var resp = await _tikaClient.CreateApiKey(serviceAccountId, description);
+            
             return new ApiKey
             {
-                Id = "",
                 Key = resp.Key,
                 Secret = resp.Secret,
                 ServiceAccountId = serviceAccountId
