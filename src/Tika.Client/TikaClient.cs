@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Tika.Client.Models;
 
@@ -12,10 +13,10 @@ namespace Tika.Client
         private HttpClient _httpClient;
         private TikaOptions _options;
 
-        public TikaClient(HttpClient httpClient = null, TikaOptions options = null)
+        public TikaClient(HttpClient httpClient = null, IOptions<TikaOptions> options = null)
         {
-            _httpClient = httpClient ?? new HttpClient() {BaseAddress = new System.Uri(options?.TIKA_API_ENDPOINT, System.UriKind.Absolute)};
-            _options = options;
+            _options = options?.Value;
+            _httpClient = httpClient ?? new HttpClient() {BaseAddress = new System.Uri(_options?.TIKA_API_ENDPOINT, System.UriKind.Absolute)};
         }
         public async Task<IEnumerable<ApiKey>> GetApiKeys()
         {

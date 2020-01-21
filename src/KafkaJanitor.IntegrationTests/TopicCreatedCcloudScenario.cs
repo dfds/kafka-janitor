@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using KafkaJanitor.WebApp.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
+using Microsoft.Extensions.Options;
 using Tika.Client;
 using Xunit;
 
@@ -30,13 +31,13 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task Then_a_topic_is_created(Topic topic)
         {
-            var tikaClient = new TikaClient(new HttpClient(), new TikaOptions(_configuration));
+            var tikaClient = new TikaClient(new HttpClient(), Options.Create(new TikaOptions(_configuration)));
             await tikaClient.CreateTopic(topic.Name, topic.Partitions.ToString());
         }
 
         private async Task Then_the_topic_is_retrieved(string topicName)
         {
-            var tikaClient = new TikaClient(new HttpClient(), new TikaOptions(_configuration));
+            var tikaClient = new TikaClient(new HttpClient(), Options.Create(new TikaOptions(_configuration)));
             var topics = await tikaClient.GetTopics();
             topics.First(to => to.Equals(topicName));
         }

@@ -4,6 +4,7 @@ using KafkaJanitor.IntegrationTests.Utils;
 using KafkaJanitor.WebApp.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
+using Microsoft.Extensions.Options;
 using Tika.Client;
 using Tika.Client.Models;
 using Xunit;
@@ -47,13 +48,13 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task<ServiceAccount> Then_a_service_account_is_created(Capability capability)
         {
-            var tikaClient = new TikaClient(new HttpClient(), new TikaOptions(_configuration));
+            var tikaClient = new TikaClient(new HttpClient(), Options.Create(new TikaOptions(_configuration)));
             return await tikaClient.CreateServiceAccount($"{capability.Name}_sa", "Creating during CapabilityCreatedDeletedScenario");
         }
 
         private async Task And_acls_to_create_read_write_to_topics_under_prefix(Capability capability, ServiceAccount serviceAccount)
         {
-            var tikaClient = new TikaClient(new HttpClient(), new TikaOptions(_configuration));
+            var tikaClient = new TikaClient(new HttpClient(), Options.Create(new TikaOptions(_configuration)));
             
             // Topic
             await tikaClient.CreateAcl(serviceAccount.Id, true, "WRITE", capability.Name);
@@ -94,7 +95,7 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task Then_the_connected_acls_are_deleted(Capability capability, ServiceAccount serviceAccount)
         {
-            var tikaClient = new TikaClient(new HttpClient(), new TikaOptions(_configuration));
+            var tikaClient = new TikaClient(new HttpClient(), Options.Create(new TikaOptions(_configuration)));
             
             // Topic
             await tikaClient.DeleteAcl(serviceAccount.Id, true, "WRITE", capability.Name);
@@ -117,7 +118,7 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task And_the_connected_service_account_is_removed(ServiceAccount serviceAccount)
         {
-            var tikaClient = new TikaClient(new HttpClient(), new TikaOptions(_configuration));
+            var tikaClient = new TikaClient(new HttpClient(), Options.Create(new TikaOptions(_configuration)));
             await tikaClient.DeleteServiceAccount(serviceAccount.Id);
         }
 

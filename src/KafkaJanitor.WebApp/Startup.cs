@@ -23,10 +23,10 @@ namespace KafkaJanitor.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<TikaOptions>(Configuration);
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(option => option.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddTransient<ForwardedHeaderBasePath>();
 
-            services.AddTransient<ITopicRepository, TopicRepository>();
+            services.AddTransient<ITopicRepository, TopicCcloudRepository>();
             services.AddSingleton<KafkaConfiguration>();
 
             services.AddHttpClient<ITikaClient, TikaClient>(cfg =>

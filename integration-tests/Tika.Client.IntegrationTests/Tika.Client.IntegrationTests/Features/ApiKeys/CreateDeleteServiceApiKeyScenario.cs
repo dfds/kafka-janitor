@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Tika.Client.Models;
 using Xunit;
 
@@ -28,7 +29,7 @@ namespace Tika.Client.IntegrationTests.Features.ApiKeys
             var httpClient = new HttpClient();
             var options = new TikaOptions { TIKA_API_ENDPOINT = "http://localhost:3000"};
             httpClient.BaseAddress = new Uri(options.TIKA_API_ENDPOINT, System.UriKind.Absolute);
-            _tikaClient = new TikaClient(httpClient, options);
+            _tikaClient = new TikaClient(httpClient, Options.Create(options));
         }
 
         private async Task And_a_service_account()
