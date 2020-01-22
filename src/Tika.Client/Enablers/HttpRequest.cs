@@ -27,9 +27,9 @@ namespace Tika.Client.Enablers
 
             var response = await httpClient.SendAsync(request);
 
-            var deserilizedObject = await HttpResponse.ToTypeAsync<T>(response);
+            var deserializedObject = await HttpResponse.ToTypeAsync<T>(response);
 
-            return deserilizedObject;
+            return deserializedObject;
         }
     }
 }
