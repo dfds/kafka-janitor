@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>KafkaJanitor.Rest_Client</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>DFDS Development excellence department</Authors>
+    <Description>A dotnet core 3 libary for communitaing with Kafka.Janitor </Description>
   </PropertyGroup>
 
 </Project>
