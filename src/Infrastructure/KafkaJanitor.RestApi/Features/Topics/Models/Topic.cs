@@ -1,6 +1,6 @@
 namespace KafkaJanitor.RestApi.Features.Topics.Models
 {
-    public class TopicCreate
+    public class Topic
     {
         public string Name { get; set; }
         public string Description { get; set; }

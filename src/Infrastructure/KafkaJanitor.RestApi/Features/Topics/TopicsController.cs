@@ -5,11 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KafkaJanitor.RestApi.Features.Topics
 {
- 
     [Route(Routes.TOPICS_ROUTE)]
     public class TopicsController : ControllerBase
     {
-
         private readonly ITikaRestClient _tikaRestClient;
 
         public TopicsController(ITikaRestClient tikaRestClient)
@@ -17,10 +15,19 @@ namespace KafkaJanitor.RestApi.Features.Topics
             _tikaRestClient = tikaRestClient;
         }
 
-        [HttpPost("")]
-        public async Task<IActionResult> Create([FromBody] TopicCreate input)
+
+        [HttpGet("")]
+        public async Task<IActionResult> GetAllAsync()
         {
-            if (await _tikaRestClient.Exists(input.Name))
+            var topics = await _tikaRestClient.GetAllAsync();
+
+            return Ok(topics);
+        }
+
+        [HttpPost("")]
+        public async Task<IActionResult> CreateAsync([FromBody] Topic input)
+        {
+            if (await _tikaRestClient.ExistsAsync(input.Name))
             {
                 return Conflict(new
                 {
@@ -28,7 +35,7 @@ namespace KafkaJanitor.RestApi.Features.Topics
                 });
             }
 
-            var topic = await _tikaRestClient.Add(input.Name);
+            var topic = await _tikaRestClient.AddAsync(input.Name);
 
             return Ok(topic);
         }
