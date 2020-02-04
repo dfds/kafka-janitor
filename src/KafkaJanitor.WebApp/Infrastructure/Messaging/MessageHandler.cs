@@ -8,12 +8,10 @@ namespace KafkaJanitor.WebApp.Infrastructure.Messaging
     public class MessageHandler
     {
         private readonly ITopicRepository _topicRepository;
-        private readonly ITikaClient _tikaClient;
 
-        public MessageHandler(ITopicRepository topicRepository, ITikaClient tikaClient)
+        public MessageHandler(ITopicRepository topicRepository)
         {
             _topicRepository = topicRepository;
-            _tikaClient = tikaClient;
         }
         
         public Task Handle(MessageEmbeddedDocument message)
@@ -36,7 +34,12 @@ namespace KafkaJanitor.WebApp.Infrastructure.Messaging
                 {
                     var data = message.ReadDataAs<TopicCreationRequested>();
                     return HandleTopicCreationRequested(data);
-                }                
+                }
+                case "topic_created":
+                {
+                    var data = message.ReadDataAs<TopicCreationRequested>();
+                    return HandleTopicCreationRequested(data);
+                }
 
                 default:
                     throw new Exception($"Unable to handle message {message.EventName}");
@@ -57,13 +60,13 @@ namespace KafkaJanitor.WebApp.Infrastructure.Messaging
 
         private async Task HandleTopicCreationRequested(TopicCreationRequested msg)
         {
-            if (! await _topicRepository.Exists(msg.TopicName))
+            if (! await _topicRepository.Exists(msg.Name))
             {
-                await _topicRepository.Add(new Topic(msg.TopicName, Convert.ToInt32(msg.TopicPartitions)));
+                await _topicRepository.Add(new Topic(msg.Name, Convert.ToInt32(msg.Partitions)));
             }
             else
             {
-                throw new Exception($"Topic '{msg.TopicName}' already exists");
+                throw new Exception($"Topic '{msg.Name}' already exists");
             }
         }
         
@@ -82,8 +85,9 @@ namespace KafkaJanitor.WebApp.Infrastructure.Messaging
         private class TopicCreationRequested
         {
             public string CapabilityId { get; set; }
-            public string TopicName { get; set; }
-            public string TopicPartitions { get; set; }
+            public string Name { get; set; }
+            public string Partitions { get; set; }
+            public string Description { get; set; }
         }
 
         private class CapabilityDeleted
