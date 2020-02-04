@@ -59,7 +59,7 @@ namespace KafkaJanitor.WebApp.Infrastructure.Messaging
         {
             if (! await _topicRepository.Exists(msg.TopicName))
             {
-                
+                await _topicRepository.Add(new Topic(msg.TopicName, Convert.ToInt32(msg.TopicPartitions)));
             }
             else
             {
