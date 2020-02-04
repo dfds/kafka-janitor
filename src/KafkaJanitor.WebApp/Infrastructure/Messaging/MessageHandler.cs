@@ -22,6 +22,9 @@ namespace KafkaJanitor.WebApp.Infrastructure.Messaging
                 case "topic_added":
                     var data = message.ReadDataAs<TopicAdded>();
                     return Handle(data);
+                case "topic_created":
+                    return HandleTopicCreated();
+                
                 default:
                     throw new Exception($"Unable to handle message {message.EventName}");
             }
@@ -37,6 +40,11 @@ namespace KafkaJanitor.WebApp.Infrastructure.Messaging
             }
 
             await _topicRepository.Add(new Topic(message.TopicName));
+        }
+
+        private async Task HandleTopicCreated()
+        {
+            // Do nothing as the payload sent by the new event is improper.
         }
 
         #region Message Definitions
