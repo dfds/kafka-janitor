@@ -4,6 +4,12 @@ trigger:
   - master
 
 steps:
+  - task: UseDotNet@2
+    displayName: 'Install .NET Core sdk'
+    inputs:
+      packageType: sdk
+      version: 3.1.100
+      installationPath: $(Agent.ToolsDirectory)/dotnet
   - bash: |
       make release BUILD_NUMBER=$(Build.BuildId)
     env:
