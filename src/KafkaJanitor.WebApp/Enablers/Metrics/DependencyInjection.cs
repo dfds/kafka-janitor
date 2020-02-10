@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DFDS.CapabilityService.WebApi.Enablers.Metrics
+namespace KafkaJanitor.WebApp.Enablers.Metrics
 {
     public static class DependencyInjection
     {
