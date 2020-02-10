@@ -29,8 +29,8 @@ spec:
         ports:
         - containerPort: 80
           name: web
-       - containerPort: 8080
-         name: metrics
+        - containerPort: 8080
+          name: metrics
         resources:
           requests:
             memory: "64Mi"
