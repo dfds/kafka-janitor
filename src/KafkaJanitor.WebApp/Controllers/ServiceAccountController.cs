@@ -17,13 +17,12 @@ namespace KafkaJanitor.WebApp.Controllers
         }
 
         [HttpPost("request")]
-        public async Task<IActionResult> RequestServiceAccount()
+        public async Task<IActionResult> RequestServiceAccount([FromBody] ServiceAccountRequestInput input)
         {
-            Console.WriteLine("RequestServiceAccount");
             var cap = new Capability
             {
-                Id = Guid.NewGuid().ToString(),
-                Name = "weeeeeee"
+                Id = input.CapabilityId,
+                Name = input.CapabilityName
             };
             
             var serviceAccount = await _tikaService.CreateServiceAccount(cap);
@@ -31,5 +30,12 @@ namespace KafkaJanitor.WebApp.Controllers
 
             return Ok();
         }
+        
+    }
+
+    public class ServiceAccountRequestInput
+    {
+        public string CapabilityName { get; set; }
+        public string CapabilityId { get; set; }
     }
 }
