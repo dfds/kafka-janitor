@@ -1,9 +1,10 @@
+using KafkaJanitor.RestApi.Enablers.Metrics;
 using KafkaJanitor.RestApi.FakeTikaRestClient;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using Prometheus;
 namespace KafkaJanitor.RestApi
 {
     public class Startup
@@ -20,6 +21,10 @@ namespace KafkaJanitor.RestApi
         {
             services.AddControllers();
             services.AddSingleton<ITikaRestClient, FakeTikaRestClient.FakeTikaRestClient>();
+            
+            // Enablers
+            services.AddMetrics();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -30,6 +35,9 @@ namespace KafkaJanitor.RestApi
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            
+            app.UseHttpMetrics();
+
         }
     }
 }
