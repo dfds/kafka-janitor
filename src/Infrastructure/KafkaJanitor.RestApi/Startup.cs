@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
+
 namespace KafkaJanitor.RestApi
 {
     public class Startup
@@ -30,6 +31,8 @@ namespace KafkaJanitor.RestApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders();
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -37,7 +40,6 @@ namespace KafkaJanitor.RestApi
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
             
             app.UseHttpMetrics();
-
         }
     }
 }

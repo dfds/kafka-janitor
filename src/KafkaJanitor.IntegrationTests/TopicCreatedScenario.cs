@@ -1,19 +1,19 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using KafkaJanitor.IntegrationTests.Utils;
-using KafkaJanitor.WebApp.Infrastructure.Messaging;
-using KafkaJanitor.WebApp.Models;
+using KafkaJanitor.RestApi.FakeTikaRestClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Xunit;
+using Topic = KafkaJanitor.RestApi.FakeTikaRestClient.Models.Topic;
 
 namespace KafkaJanitor.IntegrationTests
 {
     public class TopicCreatedScenario
     {
-        private readonly ITopicRepository _topicRepository;
+        private readonly ITikaRestClient _tikaRestClient;
 
+        // In a weird state until the new code is moved in from branch 'tika-client'
         [Fact]
         public async Task TopicCreatedScenarioRecipe()
         {
@@ -24,25 +24,22 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task When_a_topic_creation_is_requested()
         {
-            var kafkaClient = new KafkaClient();
-
             var message = new
             {
                 TopicName = "devex-integrationtest"
             };
-            await kafkaClient.SendMessageAsync(message);
+            await _tikaRestClient.AddAsync(message.TopicName);
         }
 
         private async Task Then_a_topic_is_created()
         {
             Thread.Sleep(5 * 1000);
-            var exists = await _topicRepository.Exists("devex-integrationtest");
-            Assert.True(exists);
+            var results = _tikaRestClient.GetAllAsync().Result.Single(t => t.Name == "devex-integrationtest");
         }
 
-        private async Task<WebApp.Models.Topic> Then_the_topic_is_retrieved()
+        private async Task<Topic> Then_the_topic_is_retrieved()
         {
-            var topic = _topicRepository.GetAll().Result.First(t => t.Name.Equals("devex-integrationtest"));
+            var topic = _tikaRestClient.GetAllAsync().Result.Single(t => t.Name == "devex-integrationtest");
 
             return topic;
         }
@@ -52,7 +49,8 @@ namespace KafkaJanitor.IntegrationTests
             var conf = new ConfigurationBuilder()
                 .Add(new EnvironmentVariablesConfigurationSource())
                 .Build();
-            _topicRepository = new TopicRepository(new KafkaConfiguration(conf));
+            var kafkaClient = new FakeTikaRestClient();
+
         }
     }
 }
