@@ -1,13 +1,11 @@
 ﻿using KafkaJanitor.WebApp.Infrastructure.Http;
 using KafkaJanitor.WebApp.Infrastructure.Messaging;
 using KafkaJanitor.WebApp.Models;
-using KafkaJanitor.WebApp.Enablers.Metrics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Prometheus;
 
 namespace KafkaJanitor.WebApp
 {
@@ -28,7 +26,6 @@ namespace KafkaJanitor.WebApp
             services.AddTransient<ITopicRepository, TopicRepository>();
             services.AddSingleton<KafkaConfiguration>();
             services.AddTransient<MessageHandler>();
-            services.AddMetrics();
 
             services.AddHostedService<TopicSubscriber>();
         }
@@ -40,7 +37,6 @@ namespace KafkaJanitor.WebApp
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpMetrics();
             app.UseForwardedHeadersAsBasePath();
             app.UseStaticFiles();
             app.UseMvc();
