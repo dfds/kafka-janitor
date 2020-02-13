@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Prometheus;
 
-namespace KafkaJanitor.WebApp.Enablers.Metrics
+namespace KafkaJanitor.RestApi.Enablers.Metrics
 {
     public class MetricHostedService : IHostedService
     {
