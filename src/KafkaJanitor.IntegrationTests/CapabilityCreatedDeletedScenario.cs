@@ -2,11 +2,10 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using KafkaJanitor.IntegrationTests.Utils;
-using KafkaJanitor.WebApp.Models;
+using KafkaJanitor.RestApi.Features.Topics.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.Options;
-using Tika.Client;
 using Tika.RestClient;
 using Tika.RestClient.Features.Acls.Models;
 using Tika.RestClient.Features.ServiceAccounts.Models;
@@ -73,22 +72,22 @@ namespace KafkaJanitor.IntegrationTests
         {
             var serviceAccountId = Convert.ToInt64(serviceAccount.Id);
             // Topic
-            await _tikaClient.Acls.CreateAsync(new AclCreate(serviceAccountId, true, "WRITE", capability.Name));
-            await _tikaClient.Acls.CreateAsync(new AclCreate(serviceAccountId, true, "CREATE", capability.Name));
-            await _tikaClient.Acls.CreateAsync(new AclCreate(serviceAccountId, true, "READ", capability.Name));
-            await _tikaClient.Acls.CreateAsync(new AclCreate(serviceAccountId, true, "DESCRIBE", capability.Name));
-            await _tikaClient.Acls.CreateAsync(new AclCreate(serviceAccountId, true, "DESCRIBE-CONFIGS", capability.Name));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, true, "WRITE", capability.Name));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, true, "CREATE", capability.Name));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, true, "READ", capability.Name));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, true, "DESCRIBE", capability.Name));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, true, "DESCRIBE-CONFIGS", capability.Name));
 
             // ConsumerGroup
-            await _tikaClient.Acls.CreateAsync(new AclCreate(serviceAccountId, true, "WRITE", "", capability.Name));
-            await _tikaClient.Acls.CreateAsync(new AclCreate(serviceAccountId, true, "CREATE", "", capability.Name));
-            await _tikaClient.Acls.CreateAsync(new AclCreate(serviceAccountId, true, "READ", "", capability.Name));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, true, "WRITE", "", capability.Name));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, true, "CREATE", "", capability.Name));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, true, "READ", "", capability.Name));
             
             // DENY
-            await _tikaClient.Acls.CreateAsync(new AclCreate(serviceAccountId, false, "alter"));
-            await _tikaClient.Acls.CreateAsync(new AclCreate(serviceAccountId, false, "alter-configs"));
-            await _tikaClient.Acls.CreateAsync(new AclCreate(serviceAccountId, false, "cluster-action"));
-            await _tikaClient.Acls.CreateAsync(new AclCreate(serviceAccountId, false, "create", "'*'"));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, false, "alter"));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, false, "alter-configs"));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, false, "cluster-action"));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, false, "create", "'*'"));
         }
 
         private async Task When_a_capability_is_deleted()
@@ -116,22 +115,22 @@ namespace KafkaJanitor.IntegrationTests
             // Deletion of ACL seems to be flawed if one is using Tika in notconnected mode(e.g. not calling the actual Confluent Cloud API).
 
             // Topic
-            await _tikaClient.Acls.DeleteAsync(new AclCreate(serviceAccountId, true, "WRITE", capability.Name));
-            await _tikaClient.Acls.DeleteAsync(new AclCreate(serviceAccountId, true, "CREATE", capability.Name));
-            await _tikaClient.Acls.DeleteAsync(new AclCreate(serviceAccountId, true, "READ", capability.Name));
-            await _tikaClient.Acls.DeleteAsync(new AclCreate(serviceAccountId, true, "DESCRIBE", capability.Name));
-            await _tikaClient.Acls.DeleteAsync(new AclCreate(serviceAccountId, true, "DESCRIBE-CONFIGS", capability.Name));
+            await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, true, "WRITE", capability.Name));
+            await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, true, "CREATE", capability.Name));
+            await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, true, "READ", capability.Name));
+            await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, true, "DESCRIBE", capability.Name));
+            await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, true, "DESCRIBE-CONFIGS", capability.Name));
             
             // ConsumerGroup
-            await _tikaClient.Acls.DeleteAsync(new AclCreate(serviceAccountId, true, "WRITE", "", capability.Name));
-            await _tikaClient.Acls.DeleteAsync(new AclCreate(serviceAccountId, true, "CREATE", "", capability.Name));
-            await _tikaClient.Acls.DeleteAsync(new AclCreate(serviceAccountId, true, "READ", "", capability.Name));
+            await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, true, "WRITE", "", capability.Name));
+            await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, true, "CREATE", "", capability.Name));
+            await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, true, "READ", "", capability.Name));
             
             // DENY
-            await _tikaClient.Acls.DeleteAsync(new AclCreate(serviceAccountId, false, "alter"));
-            await _tikaClient.Acls.DeleteAsync(new AclCreate(serviceAccountId, false, "alter-configs"));
-            await _tikaClient.Acls.DeleteAsync(new AclCreate(serviceAccountId, false, "cluster-action"));
-            await _tikaClient.Acls.DeleteAsync(new AclCreate(serviceAccountId, false, "create", "'*'"));
+            await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, false, "alter"));
+            await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, false, "alter-configs"));
+            await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, false, "cluster-action"));
+            await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, false, "create", "'*'"));
         }
 
         private async Task And_the_connected_service_account_is_removed(ServiceAccount serviceAccount)

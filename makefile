@@ -2,7 +2,7 @@ IMAGE_NAME=ded/kafka-janitor
 BUILD_NUMBER=n/a
 OUTPUTDIR=${PWD}/.output
 CONFIGURATION=Debug
-MAIN_APP_PROJECT_FILE=KafkaJanitor.WebApp/KafkaJanitor.WebApp.csproj
+MAIN_APP_PROJECT_FILE=Infrastructure/KafkaJanitor.RestApi/KafkaJanitor.RestApi.csproj
 
 init: restore build
 

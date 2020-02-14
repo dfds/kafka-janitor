@@ -14,12 +14,13 @@
         <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-        <PackageReference Include="Tika.RestClient" Version="0.0.4" />
+        <PackageReference Include="Tika.RestClient" Version="0.0.5" />
         <PackageReference Include="xunit" Version="2.4.0" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Infrastructure\KafkaJanitor.RestApi\KafkaJanitor.RestApi.csproj" />
       <ProjectReference Include="..\KafkaJanitor.WebApp\KafkaJanitor.WebApp.csproj" />
     </ItemGroup>
 

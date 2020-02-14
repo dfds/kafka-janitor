@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using KafkaJanitor.WebApp.Models;
+using KafkaJanitor.RestApi.Features.Topics.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.Options;
@@ -36,7 +36,11 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task<Topic> When_a_topic_is_requested()
         {
-            var topic = new Topic("devex-integrationtest2", 3);
+            var topic = new Topic
+            {
+                Name = "devex-integrationtest2",
+                Partitions = 3
+            };
 
             return topic;
         }
