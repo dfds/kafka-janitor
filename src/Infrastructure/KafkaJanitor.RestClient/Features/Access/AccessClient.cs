@@ -2,8 +2,7 @@ using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using KafkaJanitor.RestApi;
-using KafkaJanitor.RestApi.Features.Topics;
+using KafkaJanitor.RestClient.Features.Access.Models;
 using Newtonsoft.Json;
 
 namespace KafkaJanitor.RestClient.Features.Access
@@ -11,6 +10,7 @@ namespace KafkaJanitor.RestClient.Features.Access
     public class AccessClient : IAccessClient
     {
         private readonly HttpClient _httpClient;
+        private const string ACCESS_ROUTE = "access/";
 
         public AccessClient(HttpClient httpClient)
         {
@@ -29,7 +29,7 @@ namespace KafkaJanitor.RestClient.Features.Access
             );
 
             await _httpClient.PostAsync(
-                new Uri(Routes.ACCESS_ROUTE, UriKind.Relative),
+                new Uri(ACCESS_ROUTE, UriKind.Relative),
                 content
             );
         }

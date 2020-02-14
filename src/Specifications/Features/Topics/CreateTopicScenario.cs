@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using KafkaJanitor.RestApi.Features.Topics.Models;
 using KafkaJanitor.RestClient;
 using KafkaJanitor.RestClient.Factories;
+using KafkaJanitor.RestClient.Features.Topics.Models;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 using Xunit;

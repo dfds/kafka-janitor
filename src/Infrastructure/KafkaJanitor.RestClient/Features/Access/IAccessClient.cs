@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using KafkaJanitor.RestApi.Features.Topics;
+using KafkaJanitor.RestClient.Features.Access.Models;
 
 namespace KafkaJanitor.RestClient.Features.Access
 {
