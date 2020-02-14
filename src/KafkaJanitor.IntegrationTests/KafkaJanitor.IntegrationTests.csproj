@@ -21,7 +21,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Infrastructure\KafkaJanitor.RestApi\KafkaJanitor.RestApi.csproj" />
-      <ProjectReference Include="..\KafkaJanitor.WebApp\KafkaJanitor.WebApp.csproj" />
     </ItemGroup>
 
 </Project>
