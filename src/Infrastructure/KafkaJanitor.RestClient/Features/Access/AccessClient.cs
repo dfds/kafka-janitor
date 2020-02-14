@@ -29,7 +29,7 @@ namespace KafkaJanitor.RestClient.Features.Access
             );
 
             await _httpClient.PostAsync(
-                new Uri(ACCESS_ROUTE, UriKind.Relative),
+                new Uri($"{ACCESS_ROUTE}request", UriKind.Relative),
                 content
             );
         }
