@@ -1,6 +1,6 @@
 using KafkaJanitor.RestClient.Features.Topics;
 
-namespace KafkaJanitor.RestClient.Factories
+namespace KafkaJanitor.RestClient
 {
     public interface IRestClient
     {
