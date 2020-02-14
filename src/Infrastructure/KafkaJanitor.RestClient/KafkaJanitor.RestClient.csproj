@@ -5,7 +5,7 @@
     <RootNamespace>KafkaJanitor.RestClient</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>DFDS Development excellence department</Authors>
-    <Description>A dotnet core 3 libary for communitaing with Kafka.Janitor </Description>
+    <Description>A dotnet core 3 libary for communicating with Kafka.Janitor </Description>
   </PropertyGroup>
 
   <ItemGroup>
