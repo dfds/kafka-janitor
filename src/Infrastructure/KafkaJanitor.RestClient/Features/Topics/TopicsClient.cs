@@ -11,7 +11,7 @@ namespace KafkaJanitor.RestClient.Features.Topics
     internal class TopicsClient : ITopicsClient
     {
         private readonly HttpClient _httpClient;
-        private const string TOPICS_ROUTE = "topics/";
+        private const string TOPICS_ROUTE = "api/topics/";
 
         public TopicsClient(HttpClient httpClient)
         {

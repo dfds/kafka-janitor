@@ -10,7 +10,7 @@ namespace KafkaJanitor.RestClient.Features.Access
     public class AccessClient : IAccessClient
     {
         private readonly HttpClient _httpClient;
-        private const string ACCESS_ROUTE = "access/";
+        private const string ACCESS_ROUTE = "api/access/";
 
         public AccessClient(HttpClient httpClient)
         {
