@@ -7,11 +7,11 @@ using Tika.RestClient.Features.Topics.Models;
 
 namespace KafkaJanitor.RestApi.Features.Topics.Models
 {
-    public class TopicCcloudRepository : ITopicRepository
+    public class TikaTopicRepository : ITopicRepository
     {
         private readonly IRestClient _tikaClient;
 
-        public TopicCcloudRepository(IRestClient tikaClient)
+        public TikaTopicRepository(IRestClient tikaClient)
         {
             _tikaClient = tikaClient;
         }

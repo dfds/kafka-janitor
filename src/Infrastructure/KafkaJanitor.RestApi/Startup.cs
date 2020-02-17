@@ -25,7 +25,7 @@ namespace KafkaJanitor.RestApi
         {
             services.AddControllers();
             
-            services.AddTransient<ITopicRepository, TopicCcloudRepository>();
+            services.AddTransient<ITopicRepository, TikaTopicRepository>();
 
             services.AddTikaRestClient(Configuration);
             
