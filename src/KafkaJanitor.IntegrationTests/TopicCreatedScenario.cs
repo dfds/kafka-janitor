@@ -36,7 +36,6 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task Then_a_topic_is_created()
         {
-            Thread.Sleep(5 * 1000);
             _tikaRestClient
                 .Topics
                 .GetAllAsync()
