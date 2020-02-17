@@ -1,7 +1,10 @@
 using System.Threading.Tasks;
 using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
+using KafkaJanitor.RestApi.Features.ApiKeys;
 using KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure;
 using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
+using KafkaJanitor.RestApi.Features.Vault;
+using KafkaJanitor.RestApi.Features.Vault.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
@@ -11,13 +14,19 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
     {
         private readonly IAccessControlListClient _accessControlListService;
         private readonly IServiceAccountClient _serviceAccountClient;
+        private readonly IApiKeyClient _apiKeyClient;
+        private readonly IVault _vault;
         public AccessController(
             IAccessControlListClient accessControlListService, 
-            IServiceAccountClient serviceAccountClient
+            IServiceAccountClient serviceAccountClient,
+            IApiKeyClient apiKeyClient,
+            IVault vault
         )
         {
             _accessControlListService = accessControlListService;
             _serviceAccountClient = serviceAccountClient;
+            _apiKeyClient = apiKeyClient;
+            _vault = vault;
         }
 
         [HttpPost("request")]
@@ -28,11 +37,18 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
                 Id = input.CapabilityId,
                 Name = input.CapabilityName
             };
-            
-            
+
             var serviceAccount = await _serviceAccountClient.CreateServiceAccount(cap);
 
             await _accessControlListService.CreateAclsForServiceAccount(serviceAccount.Id, cap.Name);
+
+            var apiKeyPair = await _apiKeyClient.CreateApiKeyPair(serviceAccount);
+
+            await _vault.AddApiCredentials(new ApiCredentials
+            {
+                Key = apiKeyPair.Key,
+                Secret = apiKeyPair.Secret
+            });
 
             return Ok();
         }

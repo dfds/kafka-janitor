@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Amazon;
+using Amazon.Runtime;
 using Amazon.SecurityToken;
 using Amazon.SecurityToken.Model;
 using Amazon.SimpleSystemsManagement;
@@ -11,12 +12,8 @@ namespace KafkaJanitor.RestApi.Features.Vault
 {
     public class AwsSsmParameterStoreVault : IVault
     {
-        private readonly AmazonSecurityTokenServiceClient _amazonSecurityTokenServiceClient;
         public AwsSsmParameterStoreVault()
         {
-            _amazonSecurityTokenServiceClient = new AmazonSecurityTokenServiceClient();
-            var caller = _amazonSecurityTokenServiceClient.GetCallerIdentityAsync(new GetCallerIdentityRequest()).Result;
-            Console.WriteLine($"Caller identity: {caller.Arn} | {caller.Account} | {caller.UserId}");
         }
         public async Task AddApiCredentials(ApiCredentials apiCredentials)
         {
