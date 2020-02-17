@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
 using KafkaJanitor.RestApi.Features.Topics.Models;
 using KafkaJanitor.RestApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ namespace KafkaJanitor.RestApi.Features.Topics
     public class AccessController : ControllerBase
     {
         private readonly ITikaService _tikaService;
-        
+        private readonly IAccessControlListClient _accessControlListService;
         public AccessController(ITikaService tikaService)
         {
             _tikaService = tikaService;
@@ -24,8 +25,10 @@ namespace KafkaJanitor.RestApi.Features.Topics
                 Name = input.CapabilityName
             };
             
+            
             var serviceAccount = await _tikaService.CreateServiceAccount(cap);
-            await _tikaService.CreateAcl(cap, serviceAccount);
+
+            await _accessControlListService.CreateAclsForServiceAccount(serviceAccount.Id, cap.Name);
 
             return Ok();
         }

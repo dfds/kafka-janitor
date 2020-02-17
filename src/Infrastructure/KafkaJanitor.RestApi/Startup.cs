@@ -1,4 +1,5 @@
 using KafkaJanitor.RestApi.Enablers.Metrics;
+using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
 using KafkaJanitor.RestApi.Features.Topics.Models;
 using KafkaJanitor.RestApi.Services;
 using Microsoft.AspNetCore.Builder;
@@ -30,6 +31,7 @@ namespace KafkaJanitor.RestApi
             
             services.AddTransient<ITikaService, TikaService>();
 
+            services.AddTransient<IAccessControlListClient, AccessControlListClient>();
             
             // Enablers
             services.AddMetrics();
