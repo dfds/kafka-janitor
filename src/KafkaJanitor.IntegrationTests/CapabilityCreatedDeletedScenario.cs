@@ -16,7 +16,6 @@ namespace KafkaJanitor.IntegrationTests
 {
     public class CapabilityCreatedDeletedScenario
     {
-        private IConfiguration _configuration;
         private IRestClient _tikaClient;
         private Capability capability;
         private ServiceAccount serviceAccount;
@@ -138,9 +137,6 @@ namespace KafkaJanitor.IntegrationTests
 
         public CapabilityCreatedDeletedScenario()
         {
-            _configuration = new ConfigurationBuilder()
-                .Add(new EnvironmentVariablesConfigurationSource())
-                .Build();
             
         }
     }

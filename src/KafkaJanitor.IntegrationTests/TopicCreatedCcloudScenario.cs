@@ -14,7 +14,6 @@ namespace KafkaJanitor.IntegrationTests
 {
     public class TopicCreatedCcloudScenario
     {
-        private IConfiguration _configuration;
         private IRestClient _tikaClient;
         private Topic topic;
         [Fact]
@@ -60,9 +59,6 @@ namespace KafkaJanitor.IntegrationTests
 
         public TopicCreatedCcloudScenario()
         {
-            _configuration = new ConfigurationBuilder()
-                .Add(new EnvironmentVariablesConfigurationSource())
-                .Build();
         }
     }
 }
