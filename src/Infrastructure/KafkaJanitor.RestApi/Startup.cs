@@ -1,5 +1,6 @@
 using KafkaJanitor.RestApi.Enablers.Metrics;
 using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
+using KafkaJanitor.RestApi.Features.ApiKeys;
 using KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure;
 using KafkaJanitor.RestApi.Features.Topics.Domain;
 using KafkaJanitor.RestApi.Features.Topics.Infrastructure;
@@ -33,6 +34,8 @@ namespace KafkaJanitor.RestApi
             services.AddTransient<IAccessControlListClient, AccessControlListClient>();
             
             services.AddTransient<IServiceAccountClient, ServiceAccountClient>();
+
+            services.AddTransient<IApiKeyClient, ApiKeyClient>();
 
             // Enablers
             services.AddMetrics();
