@@ -6,7 +6,7 @@ using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
 using Tika.RestClient;
 using Tika.RestClient.Features.Topics.Models;
 
-namespace KafkaJanitor.RestApi.Features.Topics
+namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
 {
     public class TikaTopicRepository : ITopicRepository
     {
