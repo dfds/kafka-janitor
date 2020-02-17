@@ -1,7 +1,8 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using KafkaJanitor.RestApi.Features.Topics.Models;
+using KafkaJanitor.RestApi.Features.Topics;
+using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.Options;

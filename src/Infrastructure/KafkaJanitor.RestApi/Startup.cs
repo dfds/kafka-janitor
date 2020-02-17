@@ -1,7 +1,7 @@
 using KafkaJanitor.RestApi.Enablers.Metrics;
 using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
 using KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure;
-using KafkaJanitor.RestApi.Features.Topics.Models;
+using KafkaJanitor.RestApi.Features.Topics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

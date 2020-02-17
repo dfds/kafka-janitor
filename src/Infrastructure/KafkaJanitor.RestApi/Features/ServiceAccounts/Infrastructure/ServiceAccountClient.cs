@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
-using KafkaJanitor.RestApi.Features.Topics.Models;
+using KafkaJanitor.RestApi.Features.Topics;
+using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
 using Tika.RestClient;
 using Tika.RestClient.Features.ServiceAccounts.Models;
 

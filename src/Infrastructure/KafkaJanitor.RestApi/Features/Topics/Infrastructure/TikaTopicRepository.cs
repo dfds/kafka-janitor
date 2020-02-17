@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
 using Tika.RestClient;
 using Tika.RestClient.Features.Topics.Models;
 
-namespace KafkaJanitor.RestApi.Features.Topics.Models
+namespace KafkaJanitor.RestApi.Features.Topics
 {
     public class TikaTopicRepository : ITopicRepository
     {

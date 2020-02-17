@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
 using KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure;
-using KafkaJanitor.RestApi.Features.Topics.Models;
+using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KafkaJanitor.RestApi.Features.Topics
