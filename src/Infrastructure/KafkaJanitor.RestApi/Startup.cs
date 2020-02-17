@@ -59,7 +59,6 @@ namespace KafkaJanitor.RestApi
                         throw new InvalidVaultConfigurationException("KAFKAJANITOR_VAULT");
                 }
             });
-            services.AddTransient<IVault, AwsSsmParameterStoreVault>();
 
             // Enablers
             services.AddMetrics();
