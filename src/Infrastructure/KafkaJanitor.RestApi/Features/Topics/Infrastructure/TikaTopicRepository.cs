@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using KafkaJanitor.RestApi.Features.Topics.Domain;
 using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
 using Tika.RestClient;
 using Tika.RestClient.Features.Topics.Models;

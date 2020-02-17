@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using KafkaJanitor.RestApi.Features.Topics.Domain;
 using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
