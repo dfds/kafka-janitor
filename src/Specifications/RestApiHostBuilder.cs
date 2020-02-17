@@ -11,18 +11,18 @@ using Microsoft.Extensions.Hosting;
 
 namespace Specifications
 {
-    public class RestApiHostCreator
+    public class RestApiHostBuilder
     {
         private readonly Dictionary<Type, ServiceDescriptor> _serviceDescriptors = new Dictionary<Type, ServiceDescriptor>();
 
-        public RestApiHostCreator WithService(Type serviceType, object serviceInstance)
+        public RestApiHostBuilder WithService(Type serviceType, object serviceInstance)
         {
             _serviceDescriptors.Remove(serviceType);
             _serviceDescriptors.Add(serviceType, ServiceDescriptor.Singleton(serviceType, serviceInstance));
 
             return this;
         }
-        public RestApiHostCreator WithService<TService>(TService serviceInstance)
+        public RestApiHostBuilder WithService<TService>(TService serviceInstance)
         {
             return WithService(typeof(TService), serviceInstance);
         }

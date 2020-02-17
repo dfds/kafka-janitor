@@ -28,7 +28,7 @@ namespace Specifications.Features.Topics
 
         private async Task Given_a_rest_api()
         {
-            var builder = new RestApiHostCreator().WithService<Tika.RestClient.IRestClient>(new TikaRestClientSpy());
+            var builder = new RestApiHostBuilder().WithService<Tika.RestClient.IRestClient>(new TikaRestClientSpy());
             
             testHost = await builder.CreateAsync();
         }
