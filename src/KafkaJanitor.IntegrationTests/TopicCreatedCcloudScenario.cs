@@ -16,11 +16,10 @@ namespace KafkaJanitor.IntegrationTests
     {
         private IConfiguration _configuration;
         private IRestClient _tikaClient;
-        
+        private Topic topic;
         [Fact]
         public async Task TopicCreatedCcloudScenarioRecipe()
-        {
-            var topic = 
+        { 
             await When_a_topic_is_requested();
                   And_a_tikaClient_is_provided();
             await Then_a_topic_is_created(topic);
@@ -35,15 +34,13 @@ namespace KafkaJanitor.IntegrationTests
             }));
         }
 
-        private async Task<Topic> When_a_topic_is_requested()
+        private async Task When_a_topic_is_requested()
         {
-            var topic = new Topic
+            topic = new Topic
             {
                 Name = "devex-integrationtest2",
                 Partitions = 3
             };
-
-            return topic;
         }
 
         private async Task Then_a_topic_is_created(Topic topic)

@@ -24,37 +24,26 @@ namespace KafkaJanitor.IntegrationTests
         {
             await When_a_topic_creation_is_requested();
             await Then_a_topic_is_created();
-            var topic = await Then_the_topic_is_retrieved();
         }
 
         private async Task When_a_topic_creation_is_requested()
         {
-            var message = new
-            {
-                TopicName = "devex-integrationtest"
-            };
             await _tikaRestClient.Topics.CreateAsync(new TopicCreate
             {
-                name = message.TopicName
+                name =  "devex-integrationtest"
             });
         }
 
         private async Task Then_a_topic_is_created()
         {
             Thread.Sleep(5 * 1000);
-            var results = _tikaRestClient.Topics.GetAllAsync().Result.Single(t => t == "devex-integrationtest");
+            _tikaRestClient
+                .Topics
+                .GetAllAsync()
+                .Result
+                .Single(t => t == "devex-integrationtest");
         }
 
-        private async Task<Topic> Then_the_topic_is_retrieved()
-        {
-            var topic = _tikaRestClient.Topics.GetAllAsync().Result.Single(t => t == "devex-integrationtest");
-
-            return new Topic
-            {
-                Name = topic
-            };
-        }
-        
         public TopicCreatedScenario()
         {
             var conf = new ConfigurationBuilder()
