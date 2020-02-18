@@ -39,6 +39,8 @@ spec:
             memory: "128Mi"
             cpu: "200m"
         env:
+        - name: TIKA_API_ENDPOINT
+          value: "http://localhost:3000"
         - name: KAFKA_JANITOR_BOOTSTRAP_SERVERS
           value: $(KAFKA_BOOTSTRAP_SERVERS)
         - name: KAFKA_JANITOR_GROUP_ID
