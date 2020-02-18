@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using KafkaJanitor.RestApi.Features.Topics.Models;
+using KafkaJanitor.RestClient.Features.Topics.Models;
 
 namespace KafkaJanitor.RestClient.Features.Topics
 {

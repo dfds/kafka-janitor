@@ -1,25 +1,26 @@
 using System.Threading.Tasks;
-using KafkaJanitor.RestApi.FakeTikaRestClient;
-using KafkaJanitor.RestApi.Features.Topics.Models;
+using KafkaJanitor.RestApi.Features.Topics.Domain;
+using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace KafkaJanitor.RestApi.Features.Topics
+namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
 {
     [Route(Routes.TOPICS_ROUTE)]
     public class TopicsController : ControllerBase
     {
-        private readonly ITikaRestClient _tikaRestClient;
+        private readonly ITopicRepository _topicRepository;
 
-        public TopicsController(ITikaRestClient tikaRestClient)
+
+        public TopicsController(ITopicRepository topicRepository)
         {
-            _tikaRestClient = tikaRestClient;
+            _topicRepository = topicRepository;
         }
 
 
         [HttpGet("")]
         public async Task<IActionResult> GetAllAsync()
         {
-            var topics = await _tikaRestClient.GetAllAsync();
+            var topics = await _topicRepository.GetAll();
 
             return Ok(topics);
         }
@@ -27,7 +28,7 @@ namespace KafkaJanitor.RestApi.Features.Topics
         [HttpPost("")]
         public async Task<IActionResult> CreateAsync([FromBody] Topic input)
         {
-            if (await _tikaRestClient.ExistsAsync(input.Name))
+            if (await _topicRepository.Exists(input.Name))
             {
                 return Conflict(new
                 {
@@ -35,9 +36,9 @@ namespace KafkaJanitor.RestApi.Features.Topics
                 });
             }
 
-            var topic = await _tikaRestClient.AddAsync(input.Name);
+            await _topicRepository.Add(input);
 
-            return Ok(topic);
+            return Ok(input);
         }
     }
 }

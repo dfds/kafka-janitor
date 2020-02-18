@@ -39,6 +39,8 @@ spec:
             memory: "128Mi"
             cpu: "200m"
         env:
+        - name: TIKA_API_ENDPOINT
+          value: "http://localhost:3000"
         - name: KAFKA_JANITOR_BOOTSTRAP_SERVERS
           value: $(KAFKA_BOOTSTRAP_SERVERS)
         - name: KAFKA_JANITOR_GROUP_ID
@@ -62,7 +64,7 @@ spec:
         - name: KAFKA_JANITOR_SECURITY_PROTOCOL
           value: "SASL_SSL"
       - name: tika
-        image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/tika:209887
+        image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/tika:216431
         resources:
           requests:
             memory: "64Mi"

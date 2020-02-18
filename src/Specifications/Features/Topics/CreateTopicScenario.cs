@@ -1,10 +1,12 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using KafkaJanitor.RestClient;
 using KafkaJanitor.RestClient.Factories;
-using KafkaJanitor.RestApi.Features.Topics.Models;
+using KafkaJanitor.RestClient.Features.Topics.Models;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
+using Specifications.TestDoubles;
 using Xunit;
 
 namespace Specifications.Features.Topics
@@ -26,7 +28,9 @@ namespace Specifications.Features.Topics
 
         private async Task Given_a_rest_api()
         {
-            testHost = await RestApiHostCreator.CreateAsync();
+            var builder = new RestApiHostBuilder().WithService<Tika.RestClient.IRestClient>(new TikaRestClientSpy());
+            
+            testHost = await builder.CreateAsync();
         }
 
         private void And_a_rest_client()

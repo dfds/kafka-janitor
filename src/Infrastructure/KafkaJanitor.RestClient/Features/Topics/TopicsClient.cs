@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using KafkaJanitor.RestApi;
-using KafkaJanitor.RestApi.Features.Topics.Models;
+using KafkaJanitor.RestClient.Features.Topics.Models;
 using Newtonsoft.Json;
 
 namespace KafkaJanitor.RestClient.Features.Topics
@@ -12,6 +11,7 @@ namespace KafkaJanitor.RestClient.Features.Topics
     internal class TopicsClient : ITopicsClient
     {
         private readonly HttpClient _httpClient;
+        private const string TOPICS_ROUTE = "api/topics/";
 
         public TopicsClient(HttpClient httpClient)
         {
@@ -29,7 +29,7 @@ namespace KafkaJanitor.RestClient.Features.Topics
             );
 
             await _httpClient.PostAsync(
-                new Uri(Routes.TOPICS_ROUTE, UriKind.Relative),
+                new Uri(TOPICS_ROUTE, UriKind.Relative),
                 content
             );
         }
@@ -37,7 +37,7 @@ namespace KafkaJanitor.RestClient.Features.Topics
         public async Task<IEnumerable<Topic>> GetAllAsync()
         {
             var httpResponseMessage = await _httpClient.GetAsync(
-                new Uri(Routes.TOPICS_ROUTE, UriKind.Relative)
+                new Uri(TOPICS_ROUTE, UriKind.Relative)
             );
             var content = await httpResponseMessage.Content.ReadAsStringAsync();
 

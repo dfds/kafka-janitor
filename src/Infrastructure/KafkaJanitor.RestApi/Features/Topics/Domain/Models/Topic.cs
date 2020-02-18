@@ -1,4 +1,4 @@
-namespace KafkaJanitor.RestApi.Features.Topics.Models
+namespace KafkaJanitor.RestApi.Features.Topics.Domain.Models
 {
     public class Topic
     {

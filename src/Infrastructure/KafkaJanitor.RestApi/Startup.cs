@@ -1,10 +1,14 @@
 using KafkaJanitor.RestApi.Enablers.Metrics;
-using KafkaJanitor.RestApi.FakeTikaRestClient;
+using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
+using KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure;
+using KafkaJanitor.RestApi.Features.Topics.Domain;
+using KafkaJanitor.RestApi.Features.Topics.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
+using Tika.RestClient;
 
 namespace KafkaJanitor.RestApi
 {
@@ -21,11 +25,17 @@ namespace KafkaJanitor.RestApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSingleton<ITikaRestClient, FakeTikaRestClient.FakeTikaRestClient>();
             
+            services.AddTransient<ITopicRepository, TikaTopicRepository>();
+
+            services.AddTikaRestClient(Configuration);
+            
+            services.AddTransient<IAccessControlListClient, AccessControlListClient>();
+            
+            services.AddTransient<IServiceAccountClient, ServiceAccountClient>();
+
             // Enablers
             services.AddMetrics();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
