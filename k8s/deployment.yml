@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kafka-janitor
-  namespace: $(kubernetes-namespace)
+  namespace: aa
   labels:
     project: selfservice
     department: devex
@@ -73,6 +73,8 @@ spec:
             memory: "128Mi"
             cpu: "200m"
         env:
+        - name: TIKA_CCLOUD_CLUSTER_ID
+          value: $(TIKA_CCLOUD_CLUSTER_ID)
         - name: TIKA_CC_USER
           valueFrom:
             secretKeyRef:
