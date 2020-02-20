@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using KafkaJanitor.RestApi.Features.Vault.Model;
 
 namespace KafkaJanitor.RestApi.Features.Vault
 {
     public interface IVault
     {
-        Task AddApiCredentials(ApiCredentials apiCredentials);
+        Task AddApiCredentials(string capabilityId, ApiCredentials apiCredentials);
     }
 }

@@ -12,10 +12,11 @@ namespace KafkaJanitor.RestApi.Features.Vault
         {
             _data = new List<ApiCredentials>();
         }
-        
-        public async Task AddApiCredentials(ApiCredentials apiCredentials)
+        public Task AddApiCredentials(string capabilityId, ApiCredentials apiCredentials)
         {
             _data.Add(apiCredentials);
+            
+            return Task.CompletedTask;
         }
     }
 }
