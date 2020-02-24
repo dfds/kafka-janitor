@@ -43,11 +43,6 @@ namespace KafkaJanitor.RestApi
             services.AddTransient<IVault>(o =>
             {
                 var vaultToUse = Configuration["KAFKAJANITOR_VAULT"];
-                if (vaultToUse == null)
-                {
-                    Console.WriteLine("No Vault option was provided during Configuration. Defaulting to in-memory Vault.");
-                    return new InMemoryVault();
-                }
 
                 switch (vaultToUse)
                 {
