@@ -45,12 +45,12 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
             var apiKeyPair = await _apiKeyClient.CreateApiKeyPair(serviceAccount);
 
             await _vault.AddApiCredentials(
-                cap.Id, 
+                cap, 
                 new ApiCredentials
-                    {
-                        Key = apiKeyPair.Key,
-                        Secret = apiKeyPair.Secret
-                    }
+                {
+                    Key = apiKeyPair.Key,
+                    Secret = apiKeyPair.Secret
+                }
             );
 
             return Ok();
