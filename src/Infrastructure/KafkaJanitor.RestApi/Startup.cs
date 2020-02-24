@@ -1,8 +1,12 @@
+using System;
 using KafkaJanitor.RestApi.Enablers.Metrics;
 using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
+using KafkaJanitor.RestApi.Features.ApiKeys;
 using KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure;
 using KafkaJanitor.RestApi.Features.Topics.Domain;
 using KafkaJanitor.RestApi.Features.Topics.Infrastructure;
+using KafkaJanitor.RestApi.Features.Vault;
+using KafkaJanitor.RestApi.Features.Vault.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +37,23 @@ namespace KafkaJanitor.RestApi
             services.AddTransient<IAccessControlListClient, AccessControlListClient>();
             
             services.AddTransient<IServiceAccountClient, ServiceAccountClient>();
+
+            services.AddTransient<IApiKeyClient, ApiKeyClient>();
+
+            services.AddTransient<IVault>(o =>
+            {
+                var vaultToUse = Configuration["KAFKAJANITOR_VAULT"];
+
+                switch (vaultToUse)
+                {
+                    case "AWS_SSM":
+                        return new AwsSsmParameterStoreVault();
+                    case "INMEMORY":
+                        return new InMemoryVault();
+                    default:
+                        throw new InvalidVaultConfigurationException("KAFKAJANITOR_VAULT");
+                }
+            });
 
             // Enablers
             services.AddMetrics();

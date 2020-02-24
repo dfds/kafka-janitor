@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaJanitor.RestApi", "Inf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Specifications", "Specifications\Specifications.csproj", "{801DA269-2EE0-4639-81F5-66DA6E54B0E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaJanitor.UnitTests", "Infrastructure\KafkaJanitor.UnitTests\KafkaJanitor.UnitTests.csproj", "{E7BB4633-E7E5-4D7C-B670-400A2772E464}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,9 +76,22 @@ Global
 		{801DA269-2EE0-4639-81F5-66DA6E54B0E0}.Release|x64.Build.0 = Release|Any CPU
 		{801DA269-2EE0-4639-81F5-66DA6E54B0E0}.Release|x86.ActiveCfg = Release|Any CPU
 		{801DA269-2EE0-4639-81F5-66DA6E54B0E0}.Release|x86.Build.0 = Release|Any CPU
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464}.Debug|x64.Build.0 = Debug|Any CPU
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464}.Debug|x86.Build.0 = Debug|Any CPU
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464}.Release|x64.ActiveCfg = Release|Any CPU
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464}.Release|x64.Build.0 = Release|Any CPU
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464}.Release|x86.ActiveCfg = Release|Any CPU
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8432D6D4-E995-463B-8F8D-D173BC68A978} = {42815DD2-8293-48E9-9F28-D61C3D563C6A}
 		{D4DB09C4-6DA9-4B67-995A-9381416D5C0D} = {42815DD2-8293-48E9-9F28-D61C3D563C6A}
+		{E7BB4633-E7E5-4D7C-B670-400A2772E464} = {42815DD2-8293-48E9-9F28-D61C3D563C6A}
 	EndGlobalSection
 EndGlobal
