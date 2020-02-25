@@ -27,7 +27,8 @@ namespace KafkaJanitor.RestApi.Features.Vault
                 Tags = new List<Tag>
                 {
                     new Tag{Key = "capabilityName",Value = capability.Name},
-                    new Tag{Key = "capabilityId",Value = capability.Id}
+                    new Tag{Key = "capabilityId",Value = capability.Id},
+                    new Tag{Key = "capabilityRootId",Value = capability.RootId}
                 }
             });
         }
