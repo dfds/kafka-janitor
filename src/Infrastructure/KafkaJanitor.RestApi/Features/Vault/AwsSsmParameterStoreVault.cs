@@ -17,7 +17,7 @@ namespace KafkaJanitor.RestApi.Features.Vault
             await ssmClient.PutParameterAsync(new PutParameterRequest
             {
                 Type = ParameterType.SecureString,
-                Name = $"/capabilities/{capability.Id}/kafka/credentials",
+                Name = $"/capabilities/{capability.RootId}/kafka/credentials",
                 Tier = ParameterTier.Standard,
                 Value = JsonConvert.SerializeObject(new
                 {
