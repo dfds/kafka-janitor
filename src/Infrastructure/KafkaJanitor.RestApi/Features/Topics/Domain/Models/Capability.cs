@@ -4,5 +4,6 @@ namespace KafkaJanitor.RestApi.Features.Topics.Domain.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public string RootId { get; set; }
     }
 }
