@@ -77,6 +77,8 @@ paths:
                 type: string
               capabilityId:
                 type: string
+              capabilityRootId:
+                type: string                
 definitions:
   topic:
     type: object
