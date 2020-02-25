@@ -5,6 +5,7 @@ using Amazon.SimpleSystemsManagement;
 using Amazon.SimpleSystemsManagement.Model;
 using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
 using KafkaJanitor.RestApi.Features.Vault.Model;
+using Newtonsoft.Json;
 
 namespace KafkaJanitor.RestApi.Features.Vault
 {
@@ -18,7 +19,11 @@ namespace KafkaJanitor.RestApi.Features.Vault
                 Type = ParameterType.SecureString,
                 Name = $"/capabilities/{capability.Id}/kafka/credentials",
                 Tier = ParameterTier.Standard,
-                Value = $"KEY: {apiCredentials.Key}\nSECRET: {apiCredentials.Secret}",
+                Value = JsonConvert.SerializeObject(new
+                {
+                    Key = apiCredentials.Key,
+                    Secret = apiCredentials.Secret
+                }),
                 Tags = new List<Tag>
                 {
                     new Tag{Key = "capabilityName",Value = capability.Name},
