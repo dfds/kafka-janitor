@@ -35,7 +35,8 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
             var cap = new Capability
             {
                 Id = input.CapabilityId,
-                Name = input.CapabilityName
+                Name = input.CapabilityName,
+                RootId = input.CapabilityRootId
             };
 
             var serviceAccount = await _serviceAccountClient.CreateServiceAccount(cap);
@@ -62,5 +63,6 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
     {
         public string CapabilityName { get; set; }
         public string CapabilityId { get; set; }
+        public string CapabilityRootId { get; set; }
     }
 }

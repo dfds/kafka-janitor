@@ -17,7 +17,7 @@ namespace KafkaJanitor.RestApi.Features.Vault
             await ssmClient.PutParameterAsync(new PutParameterRequest
             {
                 Type = ParameterType.SecureString,
-                Name = $"/capabilities/{capability.Id}/kafka/credentials",
+                Name = $"/capabilities/{capability.RootId}/kafka/credentials",
                 Tier = ParameterTier.Standard,
                 Value = JsonConvert.SerializeObject(new
                 {
@@ -27,7 +27,8 @@ namespace KafkaJanitor.RestApi.Features.Vault
                 Tags = new List<Tag>
                 {
                     new Tag{Key = "capabilityName",Value = capability.Name},
-                    new Tag{Key = "capabilityId",Value = capability.Id}
+                    new Tag{Key = "capabilityId",Value = capability.Id},
+                    new Tag{Key = "capabilityRootId",Value = capability.RootId}
                 }
             });
         }
