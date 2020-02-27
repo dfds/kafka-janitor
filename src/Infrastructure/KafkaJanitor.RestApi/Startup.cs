@@ -56,7 +56,8 @@ namespace KafkaJanitor.RestApi
             });
 
             // Enablers
-            services.AddMetrics();
+            var shouldStartMetricHostedService = Configuration["KAFKAJANITOR_START_METRIC_SERVER"] != "false";
+            services.AddMetrics(shouldStartMetricHostedService);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
