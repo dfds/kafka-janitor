@@ -1,3 +1,4 @@
+using KafkaJanitor.RestApi.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -9,17 +10,14 @@ namespace KafkaJanitor.RestApi.Enablers.PrometheusHealthCheck
             this IServiceCollection services
         )
         {
+     
+            
+       //     services.AddSingleton<IHealthCheck, TikaHealthCheck>();
+            
             var healthChecksBuilder = services
-                .AddHealthChecks();
-
-            foreach (var healthCheck in HealthChecks.Checks)
-            {
-                healthChecksBuilder.AddCheck(
-                    healthCheck.Key, 
-                    healthCheck.Value
-                );
-            }
-
+                .AddHealthChecks()
+                .AddOurChecks();
+            
             return healthChecksBuilder;
         }
     }
