@@ -1,4 +1,5 @@
 using System;
+using KafkaJanitor.RestApi.Enablers.Metrics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
@@ -15,7 +16,7 @@ namespace KafkaJanitor.RestApi.Enablers.PrometheusHealthCheck
             
             app.UseHealthChecks("/healthz", new HealthCheckOptions
             {
-                ResponseWriter = PrometheusHealthProbe.WriteHealthResponseAsync
+                ResponseWriter = PrometheusHealthResponseWrapper.WriteHealthResponseAndAddToMetricsAsync
             });
 
             return app;
