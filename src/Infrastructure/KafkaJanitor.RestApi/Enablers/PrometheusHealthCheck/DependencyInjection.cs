@@ -9,9 +9,18 @@ namespace KafkaJanitor.RestApi.Enablers.PrometheusHealthCheck
             this IServiceCollection services
         )
         {
-            return services
-                .AddHealthChecks()
-                .AddCheck("self", () => HealthCheckResult.Healthy());
+            var healthChecksBuilder = services
+                .AddHealthChecks();
+
+            foreach (var healthCheck in HealthChecks.Checks)
+            {
+                healthChecksBuilder.AddCheck(
+                    healthCheck.Key, 
+                    healthCheck.Value
+                );
+            }
+
+            return healthChecksBuilder;
         }
     }
 }
