@@ -69,7 +69,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Request rate",
+      "title": "Health check",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -146,5 +146,5 @@
   "timezone": "",
   "title": "Kafka-Janitor",
   "uid": "PBCkAiuWz",
-  "version": 6
+  "version": 7
 }
