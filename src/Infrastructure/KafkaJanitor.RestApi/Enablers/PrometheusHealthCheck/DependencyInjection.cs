@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace KafkaJanitor.RestApi.Enablers.PrometheusHealthCheck
 {
@@ -10,16 +9,9 @@ namespace KafkaJanitor.RestApi.Enablers.PrometheusHealthCheck
         )
         {
             var healthChecksBuilder = services
-                .AddHealthChecks();
-
-            foreach (var healthCheck in HealthChecks.Checks)
-            {
-                healthChecksBuilder.AddCheck(
-                    healthCheck.Key, 
-                    healthCheck.Value
-                );
-            }
-
+                .AddHealthChecks()
+                .AddOurChecks();
+            
             return healthChecksBuilder;
         }
     }
