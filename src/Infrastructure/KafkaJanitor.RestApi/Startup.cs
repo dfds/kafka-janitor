@@ -1,5 +1,6 @@
 using System;
 using KafkaJanitor.RestApi.Enablers.Metrics;
+using KafkaJanitor.RestApi.Enablers.PrometheusHealthCheck;
 using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
 using KafkaJanitor.RestApi.Features.ApiKeys;
 using KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure;
@@ -58,6 +59,7 @@ namespace KafkaJanitor.RestApi
             // Enablers
             var shouldStartMetricHostedService = Configuration["KAFKAJANITOR_START_METRIC_SERVER"] != "false";
             services.AddMetrics(shouldStartMetricHostedService);
+            services.ConfigureHealthChecks();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,6 +74,8 @@ namespace KafkaJanitor.RestApi
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
             
             app.UseHttpMetrics();
+            
+            app.UsePrometheusHealthCheck();
         }
     }
 }
