@@ -9,3 +9,8 @@ content-type: application/json
     "description": "I won't tell",
     "partitions": 3
 }
+
+###
+
+# Checks health of service and dependencies
+GET http://localhost:5000/Healthz
