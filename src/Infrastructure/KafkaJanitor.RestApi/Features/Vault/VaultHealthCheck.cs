@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.SimpleSystemsManagement.Model;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace KafkaJanitor.RestApi.Features.Vault
@@ -22,7 +23,11 @@ namespace KafkaJanitor.RestApi.Features.Vault
             try
             {
                 await _vault.EnsureConnection();
-                
+
+                return HealthCheckResult.Healthy();
+            }
+            catch (TooManyUpdatesException)
+            {
                 return HealthCheckResult.Healthy();
             }
             catch (Exception e)
