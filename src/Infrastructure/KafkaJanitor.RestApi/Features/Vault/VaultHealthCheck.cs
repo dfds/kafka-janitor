@@ -28,7 +28,7 @@ namespace KafkaJanitor.RestApi.Features.Vault
             catch (Exception e)
             {
                 return HealthCheckResult.Unhealthy(
-                    "Could not connect to Vault",
+                    $"Could not connect to Vault\nException: {e.Message}",
                     e
                 ); 
             }    
