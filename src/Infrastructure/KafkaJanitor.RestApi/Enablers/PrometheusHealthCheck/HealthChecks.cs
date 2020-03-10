@@ -1,4 +1,5 @@
 using KafkaJanitor.RestApi.Features;
+using KafkaJanitor.RestApi.Features.Vault;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,7 +11,9 @@ namespace KafkaJanitor.RestApi.Enablers.PrometheusHealthCheck
         {
             healthChecksBuilder
                 .AddCheck("assembly", () => HealthCheckResult.Healthy())
-                .AddCheck<TikaHealthCheck>("Tika");
+                .AddCheck<TikaHealthCheck>("Tika")
+                .AddCheck<VaultHealthCheck>("Vault");
+
             return healthChecksBuilder;
         }
     }
