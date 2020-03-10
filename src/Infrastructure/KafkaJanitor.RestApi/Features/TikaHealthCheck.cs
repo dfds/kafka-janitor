@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using Tika.RestClient;
 
 namespace KafkaJanitor.RestApi.Features
@@ -9,10 +10,12 @@ namespace KafkaJanitor.RestApi.Features
     public class TikaHealthCheck : IHealthCheck
     {
         private readonly IRestClient _tikaClient;
+        private readonly ILogger _logger;
 
-        public TikaHealthCheck(IRestClient tikaClient)
+        public TikaHealthCheck(IRestClient tikaClient, ILogger<TikaHealthCheck> logger)
         {
             _tikaClient = tikaClient;
+            _logger = logger;
         }
 
         public async Task<HealthCheckResult> CheckHealthAsync(
@@ -28,8 +31,9 @@ namespace KafkaJanitor.RestApi.Features
             }
             catch (Exception exception)
             {
+                _logger.Log(LogLevel.Error, exception, "Could not connect to Tika");
                 return HealthCheckResult.Unhealthy(
-                    "Could not Connect to Tika",
+                    "Could not connect to Tika",
                     exception
                 );
             }
