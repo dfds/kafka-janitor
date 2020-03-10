@@ -11,9 +11,19 @@ namespace KafkaJanitor.RestApi.Features.Vault
 {
     public class AwsSsmParameterStoreVault : IVault
     {
+        public async Task EnsureConnection()
+        {
+            var ssmClient = new AmazonSimpleSystemsManagementClient(RegionEndpoint.EUCentral1);
+            await ssmClient.GetParametersAsync(
+                new GetParametersRequest{
+                    Names = new List<string>{"thisNameDoesNotExist"}
+                }
+            );
+        }
         public async Task AddApiCredentials(Capability capability, ApiCredentials apiCredentials)
         {
             var ssmClient = new AmazonSimpleSystemsManagementClient(RegionEndpoint.EUCentral1);
+
             await ssmClient.PutParameterAsync(new PutParameterRequest
             {
                 Type = ParameterType.SecureString,
