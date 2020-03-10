@@ -14,11 +14,18 @@ namespace KafkaJanitor.RestApi.Features.Vault
         public async Task EnsureConnection()
         {
             var ssmClient = new AmazonSimpleSystemsManagementClient(RegionEndpoint.EUCentral1);
-            await ssmClient.GetParametersAsync(
-                new GetParametersRequest{
-                    Names = new List<string>{"thisNameDoesNotExist"}
-                }
-            );
+            await ssmClient.PutParameterAsync(new PutParameterRequest
+            {
+                Type = ParameterType.SecureString,
+                Name = $"/capabilities/HEALTH_CHECK_DUMMY/kafka/credentials",
+                Tier = ParameterTier.Standard,
+                Overwrite = true,
+                Value = JsonConvert.SerializeObject(new
+                {
+                    Key = "DUMMY",
+                    Secret = "DUMMY"
+                })
+            });
         }
         public async Task AddApiCredentials(Capability capability, ApiCredentials apiCredentials)
         {
