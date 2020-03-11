@@ -17,20 +17,20 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure
         }
 
 
-        public async Task CreateAclsForServiceAccount(string serviceAccountId, string capabilityName)
+        public async Task CreateAclsForServiceAccount(string serviceAccountId, string prefix)
         {
             var serviceAccountIdAsInt = Convert.ToInt64(serviceAccountId);
             // Topic
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", capabilityName));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", capabilityName));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", capabilityName));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "DESCRIBE", capabilityName));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "DESCRIBE-CONFIGS", capabilityName));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", prefix));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", prefix));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", prefix));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "DESCRIBE", prefix));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "DESCRIBE-CONFIGS", prefix));
 
             // ConsumerGroup
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", "", capabilityName));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", "", capabilityName));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", "", capabilityName));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", "", prefix));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", "", prefix));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", "", prefix));
             
             // DENY
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, false, "alter"));

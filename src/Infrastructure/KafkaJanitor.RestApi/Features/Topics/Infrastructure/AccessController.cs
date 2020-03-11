@@ -41,7 +41,7 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
 
             var serviceAccount = await _serviceAccountClient.CreateServiceAccount(cap);
 
-            await _accessControlListService.CreateAclsForServiceAccount(serviceAccount.Id, cap.Name);
+            await _accessControlListService.CreateAclsForServiceAccount(serviceAccount.Id, input.TopicPrefix);
 
             var apiKeyPair = await _apiKeyClient.CreateApiKeyPair(serviceAccount);
 
@@ -64,5 +64,6 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
         public string CapabilityName { get; set; }
         public string CapabilityId { get; set; }
         public string CapabilityRootId { get; set; }
+        public string TopicPrefix { get; set; }
     }
 }
