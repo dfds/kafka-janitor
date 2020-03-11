@@ -24,7 +24,410 @@
           {
             "evaluator": {
               "params": [
-                6.5
+                1.75
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "3m",
+        "frequency": "1m",
+        "handler": 1,
+        "name": "Healthcheck - Tika alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "u5XuG7XZz"
+          }
+        ]
+      },
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "fill": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 0,
+        "y": 0
+      },
+      "id": 25,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {},
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(healthcheck{service=\"kafka-janitor\", exported_service=\"Tika\", status=~\"healthy\"}) * 2 + sum(healthcheck{service=\"kafka-janitor\", exported_service=\"Tika\", status=~\"degraded\"})",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 4,
+          "legendFormat": "Tika",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "lt",
+          "value": 1.75,
+          "yaxis": "left"
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Healthcheck - Tika",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "alert": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1.75
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "3m",
+        "frequency": "1m",
+        "handler": 1,
+        "name": "Healthcheck - Vault alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "u5XuG7XZz"
+          }
+        ]
+      },
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "fill": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 5,
+        "y": 0
+      },
+      "id": 26,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {},
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(healthcheck{service=\"kafka-janitor\", exported_service=\"Vault\", status=~\"healthy\"}) * 2 + sum(healthcheck{service=\"kafka-janitor\", exported_service=\"Vault\", status=~\"degraded\"})",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 4,
+          "legendFormat": "Tika",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "lt",
+          "value": 1.75
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Healthcheck - Vault",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "alert": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1.75
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "3m",
+        "frequency": "1m",
+        "handler": 1,
+        "name": "Healthcheck - assembly alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "u5XuG7XZz"
+          }
+        ]
+      },
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "fill": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 10,
+        "y": 0
+      },
+      "id": 29,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {},
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(healthcheck{service=\"kafka-janitor\", exported_service=\"assembly\", status=~\"healthy\"}) * 2 + sum(healthcheck{service=\"kafka-janitor\", exported_service=\"assembly\", status=~\"degraded\"})",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 4,
+          "legendFormat": "assembly",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "lt",
+          "value": 1.75
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Healthcheck - assembly",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "alert": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                6
               ],
               "type": "gt"
             },
@@ -51,7 +454,11 @@
         "handler": 1,
         "name": "Request duration alert",
         "noDataState": "no_data",
-        "notifications": []
+        "notifications": [
+          {
+            "uid": "u5XuG7XZz"
+          }
+        ]
       },
       "aliasColors": {},
       "bars": false,
@@ -60,9 +467,9 @@
       "fill": 1,
       "gridPos": {
         "h": 6,
-        "w": 9,
+        "w": 7,
         "x": 0,
-        "y": 0
+        "y": 7
       },
       "id": 23,
       "legend": {
@@ -72,7 +479,7 @@
         "max": false,
         "min": false,
         "rightSide": true,
-        "show": true,
+        "show": false,
         "total": false,
         "values": false
       },
@@ -104,7 +511,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 6.5
+          "value": 6,
+          "yaxis": "left"
         }
       ],
       "timeFrom": null,
@@ -156,8 +564,8 @@
       "gridPos": {
         "h": 6,
         "w": 9,
-        "x": 9,
-        "y": 0
+        "x": 7,
+        "y": 7
       },
       "id": 19,
       "legend": {
@@ -245,7 +653,7 @@
         "h": 6,
         "w": 9,
         "x": 0,
-        "y": 6
+        "y": 13
       },
       "id": 8,
       "legend": {
@@ -260,7 +668,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 9,
       "links": [],
       "nullPointMode": "null",
       "options": {},
@@ -274,12 +682,25 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max(healthcheck{service=\"kafka-janitor\"}) by (exported_service, status)",
+          "expr": "sum(healthcheck{service=\"kafka-janitor\", exported_service=\"Tika\", status=~\"healthy\"}) * 2 + sum(healthcheck{service=\"kafka-janitor\", exported_service=\"Tika\", status=~\"degraded\"})",
           "format": "time_series",
-          "hide": false,
-          "intervalFactor": 4,
-          "legendFormat": "{{exported_service}} | {{status}}",
-          "refId": "A"
+          "intervalFactor": 1,
+          "legendFormat": "Tika",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(healthcheck{service=\"kafka-janitor\", exported_service=\"Vault\", status=~\"healthy\"}) * 2 + sum(healthcheck{service=\"kafka-janitor\", exported_service=\"Vault\", status=~\"degraded\"})",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Vault",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(healthcheck{service=\"kafka-janitor\", exported_service=\"assembly\", status=~\"healthy\"}) * 2 + sum(healthcheck{service=\"kafka-janitor\", exported_service=\"assembly\", status=~\"degraded\"})",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "assembly",
+          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -322,6 +743,29 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "dashboardFilter": "Kafka-Janitor",
+      "dashboardTags": [],
+      "folderId": null,
+      "gridPos": {
+        "h": 7,
+        "w": 3,
+        "x": 0,
+        "y": 19
+      },
+      "id": 28,
+      "limit": 10,
+      "nameFilter": "",
+      "onlyAlertsOnDashboard": false,
+      "options": {},
+      "show": "current",
+      "sortOrder": 1,
+      "stateFilter": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Panel Title",
+      "type": "alertlist"
     }
   ],
   "refresh": "10s",
@@ -363,5 +807,5 @@
   "timezone": "",
   "title": "Kafka-Janitor - In depth",
   "uid": "W43_fGuWz",
-  "version": 4
+  "version": 18
 }
