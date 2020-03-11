@@ -4,6 +4,6 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure
 {
     public interface IAccessControlListClient
     {
-        Task CreateAclsForServiceAccount(string serviceAccountId, string capabilityName);
+        Task CreateAclsForServiceAccount(string serviceAccountId, string prefix);
     }
 }
