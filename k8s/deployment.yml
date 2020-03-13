@@ -8,7 +8,13 @@ metadata:
     department: devex
     app: kafka-janitor
     component: kafka-janitor
+    app.kubernetes.io/version: "0.0.1"
 spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+    runAsNonRoot: true
   replicas: 1
   selector:
     matchLabels:
@@ -24,9 +30,15 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/scrape: "true"
     spec:
+      volumes:
+      - name: cache-volume
+        emptyDir: {}
       containers:
       - name: kafka-janitor
         image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/kafka-janitor:$(Build.BuildId)
+        volumeMounts:
+        - mountPath: /cache
+          name: cache-volume
         ports:
         - containerPort: 5000
           name: web
