@@ -1,11 +1,15 @@
 #!/bin/bash
 
+echo $OSTYPE
+
 case "$OSTYPE" in
-  darwin)  platform=darwin ;; 
-  linux)   platform=linux ;;
+  darwin*)  platform=darwin ;; 
+  linux*)   platform=linux ;;
   #msys*)    platform=WINDOWS ;;
   *)        (exit 1) ;;
 esac
+
+echo $platform
 
 manifest=$1 # First parameter is kubernetes manifest to scan
 strict=0
