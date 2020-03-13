@@ -17,6 +17,7 @@ steps:
     displayName: 'Build, create and upload container image'
 
   - bash: |
+      chmod +x alcide.sh
       ./alcide.sh
     displayName: 'Run Alcide scans'
 
