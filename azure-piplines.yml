@@ -18,7 +18,8 @@ steps:
 
   - bash: |
       chmod +x alcide.sh
-      ./alcide.sh
+      ./alcide.sh k8s/deployment.yml
+      ./alcide.sh k8s/service.yml
     displayName: 'Run Alcide scans'
 
   - task: PublishBuildArtifacts@1
