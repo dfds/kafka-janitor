@@ -8,13 +8,8 @@ metadata:
     department: devex
     app: kafka-janitor
     component: kafka-janitor
-    app.kubernetes.io/version: "0.0.1"
+    version: 0.0.1
 spec:
-  securityContext:
-    runAsUser: 1000
-    runAsGroup: 3000
-    fsGroup: 2000
-    runAsNonRoot: true
   replicas: 1
   selector:
     matchLabels:
@@ -30,15 +25,16 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/scrape: "true"
     spec:
-      volumes:
-      - name: cache-volume
-        emptyDir: {}
       containers:
       - name: kafka-janitor
         image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/kafka-janitor:$(Build.BuildId)
-        volumeMounts:
-        - mountPath: /cache
-          name: cache-volume
+        securityContext:
+          runAsUser: 10001
+          runAsGroup: 3000
+          fsGroup: 2000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
         ports:
         - containerPort: 5000
           name: web
@@ -96,6 +92,13 @@ spec:
             path: /healthz
       - name: tika
         image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/tika:223930
+        securityContext:
+          runAsUser: 10001
+          runAsGroup: 3000
+          fsGroup: 2000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
         resources:
           requests:
             memory: "64Mi"
