@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
 using KafkaJanitor.RestApi.Features.ApiKeys;
@@ -48,13 +49,22 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
                 var sa = await _serviceAccountClient.GetServiceAccount(cap);
                 return true;
             });
+            
+            var isExpectedAmountOfAclsInPlace = new Func<Task<bool>>(async () =>
+            {
+                var acls = await _accessControlListService.GetAclsForServiceAccount(serviceAccount.Id);
+                return acls.Count() == 12;
+            });
 
             if (!await doesServiceaccountExist())
             {
                 serviceAccount = await _serviceAccountClient.CreateServiceAccount(cap);
             }
-            
-            await _accessControlListService.CreateAclsForServiceAccount(serviceAccount.Id, input.TopicPrefix);
+
+            if (!await isExpectedAmountOfAclsInPlace())
+            {
+                await _accessControlListService.CreateAclsForServiceAccount(serviceAccount.Id, input.TopicPrefix);
+            }
 
             var apiKeyPair = await _apiKeyClient.CreateApiKeyPair(serviceAccount);
 
