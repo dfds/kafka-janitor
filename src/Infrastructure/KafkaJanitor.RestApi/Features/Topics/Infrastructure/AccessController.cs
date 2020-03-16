@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
 using KafkaJanitor.RestApi.Features.ApiKeys;
@@ -6,6 +7,7 @@ using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
 using KafkaJanitor.RestApi.Features.Vault;
 using KafkaJanitor.RestApi.Features.Vault.Model;
 using Microsoft.AspNetCore.Mvc;
+using Tika.RestClient.Features.ServiceAccounts.Models;
 
 namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
 {
@@ -39,8 +41,19 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
                 RootId = input.CapabilityRootId
             };
 
-            var serviceAccount = await _serviceAccountClient.CreateServiceAccount(cap);
+            ServiceAccount serviceAccount = null;
 
+            var doesServiceaccountExist = new Func<Task<bool>>(async () =>
+            {
+                var sa = await _serviceAccountClient.GetServiceAccount(cap);
+                return true;
+            });
+
+            if (!await doesServiceaccountExist())
+            {
+                serviceAccount = await _serviceAccountClient.CreateServiceAccount(cap);
+            }
+            
             await _accessControlListService.CreateAclsForServiceAccount(serviceAccount.Id, input.TopicPrefix);
 
             var apiKeyPair = await _apiKeyClient.CreateApiKeyPair(serviceAccount);

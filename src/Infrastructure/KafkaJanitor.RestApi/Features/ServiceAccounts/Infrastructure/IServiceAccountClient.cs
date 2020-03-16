@@ -8,5 +8,6 @@ namespace KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure
     public interface IServiceAccountClient
     {
         Task<ServiceAccount> CreateServiceAccount(Capability capability);
+        Task<ServiceAccount> GetServiceAccount(Capability capability);
     }
 }
