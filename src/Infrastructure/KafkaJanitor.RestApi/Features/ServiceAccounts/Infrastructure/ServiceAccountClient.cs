@@ -1,5 +1,5 @@
+using System.Linq;
 using System.Threading.Tasks;
-using KafkaJanitor.RestApi.Features.Topics;
 using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
 using Tika.RestClient;
 using Tika.RestClient.Features.ServiceAccounts.Models;
@@ -20,6 +20,11 @@ namespace KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure
                 name = $"{capability.Name}_sa",
                 description = "Creating with TikaService using KafkaJanitor"
             });
+        }
+        public async Task<ServiceAccount> GetServiceAccount(Capability capability)
+        {
+            var results = await _tikaClient.ServiceAccounts.GetAllAsync();
+            return results.First(sa => sa.Name == $"{capability.Name}_sa");
         }
     }
 }
