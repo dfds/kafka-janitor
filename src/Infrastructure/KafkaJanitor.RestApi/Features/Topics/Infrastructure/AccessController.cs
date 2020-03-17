@@ -46,33 +46,44 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
 
             var doesServiceaccountExist = new Func<Task<bool>>(async () =>
             {
-                var sa = await _serviceAccountClient.GetServiceAccount(cap);
+                try
+                {
+                    var sa = await _serviceAccountClient.GetServiceAccount(cap);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return false;
+                }
                 return true;
             });
             
-            var isExpectedAmountOfAclsInPlace = new Func<Task<bool>>(async () =>
+            var isExpectedAmountOfAclsInPlace = new Func<string,Task<bool>>(async (string serviceAccountId) =>
             {
-                var acls = await _accessControlListService.GetAclsForServiceAccount(serviceAccount.Id);
+                var acls = await _accessControlListService.GetAclsForServiceAccount(serviceAccountId);
                 return acls.Count() == 12;
             });
             
-            var isExpectedAmountOfApiKeysInPlace = new Func<Task<bool>>(async () =>
+            var isExpectedAmountOfApiKeysInPlace = new Func<string,Task<bool>>(async (string serviceAccountId) =>
             {
-                var apiKeys = await _apiKeyClient.GetApiKeyPairsForServiceAccount(serviceAccount.Id);
+                var apiKeys = await _apiKeyClient.GetApiKeyPairsForServiceAccount(serviceAccountId);
                 return apiKeys.Any();
             });
-
+            
             if (!await doesServiceaccountExist())
             {
                 serviceAccount = await _serviceAccountClient.CreateServiceAccount(cap);
             }
+            else
+            {
+                serviceAccount = await _serviceAccountClient.GetServiceAccount(cap);
+            }
 
-            if (!await isExpectedAmountOfAclsInPlace())
+            if (!await isExpectedAmountOfAclsInPlace(serviceAccount.Id))
             {
                 await _accessControlListService.CreateAclsForServiceAccount(serviceAccount.Id, input.TopicPrefix);
             }
 
-            if (!await isExpectedAmountOfApiKeysInPlace())
+            if (!await isExpectedAmountOfApiKeysInPlace(serviceAccount.Id))
             {
                 var apiKeyPair = await _apiKeyClient.CreateApiKeyPair(serviceAccount);
 
