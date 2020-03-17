@@ -55,6 +55,12 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
                 var acls = await _accessControlListService.GetAclsForServiceAccount(serviceAccount.Id);
                 return acls.Count() == 12;
             });
+            
+            var isExpectedAmountOfApiKeysInPlace = new Func<Task<bool>>(async () =>
+            {
+                var apiKeys = await _apiKeyClient.GetApiKeyPairsForServiceAccount(serviceAccount.Id);
+                return apiKeys.Any();
+            });
 
             if (!await doesServiceaccountExist())
             {
@@ -66,16 +72,19 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
                 await _accessControlListService.CreateAclsForServiceAccount(serviceAccount.Id, input.TopicPrefix);
             }
 
-            var apiKeyPair = await _apiKeyClient.CreateApiKeyPair(serviceAccount);
+            if (!await isExpectedAmountOfApiKeysInPlace())
+            {
+                var apiKeyPair = await _apiKeyClient.CreateApiKeyPair(serviceAccount);
 
-            await _vault.AddApiCredentials(
-                cap, 
-                new ApiCredentials
-                {
-                    Key = apiKeyPair.Key,
-                    Secret = apiKeyPair.Secret
-                }
-            );
+                await _vault.AddApiCredentials(
+                    cap, 
+                    new ApiCredentials
+                    {
+                        Key = apiKeyPair.Key,
+                        Secret = apiKeyPair.Secret
+                    }
+                );   
+            }
 
             return Ok();
         }
