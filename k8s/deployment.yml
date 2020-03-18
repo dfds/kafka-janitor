@@ -8,6 +8,7 @@ metadata:
     department: devex
     app: kafka-janitor
     component: kafka-janitor
+    version: 0.0.1
 spec:
   replicas: 1
   selector:
@@ -27,6 +28,13 @@ spec:
       containers:
       - name: kafka-janitor
         image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/kafka-janitor:$(Build.BuildId)
+        securityContext:
+          runAsUser: 10001
+          runAsGroup: 3000
+          fsGroup: 2000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
         ports:
         - containerPort: 5000
           name: web
@@ -84,6 +92,13 @@ spec:
             path: /healthz
       - name: tika
         image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/tika:223930
+        securityContext:
+          runAsUser: 10001
+          runAsGroup: 3000
+          fsGroup: 2000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
         resources:
           requests:
             memory: "64Mi"
