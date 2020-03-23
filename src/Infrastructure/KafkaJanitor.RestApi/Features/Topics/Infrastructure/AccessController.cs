@@ -54,6 +54,15 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
                 }
             );
 
+            await _vault.AddKafkaConfiguration(
+                cap, 
+                new ApiCredentials
+                {
+                    Key = apiKeyPair.Key,
+                    Secret = apiKeyPair.Secret
+                }
+            );
+            
             return Ok();
         }
 

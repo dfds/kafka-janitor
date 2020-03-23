@@ -49,5 +49,28 @@ namespace KafkaJanitor.RestApi.Features.Vault
                 }
             });
         }
+        
+        public async Task AddKafkaConfiguration(Capability capability, ApiCredentials apiCredentials)
+        {
+            var ssmClient = new AmazonSimpleSystemsManagementClient(RegionEndpoint.EUCentral1);
+
+            var jsonKafkaConfiguration = JsonKafkaConfiguration.Create(
+                apiCredentials.Key, 
+                apiCredentials.Secret
+            );
+            await ssmClient.PutParameterAsync(new PutParameterRequest
+            {
+                Type = ParameterType.SecureString,
+                Name = $"/capabilities/{capability.RootId}/kafka/configuration",
+                Tier = ParameterTier.Standard,
+                Value = JsonConvert.SerializeObject(jsonKafkaConfiguration),
+                Tags = new List<Tag>
+                {
+                    new Tag{Key = "capabilityName",Value = capability.Name},
+                    new Tag{Key = "capabilityId",Value = capability.Id},
+                    new Tag{Key = "capabilityRootId",Value = capability.RootId}
+                }
+            });
+        }
     }
 }

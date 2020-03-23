@@ -7,11 +7,12 @@ namespace KafkaJanitor.RestApi.Features.Vault
 {
     public class InMemoryVault : IVault
     {
-        private readonly List<ApiCredentials> _data;
-
+        private readonly List<ApiCredentials> _apiCredentials;
+        private readonly List<ApiCredentials> _kafkaConfigurationCredentials;
         public InMemoryVault()
         {
-            _data = new List<ApiCredentials>();
+            _apiCredentials = new List<ApiCredentials>();
+            _kafkaConfigurationCredentials = new List<ApiCredentials>();
         }
 
         public Task EnsureConnection()
@@ -21,7 +22,14 @@ namespace KafkaJanitor.RestApi.Features.Vault
 
         public Task AddApiCredentials(Capability capability, ApiCredentials apiCredentials)
         {
-            _data.Add(apiCredentials);
+            _apiCredentials.Add(apiCredentials);
+            
+            return Task.CompletedTask;
+        }
+
+        public Task AddKafkaConfiguration(Capability capability, ApiCredentials apiCredentials)
+        {
+            _kafkaConfigurationCredentials.Add(apiCredentials);
             
             return Task.CompletedTask;
         }
