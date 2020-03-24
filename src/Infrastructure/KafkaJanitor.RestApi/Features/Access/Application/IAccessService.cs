@@ -6,7 +6,7 @@ namespace KafkaJanitor.RestApi.Features.Access.Application
     public interface IAccessService
     {
         Task ProvideAccess(
-            Capability cap,
+            Capability capability,
             string topicPrefix
         );
     }

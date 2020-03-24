@@ -31,68 +31,78 @@ namespace KafkaJanitor.RestApi.Features.Access.Application
             _vault = vault;
         }
 
+
         public async Task ProvideAccess(
-            Capability cap,
+            Capability capability,
             string topicPrefix
         )
         {
-            ServiceAccount serviceAccount = null;
-
-            Func<Task<bool>> doesServiceAccountExist = new Func<Task<bool>>(async () =>
+            ServiceAccount serviceAccount;
+            if (!await ServiceAccountExists(capability))
             {
-                try
-                {
-                    var sa = await _serviceAccountClient.GetServiceAccount(cap);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    return false;
-                }
-
-                return true;
-            });
-
-            Func<string, Task<bool>> isExpectedAmountOfAclsInPlace = new Func<string, Task<bool>>(
-                async (string serviceAccountId) =>
-                {
-                    var acls = await _accessControlListService.GetAclsForServiceAccount(serviceAccountId);
-                    return acls.Count() == 12;
-                });
-
-            Func<string, Task<bool>> isExpectedAmountOfApiKeysInPlace = new Func<string, Task<bool>>(
-                async (string serviceAccountId) =>
-                {
-                    var apiKeys = await _apiKeyClient.GetApiKeyPairsForServiceAccount(serviceAccountId);
-                    return apiKeys.Any();
-                });
-
-            if (!await doesServiceAccountExist())
-            {
-                serviceAccount = await _serviceAccountClient.CreateServiceAccount(cap);
+                serviceAccount = await _serviceAccountClient.CreateServiceAccount(capability);
             }
             else
             {
-                serviceAccount = await _serviceAccountClient.GetServiceAccount(cap);
+                serviceAccount = await _serviceAccountClient.GetServiceAccount(capability);
             }
 
-            if (!await isExpectedAmountOfAclsInPlace(serviceAccount.Id))
+            if (!await ExpectedAmountOfAclsAreInPlace(serviceAccount.Id))
             {
                 await _accessControlListService.CreateAclsForServiceAccount(serviceAccount.Id, topicPrefix);
             }
 
-            if (!await isExpectedAmountOfApiKeysInPlace(serviceAccount.Id))
+            if (!await AtLestOneApiKeyExists(serviceAccount.Id))
             {
-                var apiKeyPair = await _apiKeyClient.CreateApiKeyPair(serviceAccount);
-
-                await _vault.AddApiCredentials(
-                    cap,
-                    new ApiCredentials
-                    {
-                        Key = apiKeyPair.Key,
-                        Secret = apiKeyPair.Secret
-                    }
+                await CreateAndStoreApiKeyPair(
+                    capability, 
+                    serviceAccount
                 );
             }
+        }
+
+        public async Task CreateAndStoreApiKeyPair(
+            Capability cap, 
+            ServiceAccount serviceAccount
+        )
+        {
+            var apiKeyPair = await _apiKeyClient.CreateApiKeyPair(serviceAccount);
+
+            await _vault.AddApiCredentials(
+                cap,
+                new ApiCredentials
+                {
+                    Key = apiKeyPair.Key,
+                    Secret = apiKeyPair.Secret
+                }
+            );
+        }
+        
+        public async Task<bool> ServiceAccountExists(Capability capability)
+        {
+            try
+            {
+                var sa = await _serviceAccountClient.GetServiceAccount(capability);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> ExpectedAmountOfAclsAreInPlace(string serviceAccountId)
+        {
+            var acls = await _accessControlListService.GetAclsForServiceAccount(serviceAccountId);
+            var expectedAclCount = 12;
+            return acls.Count() == expectedAclCount;
+        }
+
+        public async Task<bool> AtLestOneApiKeyExists(string serviceAccountId)
+        {
+            var apiKeys = await _apiKeyClient.GetApiKeyPairsForServiceAccount(serviceAccountId);
+            return apiKeys.Any();
         }
     }
 }
