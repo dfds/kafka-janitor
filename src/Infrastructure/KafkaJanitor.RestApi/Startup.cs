@@ -1,6 +1,6 @@
-using System;
 using KafkaJanitor.RestApi.Enablers.Metrics;
 using KafkaJanitor.RestApi.Enablers.PrometheusHealthCheck;
+using KafkaJanitor.RestApi.Features.Access.Application;
 using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
 using KafkaJanitor.RestApi.Features.ApiKeys;
 using KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure;
@@ -56,6 +56,8 @@ namespace KafkaJanitor.RestApi
                 }
             });
 
+            services.AddTransient<IAccessService, AccessService>();
+            
             // Enablers
             var shouldStartMetricHostedService = Configuration["KAFKAJANITOR_START_METRIC_SERVER"] != "false";
             services.AddMetrics(shouldStartMetricHostedService);
