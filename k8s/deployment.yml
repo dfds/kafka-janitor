@@ -33,6 +33,7 @@ spec:
           runAsGroup: 3000
           runAsNonRoot: true
           allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
         ports:
         - containerPort: 5000
           name: web
@@ -95,6 +96,7 @@ spec:
           runAsGroup: 1000
           runAsNonRoot: true
           allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
         resources:
           requests:
             memory: "64Mi"
