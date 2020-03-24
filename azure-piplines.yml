@@ -16,6 +16,12 @@ steps:
       AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
     displayName: 'Build, create and upload container image'
 
+  - bash: |
+      chmod +x alcide.sh
+      ./alcide.sh k8s/deployment.yml
+      ./alcide.sh k8s/service.yml
+    displayName: 'Run Alcide scans'
+
   - task: PublishBuildArtifacts@1
     displayName: "Publish Artifact: k8s manifests"
     inputs:
