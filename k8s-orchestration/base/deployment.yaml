@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-janitor
+  namespace: selfservice
+  labels:
+    project: selfservice
+    department: devex
+    app: kafka-janitor
+    component: kafka-janitor
+    version: 0.0.1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-janitor
+  template:
+    metadata:
+      labels:
+        app: kafka-janitor
+        project: selfservice
+        department: devex
+      annotations:
+        iam.amazonaws.com/role: PutKafkaParameter
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+      - name: kafka-janitor
+        image: ded/kafka-janitor
+        securityContext:
+          runAsUser: 10001
+          runAsGroup: 3000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+        ports:
+        - containerPort: 5000
+          name: web
+        - containerPort: 8080
+          name: metrics
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        env:
+        - name: ASPNETCORE_URLS
+          value: http://+:5000
+        livenessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 60
+          timeoutSeconds: 5
+          httpGet:
+            port: web
+            path: /healthz
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
+          httpGet:
+            port: web
+            path: /healthz
+      - name: tika
+        image: ded/tika
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"

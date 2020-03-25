@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-janitor
+spec:
+  template:
+    spec:
+      containers:
+      - name: kafka-janitor
+        image: ded/kafka-janitor
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TIKA_API_ENDPOINT
+          value: "http://localhost:3000"
+        - name: KAFKAJANITOR_VAULT
+          value: "INMEMORY"
+      - name: tika
+        image: ded/tika
+        imagePullPolicy: IfNotPresent
+        securityContext:
+        env:
+        - name: TIKA_API_IMPLEMENTATION
+          value: notconnected
