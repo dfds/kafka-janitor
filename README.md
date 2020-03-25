@@ -28,12 +28,15 @@ To get a local copy up and running follow these simple steps.
 
 ## Installation
  
-1. Clone the repo
-```sh
+Clone the repository
+
+```shell
 git clone git@github.com:dfds/kafka-janitor.git
 ```
-2. Restore dependencies
-```sh
+
+Restore dependencies
+
+```shell
 cd kafka-janitor/src
 dotnet restore .
 ```
@@ -46,7 +49,7 @@ You can run the project with a hot reloader file watcher by completing the follo
 
 Start a local instance of Tika in not connected to ccloud mode:
 
-```bash
+```shell
 cd tika/server/
 npm install
 cd ../local-development
@@ -55,16 +58,45 @@ cd ../local-development
 
 Start Kafka janitor
 
-```bash
-cd kafka-janitor/local-development/
-./watch-run.sh
+```shell
+kafka-janitor/local-development/watch-run.sh
 ```
 
 You should now be able to make a get request against the services health endpoint and get a `Healthy` response.
 
-```bash
+```shell
 curl --request GET \
   --url http://localhost:5000/Healthz
+```
+
+### In a local cluster
+
+#### Prerequisites
+
+* [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) A command line tool for controlling Kubernetes clusters.
+* [Kustomize](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/INSTALL.md) A standalone tool to customize Kubernetes objects through a kustomization file.  
+* A local Kubernetes cluster, this could run in: [Minikube](https://kubernetes.io/docs/setup/learning-environment/minikube/), [Microk8s](https://microk8s.io/), [Kind](https://kind.sigs.k8s.io/) or [K3S](https://k3s.io/)
+
+#### Running in the local cluster
+
+Build the docker images for `kafka-janitor` and `tika`:
+
+```shell
+cd kafka-janitor/
+docker build -t ded/kafka-janitor .
+```
+
+```shell
+cd tika/server/
+docker build -t ded/tika .
+```
+Make sure your images are in your local clusters registry, otherwise you will get a 
+
+Point your `kubectl` to your local cluster. via the command: `kubectl config use-context [your-local-cluster-context]`
+
+Deploy the services to your cluster via kubectl:
+```console
+kafka-janitor/local-development/deploy-to-local-cluster.sh
 ```
 
 ## Interacting with the REST endpoint
