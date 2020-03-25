@@ -1,5 +1,5 @@
 <!-- ABOUT THE PROJECT -->
-## Kafka-janitor
+# Kafka-janitor
 
 The purpose of this project is to help faciliate Kafka functionality for Capabilities. Whether this be creation of Topics or Service accounts, Kafka-janitor will take care of those actions on behalf of services like [Capability Service](https://github.com/dfds/capability-service).
 
@@ -7,12 +7,26 @@ The purpose of this project is to help faciliate Kafka functionality for Capabil
 
 Confluent Cloud is a bit of a mess in terms of accessing it's functionality, some functionality is only available using their proprietary binary tool *ccloud* (which doesn't support outputting in a reasonable data schema), with their web interface(which uses a unsupported HTTP API with JSON as its data schema) and *confluent-kafka-dotnet* SDK partially supporting some of the functionality. Therefore we happen to use all 3 mentioned ways to access Confluent Cloud, in order to automate tedious manual tasks.
 
+## Dependencies
+
+The Kafka janitor has the following dependencies:
+
+### Tika
+
+A restful API on top of the ccloud cli  
+[Repository](https://github.com/dfds/tika)
+A Tika server docker image can be build by running the command `docker build -t tika .` in the `tika/server` folder.
+
+### AWS Systems Manager Parameter Store
+
+Kafka janitor uses AWS parameter store to save the key secrets generated for the users, this dependency can be replaced by an in memory vault by setting the following environment variable `KAFKAJANITOR_VAULT="INMEMORY"`
+
 <!-- GETTING STARTED -->
 ## Getting Started
 
 To get a local copy up and running follow these simple steps.
 
-### Installation
+## Installation
  
 1. Clone the repo
 ```sh
@@ -24,33 +38,41 @@ cd kafka-janitor/src
 dotnet restore .
 ```
 
+## Running
 
-<!-- USAGE EXAMPLES -->
-## Usage
+### With short feedback loop development
 
-Kafka-janitor expects certain environment variables to be configured before running
+You can run the project with a hot reloader file watcher by completing the following steps:
 
-* KAFKA_JANITOR_BOOTSTRAP_SERVERS -> '127.0.0.1:9092'
-* KAFKA_JANITOR_GROUP_ID -> 'kafka-janitor-consumer'
-* KAFKA_JANITOR_BROKER_VERSION_FALLBACK -> '0.10.0.0'
-* KAFKA_JANITOR_API_VERSION_FALLBACK_MS -> '0'
-* KAFKA_JANITOR_SASL_MECHANISMS -> 'PLAIN'
-* KAFKA_JANITOR_SECURITY_PROTOCOL -> 'SASL_SSL'
-* KAFKA_JANITOR_SASL_USERNAME -> 'key'
-* KAFKA_JANITOR_SASL_PASSWORD -> 'secret
+Start a local instance of Tika in not connected to ccloud mode:
 
+```bash
+cd tika/server/
+npm install
+cd ../local-development
+./run-not-connected.sh
+```
 
-These environment variables will be mapped to the default Kafka configuration keys, so if you're already familiar with using Kafka, you may have seen e.g. 'bootstrap.servers' and 'group.id' before, they're exactly as shown above, so setting *KAFKA_JANITOR_BOOTSTRAP_SERVERS* will make Kafka janitor read it as *bootstrap.servers* and pass it along to the *confluent-kafka-dotnet* SDK. With that in mind, the above example may not be enough, or may be too much for your given Kafka setup, please take a look at [Producer configs](https://kafka.apache.org/documentation/#producerconfigs), [Consumer config](https://kafka.apache.org/documentation/#consumerconfigs) and [Connect config](https://kafka.apache.org/documentation/#connectconfigs) for possible ways to configure the application.
+Start Kafka janitor
 
-The integration tests for Kafka-janitor also expects certain environment variables. If one intends to use the included Docker Compose setup for spinning up a local Kafka setup, the following can be used for tests:
+```bash
+cd kafka-janitor/local-development/
+./watch-run.sh
+```
 
-* KAFKA_JANITOR_BOOTSTRAP_SERVERS -> '127.0.0.1:29092'
-* KAFKA_JANITOR_GROUP_ID -> build.selfservice.kafka-janitor-consumer
-* KAFKA_JANITOR_BROKER_VERSION_FALLBACK -> '0.10.0.0'
-* KAFKA_JANITOR_API_VERSION_FALLBACK_MS -> '0'
-* KAFKA_JANITOR_SASL_MECHANISMS -> 'PLAIN'
+You should now be able to make a get request against the services health endpoint and get a `Healthy` response.
 
+```bash
+curl --request GET \
+  --url http://localhost:5000/Healthz
+```
 
+## Interacting with the REST endpoint
+
+We have provided some sample interactions for the REST API endpoint in the folder `kafka-janitor/local-development/`
+The interactions ends with `.rest`
+
+The samples require [Visual studio code](https://code.visualstudio.com/#alt-downloads) and the plugin [humao.rest-client](https://github.com/Huachao/vscode-restclient) to run in Visual studio code.
 
 <!-- CONTRIBUTING -->
 ## Contributing
