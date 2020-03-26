@@ -23,8 +23,7 @@ run:
 package: clean restore build
 	cd src && dotnet publish --no-build -o $(OUTPUTDIR) -c $(CONFIGURATION) $(MAIN_APP_PROJECT_FILE)
 
-container: CONFIGURATION=Release
-container: package
+container: 
 	docker build -t $(IMAGE_NAME) .
 
 release: container
