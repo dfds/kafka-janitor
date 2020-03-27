@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kafka-janitor
+  namespace: selfservice
 spec:
   template:
     spec:
