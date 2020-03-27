@@ -99,7 +99,8 @@ cd ../local-development
 Start Kafka janitor
 
 ```shell
-kafka-janitor/local-development/watch-run.sh
+cd kafka-janitor/local-development/
+./watch-run.sh
 ```
 
 You should now be able to make a get request against the services health endpoint and get a `Healthy` response.
@@ -134,14 +135,19 @@ cd tika/server/
 docker build -t ded/tika .
 ```
 
-Make sure your images are in your local clusters registry, otherwise you will get a `repository does not exist or may require 'docker login'` error when starting the pods in Kubernetes.
+Make sure your images are in your local clusters registry, otherwise you will get a `repository does not exist or may require 'docker login'` error when starting the pods in Kubernetes. Each cluster implementation has its own take on registries:  
+In [Minikube](https://kubernetes.io/docs/setup/learning-environment/minikube/) you need to run the command `eval $(minikube docker-env)` before building your image.  
+In [Microk8s](https://microk8s.io/) you need to push the image to the [Microk8s registry](https://microk8s.io/docs/registry-built-in)  
+In [Kind](https://kind.sigs.k8s.io/) you need to create a local registry and [connect it to kind](https://kind.sigs.k8s.io/docs/user/local-registry/)  
+In [K3S](https://k3s.io/) you need to create a local registry and [connect it to K3s](https://github.com/rancher/k3d/wiki/Examples%3A-Private-Registry)
 
 Point your `kubectl` to your local cluster. via the command: `kubectl config use-context [your-local-cluster-context]`
 
 Deploy the services to your cluster via kubectl:
 
 ```shell
-kafka-janitor/local-development/deploy-to-local-cluster.sh
+cd kafka-janitor/local-development/
+./deploy-to-local-cluster.sh
 ```
 
 You should now be able to access the Kafka janitor running in kubernetes by port forwarding into it, and checking its health:
@@ -153,7 +159,7 @@ curl --request GET --url http://localhost:5000/Healthz
 
 ## Interacting with the REST endpoint
 
-#### Prerequisites
+### Prerequisites
 
 * [Visual studio code](https://code.visualstudio.com/#alt-downloads) a extendable code editor with support for: debugging, version control and much more.
 * [humao.rest-client](https://github.com/Huachao/vscode-restclient) a extension that allows you to send HTTP request from Visual studio code.
