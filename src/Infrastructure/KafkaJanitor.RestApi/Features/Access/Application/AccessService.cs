@@ -37,12 +37,15 @@ namespace KafkaJanitor.RestApi.Features.Access.Application
             string topicPrefix
         )
         {
+            
             ServiceAccount serviceAccount;
-            if (!await ServiceAccountExists(capability))
+
+            try
             {
+                // ServiceAccountClient should throw a ServiceAccountExists exception. But this is the best we got for now
                 serviceAccount = await _serviceAccountClient.CreateServiceAccount(capability);
             }
-            else
+            catch (System.Net.Http.HttpRequestException e) when(e.Message.Contains("409"))
             {
                 serviceAccount = await _serviceAccountClient.GetServiceAccount(capability);
             }
