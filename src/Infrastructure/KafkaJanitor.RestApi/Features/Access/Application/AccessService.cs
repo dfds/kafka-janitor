@@ -55,7 +55,7 @@ namespace KafkaJanitor.RestApi.Features.Access.Application
                 await _accessControlListService.CreateAclsForServiceAccount(serviceAccount.Id, topicPrefix);
             }
 
-            if (!await AtLestOneApiKeyExists(serviceAccount.Id))
+            if (!await AtLeastOneApiKeyExists(serviceAccount.Id))
             {
                 await CreateAndStoreApiKeyPair(
                     capability, 
@@ -102,7 +102,7 @@ namespace KafkaJanitor.RestApi.Features.Access.Application
             return acls.Count() == expectedAclCount;
         }
 
-        public async Task<bool> AtLestOneApiKeyExists(string serviceAccountId)
+        public async Task<bool> AtLeastOneApiKeyExists(string serviceAccountId)
         {
             var apiKeys = await _apiKeyClient.GetApiKeyPairsForServiceAccount(serviceAccountId);
             return apiKeys.Any();
