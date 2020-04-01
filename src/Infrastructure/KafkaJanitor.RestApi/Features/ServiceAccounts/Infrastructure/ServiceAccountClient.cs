@@ -24,7 +24,7 @@ namespace KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure
         public async Task<ServiceAccount> GetServiceAccount(Capability capability)
         {
             var results = await _tikaClient.ServiceAccounts.GetAllAsync();
-            return results.First(sa => sa.Name == $"{capability.Name}_sa");
+            return results.Single(sa => sa.Name == $"{capability.Name}_sa");
         }
     }
 }
