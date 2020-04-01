@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kafka-janitor
-  namespace: $(kubernetes-namespace)
+  namespace: selfservice
   labels:
     project: selfservice
     department: devex
@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: kafka-janitor
-        image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/kafka-janitor:$(Build.BuildId)
+        image: ded/kafka-janitor
         securityContext:
           runAsUser: 10001
           runAsGroup: 3000
@@ -46,10 +46,6 @@ spec:
             memory: "128Mi"
             cpu: "200m"
         env:
-        - name: TIKA_API_ENDPOINT
-          value: "http://localhost:3000"
-        - name: KAFKAJANITOR_VAULT
-          value: "AWS_SSM"
         - name: ASPNETCORE_URLS
           value: http://+:5000
         livenessProbe:
@@ -67,7 +63,7 @@ spec:
             port: web
             path: /healthz
       - name: tika
-        image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/tika:232298
+        image: ded/tika
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
@@ -80,16 +76,3 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "200m"
-        env:
-        - name: TIKA_CCLOUD_CLUSTER_ID
-          value: $(TIKA_CCLOUD_CLUSTER_ID)
-        - name: TIKA_CC_USER
-          valueFrom:
-            secretKeyRef:
-              name: tika-confluent
-              key: TIKA_CC_USER
-        - name: TIKA_CC_PASS
-          valueFrom:
-            secretKeyRef:
-              name: tika-confluent
-              key: TIKA_CC_PASS

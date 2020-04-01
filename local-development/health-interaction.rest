@@ -1,0 +1,4 @@
+###
+
+# Checks health of service and dependencies
+GET http://localhost:5000/Healthz
