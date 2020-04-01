@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Tika.RestClient;
 using Tika.RestClient.Features.ApiKeys.Models;
 using Tika.RestClient.Features.ServiceAccounts.Models;
@@ -21,6 +23,13 @@ namespace KafkaJanitor.RestApi.Features.ApiKeys
                 Description = "Automatically created during SA flow",
                 ServiceAccountId = serviceAccount.Id
             });
+        }
+
+        public async Task<IEnumerable<ApiKey>> GetApiKeyPairsForServiceAccount(string serviceAccountId)
+        {
+            var result = await _tikaClient.ApiKeys.GetAllAsync();
+
+            return result.Where(ak => ak.Owner == serviceAccountId);
         }
     }
 }

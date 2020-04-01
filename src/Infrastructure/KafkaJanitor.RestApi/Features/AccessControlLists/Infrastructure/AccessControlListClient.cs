@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Tika.RestClient;
 using Tika.RestClient.Features.Acls.Models;
@@ -37,6 +39,13 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, false, "alter-configs"));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, false, "cluster-action"));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, false, "create", "'*'"));
+        }
+
+        public async Task<IEnumerable<Acl>> GetAclsForServiceAccount(string serviceAccountId)
+        {
+            var serviceAccountIdAsInt = Convert.ToInt64(serviceAccountId);
+            var results = await _tikaClient.Acls.GetAllAsync();
+            return results.Where(acl => acl.ServiceAccountId == serviceAccountIdAsInt);
         }
     }
 }

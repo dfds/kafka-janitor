@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.Options;
 using Tika.RestClient;
 using Tika.RestClient.Features.Acls.Models;
+using Tika.RestClient.Features.ApiKeys.Models;
 using Tika.RestClient.Features.ServiceAccounts.Models;
 using Xunit;
 using ServiceAccount = Tika.RestClient.Features.ServiceAccounts.Models.ServiceAccount;
@@ -19,6 +20,8 @@ namespace KafkaJanitor.IntegrationTests
         private IRestClient _tikaClient;
         private Capability capability;
         private ServiceAccount serviceAccount;
+        private ApiKey apiKey;
+        
         [Fact]
         public async Task CapabilityCreatedDeletedScenarioRecipe()
         {
@@ -26,8 +29,10 @@ namespace KafkaJanitor.IntegrationTests
                   And_a_tikaClient_is_provided();
             await Then_a_service_account_is_created(capability);
             await And_acls_to_create_read_write_to_topics_under_prefix(capability, serviceAccount);
+            await And_api_keypair_is_created(capability, serviceAccount);
             await When_a_capability_is_deleted();
             await Then_the_connected_acls_are_deleted(capability, serviceAccount);
+            await And_connected_api_keypair_is_removed(apiKey);
             await And_the_connected_service_account_is_removed(serviceAccount);
         }
 
@@ -87,6 +92,15 @@ namespace KafkaJanitor.IntegrationTests
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountId, false, "create", "'*'"));
         }
 
+        private async Task And_api_keypair_is_created(Capability capability, ServiceAccount serviceAccount)
+        {
+            apiKey = await _tikaClient.ApiKeys.CreateAsync(new ApiKeyCreate
+            {
+                Description = "Creating during CapabilityCreatedDeletedScenario",
+                ServiceAccountId = serviceAccount.Id
+            });
+        }
+
         private async Task When_a_capability_is_deleted()
         {
             var kafkaClient = new KafkaClient();
@@ -128,6 +142,11 @@ namespace KafkaJanitor.IntegrationTests
             await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, false, "alter-configs"));
             await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, false, "cluster-action"));
             await _tikaClient.Acls.DeleteAsync(new AclCreateDelete(serviceAccountId, false, "create", "'*'"));
+        }
+
+        private async Task And_connected_api_keypair_is_removed(ApiKey apiKey)
+        {
+            await _tikaClient.ApiKeys.DeleteAsync(apiKey.Key);
         }
 
         private async Task And_the_connected_service_account_is_removed(ServiceAccount serviceAccount)
