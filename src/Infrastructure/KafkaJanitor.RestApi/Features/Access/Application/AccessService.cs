@@ -80,20 +80,6 @@ namespace KafkaJanitor.RestApi.Features.Access.Application
                 }
             );
         }
-        
-        public async Task<bool> ServiceAccountExists(Capability capability)
-        {
-            try
-            {
-                var sa = await _serviceAccountClient.GetServiceAccount(capability);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return false;
-            }
-
-            return true;
-        }
 
         public async Task<bool> ExpectedAmountOfAclsAreInPlace(string serviceAccountId)
         {
