@@ -25,11 +25,14 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
 
         public async Task Add(Topic topic)
         {
-            await _tikaClient.Topics.CreateAsync(new TopicCreate
+            var topicCreate = TopicCreate.Create(topic.Name, topic.Partitions);
+            
+            foreach (var (key, value) in topic.Configurations)
             {
-                name = topic.Name,
-                partitionCount = topic.Partitions
-            });
+                topicCreate = topicCreate.WithConfiguration(key, value);
+            }
+            
+            await _tikaClient.Topics.CreateAsync(TopicCreate.Create(topic.Name, topic.Partitions));
         }
 
         public async Task<bool> Exists(string topicName)

@@ -9,9 +9,16 @@ namespace Specifications.TestDoubles
     {
         public List<string> Topics = new List<string>();
 
+        public Task<TopicDescription> DescribeAsync(string topicName)
+        {
+            Topics.Find(v => v == topicName);
+
+            return Task.FromResult(new TopicDescription());
+        }
+
         public Task CreateAsync(TopicCreate topicCreate)
         {
-            Topics.Add(topicCreate.name);
+            Topics.Add(topicCreate.Name);
 
             return Task.CompletedTask;
         }

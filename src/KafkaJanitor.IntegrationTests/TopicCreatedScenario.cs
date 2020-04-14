@@ -28,10 +28,8 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task When_a_topic_creation_is_requested()
         {
-            await _tikaRestClient.Topics.CreateAsync(new TopicCreate
-            {
-                name =  "devex-integrationtest"
-            });
+            var topicCreate = TopicCreate.Create("devex-integrationtest", 3);
+            await _tikaRestClient.Topics.CreateAsync(topicCreate);
         }
 
         private async Task Then_a_topic_is_created()
