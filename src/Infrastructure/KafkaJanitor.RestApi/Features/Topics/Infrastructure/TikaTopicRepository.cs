@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using KafkaJanitor.RestApi.Features.Topics.Domain;
 using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
@@ -29,7 +30,8 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
             
             foreach (var (key, value) in topic.Configurations)
             {
-                topicCreate = topicCreate.WithConfiguration(key, value);
+                var jsonElement = (JsonElement)value;
+                topicCreate = topicCreate.WithConfiguration(key, JsonObjectTools.GetValueFromJsonElement(jsonElement));
             }
             
             await _tikaClient.Topics.CreateAsync(topicCreate);
