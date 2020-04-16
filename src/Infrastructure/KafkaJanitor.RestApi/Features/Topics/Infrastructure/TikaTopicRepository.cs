@@ -24,6 +24,23 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
             return topics.Select(val => new Topic {Name = val});
         }
 
+
+        public async Task<Topic> DescribeAsync(string topicName)
+        {
+            var topicDescription = await _tikaClient.Topics.DescribeAsync(topicName);
+
+            var topic = new Topic
+            {
+                Name = topicDescription.name,
+                Description = "",
+                Partitions = topicDescription.partitionCount,
+                Configurations = topicDescription.configurations
+            };
+
+
+            return topic;
+        }
+
         public async Task Add(Topic topic)
         {
             var topicCreate = TopicCreate.Create(topic.Name, topic.Partitions);
@@ -33,7 +50,6 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
                 var jsonElement = (JsonElement)value;
                 topicCreate = topicCreate.WithConfiguration(key, JsonObjectTools.GetValueFromJsonElement(jsonElement));
             }
-            
             await _tikaClient.Topics.CreateAsync(topicCreate);
         }
 

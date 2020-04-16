@@ -9,5 +9,7 @@ namespace KafkaJanitor.RestClient.Features.Topics
         Task CreateAsync(Topic input);
 
         Task<IEnumerable<Topic>> GetAllAsync();
+
+        Task<Topic> DescribeAsync(string topicName);
     }
 }

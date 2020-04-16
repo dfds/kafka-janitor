@@ -39,11 +39,26 @@ namespace KafkaJanitor.RestClient.Features.Topics
             var httpResponseMessage = await _httpClient.GetAsync(
                 new Uri(TOPICS_ROUTE, UriKind.Relative)
             );
+
             var content = await httpResponseMessage.Content.ReadAsStringAsync();
 
             var topics = JsonConvert.DeserializeObject<IEnumerable<Topic>>(content);
 
             return topics;
+        }
+        
+        public async Task<Topic> DescribeAsync(string topicName)
+        {
+            var httpResponseMessage = await _httpClient.GetAsync(
+                new Uri(TOPICS_ROUTE + topicName, UriKind.Relative)
+            );
+            httpResponseMessage.EnsureSuccessStatusCode();
+
+            var content = await httpResponseMessage.Content.ReadAsStringAsync();
+
+            var topicDescription = JsonConvert.DeserializeObject<Topic>(content);
+
+            return topicDescription;
         }
     }
 }
