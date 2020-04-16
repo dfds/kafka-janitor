@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
 {
-    public class JsonObjectTools
+    public static class JsonObjectTools
     {
         public static object GetValueFromJsonElement(JsonElement val)
         {
