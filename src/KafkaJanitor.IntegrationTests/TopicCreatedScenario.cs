@@ -18,7 +18,6 @@ namespace KafkaJanitor.IntegrationTests
     {
         private readonly IRestClient _tikaRestClient;
 
-        // In a weird state until the new code is moved in from branch 'tika-client'
         [Fact]
         public async Task TopicCreatedScenarioRecipe()
         {
