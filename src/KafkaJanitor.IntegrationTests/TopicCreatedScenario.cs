@@ -47,7 +47,11 @@ namespace KafkaJanitor.IntegrationTests
                 .Add(new EnvironmentVariablesConfigurationSource())
                 .Build();
             var options = Options.Create(new ClientOptions(conf));
-            _tikaRestClient = RestClientFactory.CreateFromConfiguration(new HttpClient(), options);
+            
+            _tikaRestClient = RestClientFactory.CreateFromConfiguration(new HttpClient(), Options.Create(new ClientOptions
+            {
+                TIKA_API_ENDPOINT = "http://localhost:3000/"
+            }));
         }
     }
 }
