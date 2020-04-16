@@ -19,7 +19,7 @@ namespace Specifications.Features.Topics
         private Topic _topicToCreate;
 
         [Fact]
-        public async Task rDescribeATopicWithConfigurationsRecipe()
+        public async Task DescribeATopicWithConfigurationsRecipe()
         {
             await Given_a_rest_api_with_a_tika_spy();
             And_a_rest_client();
