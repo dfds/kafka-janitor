@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using KafkaJanitor.RestApi.Features.Topics.Domain;
 using KafkaJanitor.RestApi.Features.Topics.Domain.Models;
@@ -23,13 +24,33 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
             return topics.Select(val => new Topic {Name = val});
         }
 
+
+        public async Task<Topic> DescribeAsync(string topicName)
+        {
+            var topicDescription = await _tikaClient.Topics.DescribeAsync(topicName);
+
+            var topic = new Topic
+            {
+                Name = topicDescription.name,
+                Description = "",
+                Partitions = topicDescription.partitionCount,
+                Configurations = topicDescription.configurations
+            };
+
+
+            return topic;
+        }
+
         public async Task Add(Topic topic)
         {
-            await _tikaClient.Topics.CreateAsync(new TopicCreate
+            var topicCreate = TopicCreate.Create(topic.Name, topic.Partitions);
+            
+            foreach (var (key, value) in topic.Configurations)
             {
-                name = topic.Name,
-                partitionCount = topic.Partitions
-            });
+                var jsonElement = (JsonElement)value;
+                topicCreate = topicCreate.WithConfiguration(key, JsonObjectTools.GetValueFromJsonElement(jsonElement));
+            }
+            await _tikaClient.Topics.CreateAsync(topicCreate);
         }
 
         public async Task<bool> Exists(string topicName)

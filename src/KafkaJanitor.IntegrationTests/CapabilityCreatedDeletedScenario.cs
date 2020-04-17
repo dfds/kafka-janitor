@@ -64,10 +64,11 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task Then_a_service_account_is_created(Capability capability)
         {
-            serviceAccount = await _tikaClient.ServiceAccounts.CreateAsync(new ServiceAccountCreate {
-                name = $"{capability.Name}_sa",
-                description = "Creating during CapabilityCreatedDeletedScenario"
-                });
+            serviceAccount = await _tikaClient.ServiceAccounts.CreateAsync(new ServiceAccountCreateCommand
+            {
+                name = $"{capability.Name}",
+                description = "Creating with TikaService using KafkaJanitor"
+            });
         }
 
         private async Task And_acls_to_create_read_write_to_topics_under_prefix(Capability capability, ServiceAccount serviceAccount)

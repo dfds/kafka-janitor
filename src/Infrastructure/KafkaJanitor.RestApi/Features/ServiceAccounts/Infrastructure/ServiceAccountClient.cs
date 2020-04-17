@@ -16,8 +16,9 @@ namespace KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure
         }
         public async Task<ServiceAccount> CreateServiceAccount(Capability capability)
         {
-            return await _tikaClient.ServiceAccounts.CreateAsync(new ServiceAccountCreate {
-                name = $"{capability.Name}_sa",
+            return await _tikaClient.ServiceAccounts.CreateAsync(new ServiceAccountCreateCommand
+            {
+                name = $"{capability.Name}",
                 description = "Creating with TikaService using KafkaJanitor"
             });
         }

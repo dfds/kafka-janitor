@@ -25,6 +25,14 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
             return Ok(topics);
         }
 
+        [HttpGet("{topicName}")]
+        public async Task<IActionResult> DescribeAsync([FromRoute] string topicName)
+        {
+            var topics = await _topicRepository.DescribeAsync(topicName);
+
+            return Ok(topics);
+        }
+        
         [HttpPost("")]
         public async Task<IActionResult> CreateAsync([FromBody] Topic input)
         {

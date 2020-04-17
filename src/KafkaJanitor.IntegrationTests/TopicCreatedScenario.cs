@@ -18,7 +18,6 @@ namespace KafkaJanitor.IntegrationTests
     {
         private readonly IRestClient _tikaRestClient;
 
-        // In a weird state until the new code is moved in from branch 'tika-client'
         [Fact]
         public async Task TopicCreatedScenarioRecipe()
         {
@@ -28,10 +27,8 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task When_a_topic_creation_is_requested()
         {
-            await _tikaRestClient.Topics.CreateAsync(new TopicCreate
-            {
-                name =  "devex-integrationtest"
-            });
+            var topicCreate = TopicCreate.Create("devex-integrationtest", 3);
+            await _tikaRestClient.Topics.CreateAsync(topicCreate);
         }
 
         private async Task Then_a_topic_is_created()
@@ -49,7 +46,11 @@ namespace KafkaJanitor.IntegrationTests
                 .Add(new EnvironmentVariablesConfigurationSource())
                 .Build();
             var options = Options.Create(new ClientOptions(conf));
-            _tikaRestClient = RestClientFactory.CreateFromConfiguration(new HttpClient(), options);
+            
+            _tikaRestClient = RestClientFactory.CreateFromConfiguration(new HttpClient(), Options.Create(new ClientOptions
+            {
+                TIKA_API_ENDPOINT = "http://localhost:3000/"
+            }));
         }
     }
 }

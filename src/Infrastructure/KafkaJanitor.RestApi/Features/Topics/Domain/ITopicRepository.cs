@@ -7,6 +7,8 @@ namespace KafkaJanitor.RestApi.Features.Topics.Domain
     public interface ITopicRepository
     {
         Task<IEnumerable<Topic>> GetAll();
+
+        Task<Topic> DescribeAsync(string topicName);
         Task Add(Topic topic);
 
         Task<bool> Exists(string topicName);

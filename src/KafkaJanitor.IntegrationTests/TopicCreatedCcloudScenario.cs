@@ -44,11 +44,17 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task Then_a_topic_is_created(Topic topic)
         {
-            await _tikaClient.Topics.CreateAsync(new TopicCreate
+            var topicCreate = TopicCreate.Create(topic.Name, topic.Partitions);
+
+            if (topic.Configurations != null)
             {
-                name = topic.Name,
-                partitionCount = topic.Partitions
-            });
+                foreach (var (key, value) in topic.Configurations)
+                {
+                    topicCreate = topicCreate.WithConfiguration(key, value);
+                }
+            }
+
+            await _tikaClient.Topics.CreateAsync(topicCreate);
         }
 
         private async Task Then_the_topic_is_retrieved(string topicName)
