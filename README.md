@@ -167,6 +167,16 @@ curl --request GET --url http://localhost:5000/Healthz
 We have provided some sample interactions for the REST API endpoint in the folder `kafka-janitor/local-development/`
 The interactions ends with `.rest`
 
+## Release
+
+### Client library via nuget
+
+### Prerequisites
+* Access to the Nuget [DFDS organization](https://www.nuget.org/profiles/DFDS)
+* [A nuget API key](https://www.nuget.org/account/apikeys)   
+Add the key to your global git configuration: `git config --global nuget.token "{Your API key}"` the apli key looks similer to `oy2kulk3rva5mfcm47tqtfub45voccbehixdozxkvoim4q`
+
+
 <!-- CONTRIBUTING -->
 ## Contributing
 
