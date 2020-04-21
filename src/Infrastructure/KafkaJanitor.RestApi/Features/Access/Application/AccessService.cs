@@ -84,7 +84,7 @@ namespace KafkaJanitor.RestApi.Features.Access.Application
         public async Task<bool> ExpectedAmountOfAclsAreInPlace(string serviceAccountId)
         {
             var acls = await _accessControlListService.GetAclsForServiceAccount(serviceAccountId);
-            var expectedAclCount = 12;
+            var expectedAclCount = 14;
             return acls.Count() == expectedAclCount;
         }
 
