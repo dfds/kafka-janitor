@@ -1,0 +1,1 @@
+only load Vault controller if KAFKAJANITOR_VAULT == RESTFUL
