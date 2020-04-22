@@ -11,5 +11,7 @@ namespace KafkaJanitor.RestClient.Features.Topics
         Task<IEnumerable<Topic>> GetAllAsync();
 
         Task<Topic> DescribeAsync(string topicName);
+        
+        Task DeleteAsync(string topicName);
     }
 }
