@@ -43,6 +43,9 @@ namespace Specifications
                     });
                     // Look for controllers in the same assembly as the startup class
                     webHost.UseSetting(WebHostDefaults.ApplicationKey, typeof(Startup).Assembly.GetName().Name);
+
+                    webHost.UseSetting("KAFKAJANITOR_VAULT", "INMEMORY");
+                    webHost.UseSetting("KAFKAJANITOR_START_METRIC_SERVER", "false");
                 });
 
             var host = await hostBuilder.StartAsync();
