@@ -66,5 +66,10 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
             }
             return true;
         }
+        
+        public async Task DeleteAsync(string topicName)
+        {
+            await _tikaClient.Topics.DeleteAsync(topicName);
+        }
     }
 }

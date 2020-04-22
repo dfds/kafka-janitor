@@ -46,7 +46,7 @@ namespace KafkaJanitor.RestClient.Features.Topics
 
             return topics;
         }
-        
+
         public async Task<Topic> DescribeAsync(string topicName)
         {
             var httpResponseMessage = await _httpClient.GetAsync(
@@ -59,6 +59,13 @@ namespace KafkaJanitor.RestClient.Features.Topics
             var topicDescription = JsonConvert.DeserializeObject<Topic>(content);
 
             return topicDescription;
+        }
+
+        public async Task DeleteAsync(string topicName)
+        {
+            await _httpClient.DeleteAsync(
+                new Uri(TOPICS_ROUTE + topicName, UriKind.Relative)
+            );
         }
     }
 }

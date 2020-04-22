@@ -48,5 +48,14 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
 
             return Ok(input);
         }
+        
+        
+        [HttpDelete("{topicName}")]
+        public async Task<IActionResult> DeleteAsync([FromRoute] string topicName)
+        {
+            var topics = await _topicRepository.DescribeAsync(topicName);
+
+            return Ok(topics);
+        }
     }
 }
