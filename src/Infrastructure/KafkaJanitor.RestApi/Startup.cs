@@ -41,20 +41,25 @@ namespace KafkaJanitor.RestApi
 
             services.AddTransient<IApiKeyClient, ApiKeyClient>();
 
-            services.AddTransient<IVault>(o =>
-            {
-                var vaultToUse = Configuration["KAFKAJANITOR_VAULT"];
+            var vaultToUse = Configuration["KAFKAJANITOR_VAULT"];
 
-                switch (vaultToUse)
-                {
-                    case "AWS_SSM":
-                        return new AwsSsmParameterStoreVault();
-                    case "INMEMORY":
-                        return new InMemoryVault();
-                    default:
-                        throw new InvalidVaultConfigurationException("KAFKAJANITOR_VAULT");
-                }
-            });
+            switch (vaultToUse)
+            {
+                case "AWS_SSM":
+                    services.AddTransient<IVault, AwsSsmParameterStoreVault>();
+                    break;
+                case "INMEMORY":
+                    services.AddTransient<IVault, InMemoryVault>();
+                    break;
+                case "RESTFUL":
+                    var vault = new InMemoryVault();
+                    services.AddSingleton<IVault>(vault);
+                    services.AddSingleton(vault);
+                    // Add VaultController
+                    break;
+                default:
+                    throw new InvalidVaultConfigurationException("KAFKAJANITOR_VAULT");
+            }
 
             services.AddTransient<IAccessService, AccessService>();
             
