@@ -24,7 +24,7 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure
             var serviceAccountIdAsInt = Convert.ToInt64(serviceAccountId);
             // Topic
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", prefix));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", $"pub.{prefix}."));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", $"pub.{prefix}"));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", prefix));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", prefix));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", "pub."));
