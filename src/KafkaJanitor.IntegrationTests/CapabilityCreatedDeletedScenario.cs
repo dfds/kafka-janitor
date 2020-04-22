@@ -38,7 +38,7 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task When_a_capability_is_created()
         {
-            var kafkaClient = new KafkaClient();
+            var kafkaClient = new Utils.KafkaClient();
             capability = new Capability
             {
                 Id = "1e0a8f85-de38-42ef-a4f4-87c3b4f9a5f9",
@@ -104,7 +104,7 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task When_a_capability_is_deleted()
         {
-            var kafkaClient = new KafkaClient();
+            var kafkaClient = new Utils.KafkaClient();
             var capability = new Capability
             {
                 Id = "1e0a8f85-de38-42ef-a4f4-87c3b4f9a5f9",
