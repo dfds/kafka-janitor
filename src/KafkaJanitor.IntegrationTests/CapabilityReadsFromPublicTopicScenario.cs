@@ -25,20 +25,23 @@ namespace KafkaJanitor.IntegrationTests
         private string _consumerCapabilityRootId;
         private Dictionary<string, List<ApiCredentials>> _allKeySecrets;
         private TestPayload _testMessage;
+        private string _consumerGroupId;
 
         [Fact]
         public async Task CapabilityReadsFromPublicTopicRecipe()
         {
             await Given_producer_access();
-            await And_a_public_topic();
             await And_consumer_access();
+            await And_a_public_topic();
             await When_a_message_is_published_in_the_public_topic();
-                  Then_the_message_can_be_consumed_by_a_other_capability();
+            Then_the_message_can_be_consumed_by_a_other_capability();
         }
 
         private async Task Given_producer_access()
         {
-            _producerCapabilityRootId = "test-public-topic-producer" + _random5chars;
+            _random5chars = Guid.NewGuid().ToString().Substring(0, 5);
+            _producerCapabilityRootId = "test-public-topic-producer-" + _random5chars;
+
             var accountRequest = new ServiceAccountRequestInput
             {
                 CapabilityId = Guid.NewGuid().ToString(),
@@ -52,10 +55,9 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task And_a_public_topic()
         {
-            _random5chars = Guid.NewGuid().ToString().Substring(0, 5);
             _publicTopic = new Topic
             {
-                Name = "pub.devex-integrationtest" + _random5chars,
+                Name = "pub." + _producerCapabilityRootId + ".delete-me",
                 Partitions = 1
             };
 
@@ -66,6 +68,7 @@ namespace KafkaJanitor.IntegrationTests
         private async Task And_consumer_access()
         {
             _consumerCapabilityRootId = "test-public-topic-" + _random5chars;
+            _consumerGroupId = "test-public-topic-" + _random5chars + ".";
             var accountRequest = new ServiceAccountRequestInput
             {
                 CapabilityId = Guid.NewGuid().ToString(),
@@ -98,20 +101,21 @@ namespace KafkaJanitor.IntegrationTests
                 _testMessage
             );
         }
-     
+
         private void Then_the_message_can_be_consumed_by_a_other_capability()
         {
-            var consumerKeySecrets = _allKeySecrets[_producerCapabilityRootId];
+            var consumerKeySecrets = _allKeySecrets[_consumerCapabilityRootId];
 
             var jsonConsumer = ConsumerFactory.CreateJsonConsumer(
                 consumerKeySecrets.Single().Key,
-                consumerKeySecrets.Single().Secret
+                consumerKeySecrets.Single().Secret,
+                _consumerGroupId
             );
 
             var resultMessage = jsonConsumer.ConsumeOne<TestPayload>(_publicTopic.Name);
             Assert.Equal(_testMessage, resultMessage);
         }
-        
+
         public class TestPayload
         {
             public string Message { get; set; }
@@ -130,7 +134,7 @@ namespace KafkaJanitor.IntegrationTests
 
         public void Dispose()
         {
-            _kafkaClient.Topics.DeleteAsync(_publicTopic.Name).Wait();
+//            _kafkaClient.Topics.DeleteAsync(_publicTopic.Name).Wait();
 
             // delete permission stuff?
         }
