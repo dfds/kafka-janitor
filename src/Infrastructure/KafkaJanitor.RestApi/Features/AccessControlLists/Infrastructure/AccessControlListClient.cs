@@ -30,7 +30,12 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", "pub."));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "DESCRIBE", prefix));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "DESCRIBE-CONFIGS", prefix));
-
+            
+            // Public topics
+            const string PUBLIC_TOPIC_PREFIX = "pub.";
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", PUBLIC_TOPIC_PREFIX + prefix));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", PUBLIC_TOPIC_PREFIX));
+            
             // ConsumerGroup
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", "", prefix));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", "", prefix));
@@ -41,6 +46,7 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, false, "alter-configs"));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, false, "cluster-action"));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, false, "create", "'*'"));
+         
         }
 
         public async Task<IEnumerable<Acl>> GetAclsForServiceAccount(string serviceAccountId)
