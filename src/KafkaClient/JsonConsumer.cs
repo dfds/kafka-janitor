@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using System;
 using Confluent.Kafka;
 using Newtonsoft.Json;
 
@@ -19,8 +19,9 @@ namespace KafkaClient
             {
                 consumer.Subscribe(topicName);
 
-                var consumeResult = consumer.Consume();
+                var consumeResult = consumer.Consume(TimeSpan.FromSeconds(5));
 
+                
                 var result = JsonConvert.DeserializeObject<T>(consumeResult.Message.Value);
 
                 consumer.Commit(consumeResult);
