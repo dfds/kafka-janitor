@@ -21,9 +21,9 @@ namespace KafkaClient
             };
 
             var builder = new ConsumerBuilder<string, string>(config);
-            var jsonProducer = new JsonConsumer(builder);
+            var jsonConsumer = new JsonConsumer(builder);
 
-            return jsonProducer;
+            return jsonConsumer;
         }
     }
 }
