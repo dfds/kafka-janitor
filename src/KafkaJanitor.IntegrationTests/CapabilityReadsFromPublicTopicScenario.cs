@@ -4,10 +4,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using KafkaClient;
+using KafkaJanitor.IntegrationTests.Utils;
 using KafkaJanitor.RestApi.Features.Vault.Model;
 using KafkaJanitor.RestClient.Features.Access.Models;
 using Xunit;
-using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Topic = KafkaJanitor.RestClient.Features.Topics.Models.Topic;
 
@@ -17,15 +17,20 @@ namespace KafkaJanitor.IntegrationTests
     {
         private Topic _publicTopic;
 
-        private IHost testHost;
         private readonly RestClient.IRestClient _kafkaClient;
         private readonly HttpClient _kafkaJanitorHttpClient;
+        
         private string _random5chars;
-        private string _producerCapabilityRootId;
-        private string _consumerCapabilityRootId;
-        private Dictionary<string, List<ApiCredentials>> _allKeySecrets;
+
         private TestPayload _testMessage;
+
+        private string _producerCapabilityRootId;
+        private ApiCredentials _producerKeySecret;
+
+        private string _consumerCapabilityRootId;
         private string _consumerGroupId;
+        private ApiCredentials _consumerKeySecret;
+        private JsonConsumer _jsonConsumer;
 
         [Fact]
         public async Task CapabilityReadsFromPublicTopicRecipe()
@@ -51,6 +56,13 @@ namespace KafkaJanitor.IntegrationTests
             };
 
             await _kafkaClient.Access.RequestAsync(accountRequest);
+            
+            var getKeySecretsResponse = await _kafkaJanitorHttpClient.GetAsync(new Uri("api/vault", UriKind.Relative));
+            getKeySecretsResponse.EnsureSuccessStatusCode();
+
+            var content = await getKeySecretsResponse.Content.ReadAsStringAsync();
+            var allKeySecrets = JsonConvert.DeserializeObject<Dictionary<string, List<ApiCredentials>>>(content);
+            _producerKeySecret = allKeySecrets[_producerCapabilityRootId].Single();
         }
 
         private async Task And_a_public_topic()
@@ -67,8 +79,10 @@ namespace KafkaJanitor.IntegrationTests
 
         private async Task And_consumer_access()
         {
-            _consumerCapabilityRootId = "test-public-topic-" + _random5chars;
-            _consumerGroupId = "test-public-topic-" + _random5chars + ".";
+            var consumerStart = "test-public-topic-consume";
+            _consumerCapabilityRootId = consumerStart + _random5chars;
+            _consumerGroupId = consumerStart + _random5chars + ".";
+            
             var accountRequest = new ServiceAccountRequestInput
             {
                 CapabilityId = Guid.NewGuid().ToString(),
@@ -78,45 +92,54 @@ namespace KafkaJanitor.IntegrationTests
             };
 
             await _kafkaClient.Access.RequestAsync(accountRequest);
-        }
-
-        private async Task When_a_message_is_published_in_the_public_topic()
-        {
+            
             var getKeySecretsResponse = await _kafkaJanitorHttpClient.GetAsync(new Uri("api/vault", UriKind.Relative));
             getKeySecretsResponse.EnsureSuccessStatusCode();
 
             var content = await getKeySecretsResponse.Content.ReadAsStringAsync();
-            _allKeySecrets = JsonConvert.DeserializeObject<Dictionary<string, List<ApiCredentials>>>(content);
-            var producerKeySecrets = _allKeySecrets[_producerCapabilityRootId];
+            var allKeySecrets = JsonConvert.DeserializeObject<Dictionary<string, List<ApiCredentials>>>(content);
+            _consumerKeySecret = allKeySecrets[_consumerCapabilityRootId].Single();
+        }
 
+        private async Task When_a_message_is_published_in_the_public_topic()
+        {
             var jsonProducer = ProducerFactory.CreateJsonProducer(
-                producerKeySecrets.Single().Key,
-                producerKeySecrets.Single().Secret
+                _producerKeySecret.Key,
+                _producerKeySecret.Secret
             );
 
             _testMessage = new TestPayload {Message = "All is well " + DateTime.UtcNow.ToString("u")};
+            
             await jsonProducer.ProduceAsync(
                 _publicTopic.Name,
-                _random5chars,
+                Guid.NewGuid().ToString(),
                 _testMessage
             );
         }
 
         private void Then_the_message_can_be_consumed_by_a_other_capability()
         {
-            var consumerKeySecrets = _allKeySecrets[_consumerCapabilityRootId];
-
-            var jsonConsumer = ConsumerFactory.CreateJsonConsumer(
-                consumerKeySecrets.Single().Key,
-                consumerKeySecrets.Single().Secret,
+            _jsonConsumer = ConsumerFactory.CreateJsonConsumer(
+                _consumerKeySecret.Key,
+                _consumerKeySecret.Secret,
                 _consumerGroupId
             );
+            _jsonConsumer.StartConsuming(_publicTopic.Name);
+            
+            var payload = DoUntil.ResultOrTimespan(
+                () =>
+                {
+                    return _jsonConsumer.ConsumedMessages.Any() ? 
+                        _jsonConsumer.ConsumeOne<TestPayload>() : 
+                        null;
+                },
+                TimeSpan.FromSeconds(5)
+            );
 
-            var resultMessage = jsonConsumer.ConsumeOne<TestPayload>(_publicTopic.Name);
-            Assert.Equal(_testMessage, resultMessage);
+            Assert.Equal(_testMessage.Message, payload.Message);
         }
 
-        public class TestPayload
+        private class TestPayload
         {
             public string Message { get; set; }
         }
@@ -134,8 +157,8 @@ namespace KafkaJanitor.IntegrationTests
 
         public void Dispose()
         {
-//            _kafkaClient.Topics.DeleteAsync(_publicTopic.Name).Wait();
-
+            _kafkaClient.Topics.DeleteAsync(_publicTopic.Name).Wait();
+            _jsonConsumer.Dispose();
             // delete permission stuff?
         }
     }
