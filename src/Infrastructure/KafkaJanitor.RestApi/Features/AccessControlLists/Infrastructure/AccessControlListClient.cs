@@ -24,17 +24,15 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure
             var serviceAccountIdAsInt = Convert.ToInt64(serviceAccountId);
             // Topic
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", prefix));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", $"pub.{prefix}."));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", prefix));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", prefix));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", "pub."));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "DESCRIBE", prefix));
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "DESCRIBE-CONFIGS", prefix));
             
             // Public topics
-            const string PUBLIC_TOPIC_PREFIX = "pub.";
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", PUBLIC_TOPIC_PREFIX + prefix));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", PUBLIC_TOPIC_PREFIX));
+            const string PUBLIC_TOPIC_PREFIX = "pub";
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", $"{PUBLIC_TOPIC_PREFIX}.{prefix}."));
+            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", $"{PUBLIC_TOPIC_PREFIX}."));
             
             // ConsumerGroup
             await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", "", prefix));
