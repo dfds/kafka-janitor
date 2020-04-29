@@ -1,33 +1,59 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Confluent.Kafka;
 using Newtonsoft.Json;
 
 namespace KafkaClient
 {
-    public class JsonConsumer
+    public class JsonConsumer : IDisposable
     {
+        public List<string> ConsumedMessages = new List<string>();
         private ConsumerBuilder<string, string> _consumerBuilder;
+        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationToken _token;
 
-        public JsonConsumer(ConsumerBuilder<string,string> consumerBuilder)
+        public JsonConsumer(ConsumerBuilder<string, string> consumerBuilder)
         {
             _consumerBuilder = consumerBuilder;
+            _cancellationTokenSource = new CancellationTokenSource();
+            _token = _cancellationTokenSource.Token;
         }
 
-        public T ConsumeOne<T>(string topicName)
+        public void StartConsuming(string topicName)
         {
-            using (var consumer = _consumerBuilder.Build())
-            {
-                consumer.Subscribe(topicName);
+            Task.Run(() =>
+                {
+                    using (var consumer = _consumerBuilder.Build())
+                    {
+                        ConsumeResult<string, string> consumeResult;
+                        consumer.Subscribe(topicName);
+                        while (true)
+                        {
+                            consumeResult = consumer.Consume(_token);
+                            ConsumedMessages.Add(consumeResult.Message.Value);
 
-                var consumeResult = consumer.Consume(TimeSpan.FromSeconds(5));
+                            consumer.Commit(consumeResult);
+                        } 
+                    }
+                },
+                _token
+            );
+        }
 
-                
-                var result = JsonConvert.DeserializeObject<T>(consumeResult.Message.Value);
+        public T ConsumeOneOrDefault<T>()
+        {
+            var result = JsonConvert.DeserializeObject<T>(ConsumedMessages.First());
+            ConsumedMessages.Remove(ConsumedMessages.First());
+            return result;
+        
+        }
 
-                consumer.Commit(consumeResult);
-                
-                return result;
-            }
+        public void Dispose()
+        {
+            _cancellationTokenSource.Cancel();
         }
     }
 }
