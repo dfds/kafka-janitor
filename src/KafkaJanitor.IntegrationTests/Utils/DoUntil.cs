@@ -22,7 +22,7 @@ namespace KafkaJanitor.IntegrationTests.Utils
                 }
             } while (result == null && DateTime.Now < endTime);
 
-            return result;
+            return (TResult)result;
         }
         
         
@@ -42,7 +42,7 @@ namespace KafkaJanitor.IntegrationTests.Utils
                 }
             } while (result == null && DateTime.Now < endTime);
 
-            return result;
+            return (TResult)result;
         }
     }
     
