@@ -17,6 +17,7 @@ spec:
   template:
     metadata:
       labels:
+        logging_dfds_cloud_format_json: "true"
         app: kafka-janitor
         project: selfservice
         department: devex
