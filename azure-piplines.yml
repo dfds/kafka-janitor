@@ -1,30 +1,39 @@
 name: $(Build.BuildId)
-pool:
-  vmImage: 'ubuntu-latest'
 trigger:
   - master
 
-steps:
-  - task: UseDotNet@2
-    displayName: 'Install .NET Core sdk'
-    inputs:
-      packageType: sdk
-      version: 3.1.100
-      installationPath: $(Agent.ToolsDirectory)/dotnet
-  - bash: |
-      make release BUILD_NUMBER=$(Build.BuildId)
-    env:
-      AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
-    displayName: 'Build, create and upload container image'
+# Default agent pool to use for build pipeline
+pool:
+  vmImage: 'ubuntu-latest'
 
-  - bash: |
-      chmod +x alcide.sh
-      ./alcide.sh k8s/deployment.yml
-      ./alcide.sh k8s/service.yml
-    displayName: 'Run Alcide scans'
+stages:
+# Continuous Integration steps
+- stage: CI
+  displayName: 'Continuous Integration'
+  jobs:
+  - job: Validate   
+   # Validate pipeline / group variables
+    steps:
+      - task: UseDotNet@2
+        displayName: 'Install .NET Core sdk'
+        inputs:
+          packageType: sdk
+          version: 3.1.100
+          installationPath: $(Agent.ToolsDirectory)/dotnet
+      - bash: |
+          make release BUILD_NUMBER=$(Build.BuildId)
+        env:
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+        displayName: 'Build, create and upload container image'
 
-  - task: PublishBuildArtifacts@1
-    displayName: "Publish Artifact: k8s manifests"
-    inputs:
-      PathtoPublish: k8s
-      ArtifactName: manifests
+      - bash: |
+          chmod +x alcide.sh
+          ./alcide.sh k8s/deployment.yml
+          ./alcide.sh k8s/service.yml
+        displayName: 'Run Alcide scans'
+
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish Artifact: k8s manifests"
+        inputs:
+          PathtoPublish: k8s
+          ArtifactName: manifests
