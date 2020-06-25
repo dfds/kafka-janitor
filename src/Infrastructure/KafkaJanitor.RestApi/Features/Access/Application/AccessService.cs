@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure;
@@ -84,7 +83,7 @@ namespace KafkaJanitor.RestApi.Features.Access.Application
         public async Task<bool> ExpectedAmountOfAclsAreInPlace(string serviceAccountId)
         {
             var acls = await _accessControlListService.GetAclsForServiceAccount(serviceAccountId);
-            var expectedAclCount = 14;
+            var expectedAclCount = AccessControlLists.Domain.Models.AccessControlLists.AclTemplateCount;
             return acls.Count() == expectedAclCount;
         }
 

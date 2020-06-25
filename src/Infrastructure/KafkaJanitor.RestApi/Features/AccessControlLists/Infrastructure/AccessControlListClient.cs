@@ -7,8 +7,6 @@ using Tika.RestClient.Features.Acls.Models;
 
 namespace KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure
 {
-
-    
     public class AccessControlListClient : IAccessControlListClient
     {
         private readonly IRestClient _tikaClient;
@@ -18,29 +16,23 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure
             _tikaClient = tikaClient;
         }
 
-
         public async Task CreateAclsForServiceAccount(string serviceAccountId, string prefix)
         {
-            var serviceAccountIdAsInt = Convert.ToInt64(serviceAccountId);
-            // Topic
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", prefix));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", $"pub.{prefix}."));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", prefix));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", prefix));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", "pub."));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "DESCRIBE", prefix));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "DESCRIBE-CONFIGS", prefix));
+            var allAcls = Domain.Models.AccessControlLists.GetAllAcls(serviceAccountId, prefix);
+            foreach (var acl in allAcls)
+            {
+                await _tikaClient.Acls.CreateAsync(acl);
+            }
+        }
 
-            // ConsumerGroup
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", "", prefix));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", "", prefix));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, true, "READ", "", prefix));
-            
-            // DENY
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, false, "alter"));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, false, "alter-configs"));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, false, "cluster-action"));
-            await _tikaClient.Acls.CreateAsync(new AclCreateDelete(serviceAccountIdAsInt, false, "create", "'*'"));
+        public async Task DeleteAclsForServiceAccount(string serviceAccountId, string prefix)
+        {
+            var allAcls = Domain.Models.AccessControlLists.GetAllAcls(serviceAccountId, prefix);
+
+            foreach (var acl in allAcls)
+            {
+                await _tikaClient.Acls.DeleteAsync(acl);
+            }
         }
 
         public async Task<IEnumerable<Acl>> GetAclsForServiceAccount(string serviceAccountId)
