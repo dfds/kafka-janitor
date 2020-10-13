@@ -182,3 +182,7 @@ Contributions are what make the open source community such an amazing place to b
 ## License
 
 Distributed under the MIT License.
+
+## Deployment prerequisites
+
+If the scoped service account is missing for deployment, see https://wiki.dfds.cloud/en/teams/devex/selfservice/Kubernetes-selfservice-deployment-setup
