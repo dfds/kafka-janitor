@@ -81,7 +81,7 @@ spec:
             cpu: "100m"
           limits:
             memory: "128Mi"
-            cpu: "400m"
+            cpu: "700m"
         env:
         - name: TIKA_CCLOUD_CLUSTER_ID
           value: $(TIKA_CCLOUD_CLUSTER_ID)
