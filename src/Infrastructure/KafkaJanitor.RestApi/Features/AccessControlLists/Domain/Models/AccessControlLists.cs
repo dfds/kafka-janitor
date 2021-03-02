@@ -38,6 +38,7 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Domain.Models
             return new[]
             {
                 new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", $"{PUB_DOT}{prefix}."),
+                new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", $"{PUB_DOT}{prefix}."),
                 new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", prefix),
                 new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", prefix),
                 new AclCreateDelete(serviceAccountIdAsInt, true, "READ", prefix),
