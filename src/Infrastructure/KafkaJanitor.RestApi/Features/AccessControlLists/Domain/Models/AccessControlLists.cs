@@ -30,7 +30,7 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Domain.Models
                 // For root-id.*
                 new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", "", prefix),
                 new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", "", prefix),
-                new AclCreateDelete(serviceAccountIdAsInt, true, "READ", "", prefix)
+                new AclCreateDelete(serviceAccountIdAsInt, true, "READ", "", prefix),
                     
                 // For connect-rootid.*
                 new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", "", $"connect-{prefix}"),
