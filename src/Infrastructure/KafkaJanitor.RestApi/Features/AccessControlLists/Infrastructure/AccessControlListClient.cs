@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tika.RestClient;
+using Tika.RestClient.Factories;
 using Tika.RestClient.Features.Acls.Models;
 
 namespace KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure
