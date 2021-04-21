@@ -7,7 +7,7 @@ namespace KafkaJanitor.RestApi.Features.ApiKeys
 {
     public interface IApiKeyClient
     {
-        Task<ApiKey> CreateApiKeyPair(ServiceAccount serviceAccount);
-        Task<IEnumerable<ApiKey>> GetApiKeyPairsForServiceAccount(string serviceAccountId);
+        Task<ApiKey> CreateApiKeyPair(ServiceAccount serviceAccount, string clusterId = null);
+        Task<IEnumerable<ApiKey>> GetApiKeyPairsForServiceAccount(string serviceAccountId, string clusterId = null);
     }
 }

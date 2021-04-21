@@ -41,5 +41,6 @@ namespace KafkaJanitor.RestApi.Features.Access.Infrastructure
         public string CapabilityId { get; set; }
         public string CapabilityRootId { get; set; }
         public string TopicPrefix { get; set; }
+        public string ClusterId { get; set; }
     }
 }

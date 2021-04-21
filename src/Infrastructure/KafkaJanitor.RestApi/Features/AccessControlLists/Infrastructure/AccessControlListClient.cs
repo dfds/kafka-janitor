@@ -17,29 +17,29 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure
             _tikaClient = tikaClient;
         }
 
-        public async Task CreateAclsForServiceAccount(string serviceAccountId, string prefix)
+        public async Task CreateAclsForServiceAccount(string serviceAccountId, string prefix, string clusterId = null)
         {
             var allAcls = Domain.Models.AccessControlLists.GetAllAcls(serviceAccountId, prefix);
             foreach (var acl in allAcls)
             {
-                await _tikaClient.Acls.CreateAsync(acl);
+                await _tikaClient.Acls.CreateAsync(acl, clusterId);
             }
         }
 
-        public async Task DeleteAclsForServiceAccount(string serviceAccountId, string prefix)
+        public async Task DeleteAclsForServiceAccount(string serviceAccountId, string prefix, string clusterId = null)
         {
             var allAcls = Domain.Models.AccessControlLists.GetAllAcls(serviceAccountId, prefix);
 
             foreach (var acl in allAcls)
             {
-                await _tikaClient.Acls.DeleteAsync(acl);
+                await _tikaClient.Acls.DeleteAsync(acl, clusterId);
             }
         }
 
-        public async Task<IEnumerable<Acl>> GetAclsForServiceAccount(string serviceAccountId)
+        public async Task<IEnumerable<Acl>> GetAclsForServiceAccount(string serviceAccountId, string clusterId = null)
         {
             var serviceAccountIdAsInt = Convert.ToInt64(serviceAccountId);
-            var results = await _tikaClient.Acls.GetAllAsync();
+            var results = await _tikaClient.Acls.GetAllAsync(clusterId);
             return results.Where(acl => acl.ServiceAccountId == serviceAccountIdAsInt);
         }
     }

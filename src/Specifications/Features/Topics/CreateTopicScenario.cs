@@ -56,7 +56,7 @@ namespace Specifications.Features.Topics
 
         private async Task Then_it_can_be_found_in_the_topic_list()
         {
-            var topics = await restClient.Topics.GetAllAsync();
+            var topics = await restClient.Topics.GetAllAsync(null);
 
             topics.Single(t => t.Name == topicName);
         }

@@ -7,7 +7,8 @@ namespace KafkaJanitor.RestApi.Features.Access.Application
     {
         Task ProvideAccess(
             Capability capability,
-            string topicPrefix
+            string topicPrefix,
+            string clusterId = null
         );
     }
 }

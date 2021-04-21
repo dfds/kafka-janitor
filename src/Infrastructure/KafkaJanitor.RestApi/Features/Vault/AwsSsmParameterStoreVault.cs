@@ -27,14 +27,14 @@ namespace KafkaJanitor.RestApi.Features.Vault
                 })
             });
         }
-        public async Task AddApiCredentials(Capability capability, ApiCredentials apiCredentials)
+        public async Task AddApiCredentials(Capability capability, ApiCredentials apiCredentials, string clusterId)
         {
             var ssmClient = new AmazonSimpleSystemsManagementClient(RegionEndpoint.EUCentral1);
 
             await ssmClient.PutParameterAsync(new PutParameterRequest
             {
                 Type = ParameterType.SecureString,
-                Name = $"/capabilities/{capability.RootId}/kafka/credentials",
+                Name = $"/capabilities/{capability.RootId}/kafka/{clusterId}/credentials",
                 Tier = ParameterTier.Standard,
                 Value = JsonConvert.SerializeObject(new
                 {
@@ -45,7 +45,8 @@ namespace KafkaJanitor.RestApi.Features.Vault
                 {
                     new Tag{Key = "capabilityName",Value = capability.Name},
                     new Tag{Key = "capabilityId",Value = capability.Id},
-                    new Tag{Key = "capabilityRootId",Value = capability.RootId}
+                    new Tag{Key = "capabilityRootId",Value = capability.RootId},
+                    new Tag{Key = "createdBy",Value = "Kafka-Janitor"}
                 }
             });
         }

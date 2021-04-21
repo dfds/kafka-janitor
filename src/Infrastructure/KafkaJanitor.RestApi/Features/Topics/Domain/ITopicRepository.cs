@@ -6,11 +6,11 @@ namespace KafkaJanitor.RestApi.Features.Topics.Domain
 {
     public interface ITopicRepository
     {
-        Task<IEnumerable<Topic>> GetAll();
+        Task<IEnumerable<Topic>> GetAll(string clusterId = null);
 
-        Task<Topic> DescribeAsync(string topicName);
-        Task Add(Topic topic);
+        Task<Topic> DescribeAsync(string topicName, string clusterId = null);
+        Task Add(Topic topic, string clusterId = null);
 
-        Task<bool> Exists(string topicName);
+        Task<bool> Exists(string topicName, string clusterId = null);
     }
 }
