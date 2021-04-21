@@ -27,7 +27,8 @@ namespace KafkaJanitor.RestApi.Features.Access.Infrastructure
             
             await _accessService.ProvideAccess(
                 capability, 
-                input.TopicPrefix
+                input.TopicPrefix,
+                input.ClusterId
             );
          
             return Ok();

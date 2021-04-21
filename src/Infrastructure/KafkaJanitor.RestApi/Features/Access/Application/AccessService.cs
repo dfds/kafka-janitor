@@ -50,12 +50,12 @@ namespace KafkaJanitor.RestApi.Features.Access.Application
                 serviceAccount = await _serviceAccountClient.GetServiceAccount(capability, clusterId);
             }
 
-            if (!await ExpectedAmountOfAclsAreInPlace(serviceAccount.Id))
+            if (!await ExpectedAmountOfAclsAreInPlace(serviceAccount.Id, clusterId))
             {
                 await _accessControlListService.CreateAclsForServiceAccount(serviceAccount.Id, topicPrefix, clusterId);
             }
 
-            if (!await AtLeastOneApiKeyExists(serviceAccount.Id))
+            if (!await AtLeastOneApiKeyExists(serviceAccount.Id, clusterId))
             {
                 await CreateAndStoreApiKeyPair(
                     capability, 
