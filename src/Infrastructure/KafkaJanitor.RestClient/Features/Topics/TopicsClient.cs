@@ -37,12 +37,12 @@ namespace KafkaJanitor.RestClient.Features.Topics
 
         public async Task<IEnumerable<Topic>> GetAllAsync(string clusterId)
         {
-            var uri = new Uri(TOPICS_ROUTE, UriKind.Relative);
+            var uri = new Uri(_httpClient.BaseAddress + TOPICS_ROUTE, UriKind.Absolute);
             var builder = new UriBuilder(uri);
             var query = HttpUtility.ParseQueryString(builder.Query);
             query["clusterId"] = clusterId;
             builder.Query = query.ToString();
-            
+
             var httpResponseMessage = await _httpClient.GetAsync(
                 builder.Uri
             );
