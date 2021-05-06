@@ -61,7 +61,8 @@ namespace KafkaJanitor.RestApi
             // Enablers
             var shouldStartMetricHostedService = Configuration["KAFKAJANITOR_START_METRIC_SERVER"] != "false";
             services.AddMetrics(shouldStartMetricHostedService);
-            services.ConfigureHealthChecks();
+            var enableTikaHealthCheck = Configuration["KAFKAJANITOR_VAULT_HEALTHCHECK"] != "false";
+            services.ConfigureHealthChecks(enableTikaHealthCheck);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

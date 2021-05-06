@@ -17,7 +17,7 @@ namespace KafkaJanitor.RestApi.Features.Vault
             await ssmClient.PutParameterAsync(new PutParameterRequest
             {
                 Type = ParameterType.SecureString,
-                Name = $"/capabilities/HEALTH_CHECK_DUMMY/kafka/credentials",
+                Name = $"/capabilities/HEALTH_CHECK_DUMMY/kafka/test-9999/credentials",
                 Tier = ParameterTier.Standard,
                 Overwrite = true,
                 Value = JsonConvert.SerializeObject(new
