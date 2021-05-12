@@ -7,12 +7,16 @@ namespace KafkaJanitor.RestApi.Enablers.PrometheusHealthCheck
 {
     public static class HealthChecks
     {
-        public static IHealthChecksBuilder AddOurChecks(this IHealthChecksBuilder healthChecksBuilder)
+        public static IHealthChecksBuilder AddOurChecks(this IHealthChecksBuilder healthChecksBuilder, bool enableTikaHealthCheck)
         {
             healthChecksBuilder
                 .AddCheck("assembly", () => HealthCheckResult.Healthy())
-                .AddCheck<TikaHealthCheck>("Tika")
                 .AddCheck<VaultHealthCheck>("Vault");
+
+            if (enableTikaHealthCheck)
+            {
+                healthChecksBuilder.AddCheck<TikaHealthCheck>("Tika");
+            }
 
             return healthChecksBuilder;
         }

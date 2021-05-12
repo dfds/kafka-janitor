@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using KafkaJanitor.RestClient.Features.Topics.Models;
 using Newtonsoft.Json;
 
@@ -34,10 +35,16 @@ namespace KafkaJanitor.RestClient.Features.Topics
             );
         }
 
-        public async Task<IEnumerable<Topic>> GetAllAsync()
+        public async Task<IEnumerable<Topic>> GetAllAsync(string clusterId)
         {
+            var uri = new Uri(_httpClient.BaseAddress + TOPICS_ROUTE, UriKind.Absolute);
+            var builder = new UriBuilder(uri);
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query["clusterId"] = clusterId;
+            builder.Query = query.ToString();
+
             var httpResponseMessage = await _httpClient.GetAsync(
-                new Uri(TOPICS_ROUTE, UriKind.Relative)
+                builder.Uri
             );
 
             var content = await httpResponseMessage.Content.ReadAsStringAsync();
@@ -47,10 +54,16 @@ namespace KafkaJanitor.RestClient.Features.Topics
             return topics;
         }
         
-        public async Task<Topic> DescribeAsync(string topicName)
+        public async Task<Topic> DescribeAsync(string topicName, string clusterId)
         {
+            var uri = new Uri(TOPICS_ROUTE + topicName, UriKind.Relative);
+            var builder = new UriBuilder(uri);
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query["clusterId"] = clusterId;
+            builder.Query = query.ToString();
+
             var httpResponseMessage = await _httpClient.GetAsync(
-                new Uri(TOPICS_ROUTE + topicName, UriKind.Relative)
+                builder.Uri
             );
             httpResponseMessage.EnsureSuccessStatusCode();
 

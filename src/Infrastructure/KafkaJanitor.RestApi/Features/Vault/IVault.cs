@@ -7,6 +7,6 @@ namespace KafkaJanitor.RestApi.Features.Vault
     public interface IVault
     {
         Task EnsureConnection();
-        Task AddApiCredentials(Capability capability, ApiCredentials apiCredentials);
+        Task AddApiCredentials(Capability capability, ApiCredentials apiCredentials, string clusterId = null);
     }
 }

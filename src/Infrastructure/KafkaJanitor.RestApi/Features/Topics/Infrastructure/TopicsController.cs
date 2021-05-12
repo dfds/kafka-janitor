@@ -18,15 +18,15 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
 
 
         [HttpGet("")]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync([FromQuery] string clusterId = null)
         {
-            var topics = await _topicRepository.GetAll();
+            var topics = await _topicRepository.GetAll(clusterId);
 
             return Ok(topics);
         }
 
         [HttpGet("{topicName}")]
-        public async Task<IActionResult> DescribeAsync([FromRoute] string topicName)
+        public async Task<IActionResult> DescribeAsync([FromRoute] string topicName, [FromQuery] string clusterId = null)
         {
             var topics = await _topicRepository.DescribeAsync(topicName);
 
@@ -36,7 +36,7 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
         [HttpPost("")]
         public async Task<IActionResult> CreateAsync([FromBody] Topic input)
         {
-            if (await _topicRepository.Exists(input.Name))
+            if (await _topicRepository.Exists(input.Name, input.ClusterId))
             {
                 return Conflict(new
                 {
@@ -44,7 +44,7 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
                 });
             }
 
-            await _topicRepository.Add(input);
+            await _topicRepository.Add(input, input.ClusterId);
 
             return Ok(input);
         }

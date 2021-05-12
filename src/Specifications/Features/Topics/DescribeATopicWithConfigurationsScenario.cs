@@ -64,7 +64,7 @@ namespace Specifications.Features.Topics
 
         private async Task Then_the_topic_can_be_described()
         {
-            var topicDescription = await restClient.Topics.DescribeAsync(topicName);
+            var topicDescription = await restClient.Topics.DescribeAsync(topicName, null);
 
 
             foreach (var configuration in _topicToCreate.Configurations)

@@ -8,8 +8,8 @@ namespace KafkaJanitor.RestClient.Features.Topics
     {
         Task CreateAsync(Topic input);
 
-        Task<IEnumerable<Topic>> GetAllAsync();
+        Task<IEnumerable<Topic>> GetAllAsync(string clusterId);
 
-        Task<Topic> DescribeAsync(string topicName);
+        Task<Topic> DescribeAsync(string topicName, string clusterId);
     }
 }

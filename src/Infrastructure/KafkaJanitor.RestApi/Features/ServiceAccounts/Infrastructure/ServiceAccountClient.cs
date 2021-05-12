@@ -14,17 +14,17 @@ namespace KafkaJanitor.RestApi.Features.ServiceAccounts.Infrastructure
         {
             _tikaClient = tikaClient;
         }
-        public async Task<ServiceAccount> CreateServiceAccount(Capability capability)
+        public async Task<ServiceAccount> CreateServiceAccount(Capability capability, string clusterId = null)
         {
             return await _tikaClient.ServiceAccounts.CreateAsync(new ServiceAccountCreateCommand
             {
                 name = $"{capability.Name}",
                 description = "Creating with TikaService using KafkaJanitor"
-            });
+            }, clusterId);
         }
-        public async Task<ServiceAccount> GetServiceAccount(Capability capability)
+        public async Task<ServiceAccount> GetServiceAccount(Capability capability, string clusterId = null)
         {
-            var results = await _tikaClient.ServiceAccounts.GetAllAsync();
+            var results = await _tikaClient.ServiceAccounts.GetAllAsync(clusterId);
             return results.Single(sa => sa.Name == $"{capability.Name}_sa");
         }
     }

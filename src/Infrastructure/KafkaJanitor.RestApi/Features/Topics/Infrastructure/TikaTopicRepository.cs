@@ -18,16 +18,16 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
         {
             _tikaClient = tikaClient;
         }
-        public async Task<IEnumerable<Topic>> GetAll()
+        public async Task<IEnumerable<Topic>> GetAll(string clusterId = null)
         {
-            var topics = await _tikaClient.Topics.GetAllAsync();
+            var topics = await _tikaClient.Topics.GetAllAsync(clusterId);
             return topics.Select(val => new Topic {Name = val});
         }
 
 
-        public async Task<Topic> DescribeAsync(string topicName)
+        public async Task<Topic> DescribeAsync(string topicName, string clusterId = null)
         {
-            var topicDescription = await _tikaClient.Topics.DescribeAsync(topicName);
+            var topicDescription = await _tikaClient.Topics.DescribeAsync(topicName, clusterId);
 
             var topic = new Topic
             {
@@ -41,7 +41,7 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
             return topic;
         }
 
-        public async Task Add(Topic topic)
+        public async Task Add(Topic topic, string clusterId = null)
         {
             var topicCreate = TopicCreate.Create(topic.Name, topic.Partitions);
             
@@ -50,12 +50,12 @@ namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
                 var jsonElement = (JsonElement)value;
                 topicCreate = topicCreate.WithConfiguration(key, JsonObjectTools.GetValueFromJsonElement(jsonElement));
             }
-            await _tikaClient.Topics.CreateAsync(topicCreate);
+            await _tikaClient.Topics.CreateAsync(topicCreate, clusterId);
         }
 
-        public async Task<bool> Exists(string topicName)
+        public async Task<bool> Exists(string topicName, string clusterId = null)
         {
-            var topics = await _tikaClient.Topics.GetAllAsync();
+            var topics = await _tikaClient.Topics.GetAllAsync(clusterId);
             try
             {
                 topics.First(to => to.Equals(topicName));
