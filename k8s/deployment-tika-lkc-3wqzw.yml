@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tika-lkc-3wqzw
+  namespace: $(kubernetes-namespace)
+  labels:
+    project: selfservice
+    department: devex
+    app: tika
+    component: tika
+    version: 0.0.1
+    cluster: lkc-3wqzw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tika
+      cluster: lkc-3wqzw
+  template:
+    metadata:
+      labels:
+        logging_dfds_cloud_format_json: "false"
+        app: tika
+        project: selfservice
+        department: devex
+        cluster: lkc-3wqzw
+    spec:
+      priorityClassName: selfservice
+      containers:
+      - name: tika-lkc-3wqzw
+        image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/tika:361804
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "700m"
+        env:
+        - name: TIKA_CCLOUD_ENVIRONMENT_ID
+          value: env-3n19m
+        - name: TIKA_CCLOUD_CLUSTER_ID
+          value: lkc-3wqzw
+        - name: TIKA_CC_USER
+          valueFrom:
+            secretKeyRef:
+              name: tika-confluent
+              key: TIKA_CC_USER
+        - name: TIKA_CC_PASS
+          valueFrom:
+            secretKeyRef:
+              name: tika-confluent
+              key: TIKA_CC_PASS
