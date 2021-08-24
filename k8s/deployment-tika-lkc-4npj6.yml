@@ -28,7 +28,7 @@ spec:
       priorityClassName: selfservice
       containers:
       - name: tika-lkc-4npj6
-        image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/tika:361804
+        image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/tika:392560
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
@@ -56,3 +56,17 @@ spec:
             secretKeyRef:
               name: tika-confluent
               key: TIKA_CC_PASS
+        livenessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 60
+          timeoutSeconds: 5
+          httpGet:
+            port: 3000
+            path: /healthz
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
+          httpGet:
+            port: 3000
+            path: /healthz

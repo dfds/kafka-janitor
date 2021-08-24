@@ -5,13 +5,12 @@ namespace KafkaJanitor.RestApi.Enablers.PrometheusHealthCheck
     public static class DependencyInjection
     {
         public static IHealthChecksBuilder ConfigureHealthChecks(
-            this IServiceCollection services,
-            bool enableTikaHealthCheck
+            this IServiceCollection services
         )
         {
             var healthChecksBuilder = services
                 .AddHealthChecks()
-                .AddOurChecks(enableTikaHealthCheck);
+                .AddOurChecks();
             
             return healthChecksBuilder;
         }
