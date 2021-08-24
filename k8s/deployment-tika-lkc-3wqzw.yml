@@ -57,16 +57,16 @@ spec:
               name: tika-confluent
               key: TIKA_CC_PASS
         livenessProbe:
-          initialDelaySeconds: 15
+          initialDelaySeconds: 5
           periodSeconds: 60
-          timeoutSeconds: 10
+          timeoutSeconds: 5
           httpGet:
             port: 3000
             path: /healthz
         readinessProbe:
-          initialDelaySeconds: 15
-          periodSeconds: 20
-          timeoutSeconds: 10
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
           httpGet:
             port: 3000
             path: /healthz
