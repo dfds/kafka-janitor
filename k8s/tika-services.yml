@@ -9,10 +9,10 @@ metadata:
     department: devex
     component: tika
     cluster: lkc-4npj6
-    scrape-service-metrics: "false"
+    scrape-service-metrics: "true"
 spec:
   ports:
-  - name: external
+  - name: metrics
     port: 3000
     targetPort: 3000
   selector:
@@ -31,11 +31,11 @@ metadata:
     department: devex
     component: tika
     cluster: lkc-3wqzw
-    scrape-service-metrics: "false"
+    scrape-service-metrics: "true"
     release: kafka-multi-cluster-preview
 spec:
   ports:
-  - name: external
+  - name: metrics
     port: 3000
     targetPort: 3000
   selector:
