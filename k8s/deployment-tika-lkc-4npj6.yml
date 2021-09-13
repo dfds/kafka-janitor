@@ -28,7 +28,7 @@ spec:
       priorityClassName: selfservice
       containers:
       - name: tika-lkc-4npj6
-        image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/tika:392719
+        image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/tika:396206
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
@@ -43,7 +43,7 @@ spec:
             cpu: "700m"
         env:
         - name: TIKA_CCLOUD_ENVIRONMENT_ID
-          value: t4332        
+          value: t4332
         - name: TIKA_CCLOUD_CLUSTER_ID
           value: lkc-4npj6
         - name: TIKA_CC_USER
