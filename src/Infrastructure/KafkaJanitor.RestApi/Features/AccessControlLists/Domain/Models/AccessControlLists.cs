@@ -13,55 +13,53 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Domain.Models
     
         public static IEnumerable<AclCreateDelete> GetAllAcls(string serviceAccountId, string prefix)
         {
-            var serviceAccountIdAsInt = Convert.ToInt64(serviceAccountId);
-
             var allAcls =
-                GlobalAcls(serviceAccountIdAsInt)
-                    .Concat(TopicsAcls(serviceAccountIdAsInt, prefix))
-                    .Concat(ConsumerGroupAcls(serviceAccountIdAsInt, prefix));
+                GlobalAcls(serviceAccountId)
+                    .Concat(TopicsAcls(serviceAccountId, prefix))
+                    .Concat(ConsumerGroupAcls(serviceAccountId, prefix));
 
             return allAcls;
         }
 
-        public static AclCreateDelete[] ConsumerGroupAcls(long serviceAccountIdAsInt, string prefix)
+        public static AclCreateDelete[] ConsumerGroupAcls(string serviceAccountId, string prefix)
         {
             return new[]
             {
                 // For root-id.*
-                new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", "", prefix),
-                new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", "", prefix),
-                new AclCreateDelete(serviceAccountIdAsInt, true, "READ", "", prefix),
+                new AclCreateDelete(serviceAccountId, true, "WRITE", "", prefix),
+                new AclCreateDelete(serviceAccountId, true, "CREATE", "", prefix),
+                new AclCreateDelete(serviceAccountId, true, "READ", "", prefix),
                     
                 // For connect-rootid.*
-                new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", "", $"connect-{prefix}"),
-                new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", "", $"connect-{prefix}"),
-                new AclCreateDelete(serviceAccountIdAsInt, true, "READ", "", $"connect-{prefix}")
+                new AclCreateDelete(serviceAccountId, true, "WRITE", "", $"connect-{prefix}"),
+                new AclCreateDelete(serviceAccountId, true, "CREATE", "", $"connect-{prefix}"),
+                new AclCreateDelete(serviceAccountId, true, "READ", "", $"connect-{prefix}")
             };
         }
 
-        public static AclCreateDelete[] TopicsAcls(long serviceAccountIdAsInt, string prefix)
+        public static AclCreateDelete[] TopicsAcls(string serviceAccountId, string prefix)
         {
             return new[]
             {
-                new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", $"{PUB_DOT}{prefix}."),
-                new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", $"{PUB_DOT}{prefix}."),
-                new AclCreateDelete(serviceAccountIdAsInt, true, "WRITE", prefix),
-                new AclCreateDelete(serviceAccountIdAsInt, true, "CREATE", prefix),
-                new AclCreateDelete(serviceAccountIdAsInt, true, "READ", prefix),
-                new AclCreateDelete(serviceAccountIdAsInt, true, "DESCRIBE", prefix),
-                new AclCreateDelete(serviceAccountIdAsInt, true, "DESCRIBE-CONFIGS", prefix)
+                new AclCreateDelete(serviceAccountId, true, "WRITE", $"{PUB_DOT}{prefix}."),
+                new AclCreateDelete(serviceAccountId, true, "CREATE", $"{PUB_DOT}{prefix}."),
+                new AclCreateDelete(serviceAccountId, true, "WRITE", prefix),
+                new AclCreateDelete(serviceAccountId, true, "CREATE", prefix),
+                new AclCreateDelete(serviceAccountId, true, "READ", prefix),
+                new AclCreateDelete(serviceAccountId, true, "DESCRIBE", prefix),
+                new AclCreateDelete(serviceAccountId, true, "DESCRIBE-CONFIGS", prefix)
             };
         }
 
-        public static AclCreateDelete[] GlobalAcls(long serviceAccountIdAsInt)
+        public static AclCreateDelete[] GlobalAcls(string serviceAccountId)
         {
             return new[]
             {
-                new AclCreateDelete(serviceAccountIdAsInt, false, "alter"),
-                new AclCreateDelete(serviceAccountIdAsInt, false, "alter-configs"),
-                new AclCreateDelete(serviceAccountIdAsInt, false, "cluster-action"),
-                new AclCreateDelete(serviceAccountIdAsInt, false, "create", "'*'"),
-                new AclCreateDelete(serviceAccountIdAsInt, true, "READ", PUB_DOT)
+                new AclCreateDelete(serviceAccountId, false, "alter"),
+                new AclCreateDelete(serviceAccountId, false, "alter-configs"),
+                new AclCreateDelete(serviceAccountId, false, "cluster-action"),
+                new AclCreateDelete(serviceAccountId, false, "create", "'*'"),
+                new AclCreateDelete(serviceAccountId, true, "READ", PUB_DOT)
             };
         }
     }
