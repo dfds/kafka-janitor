@@ -38,9 +38,8 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Infrastructure
 
         public async Task<IEnumerable<Acl>> GetAclsForServiceAccount(string serviceAccountId, string clusterId = null)
         {
-            var serviceAccountIdAsInt = Convert.ToInt64(serviceAccountId);
             var results = await _tikaClient.Acls.GetAllAsync(clusterId);
-            return results.Where(acl => acl.UserId == serviceAccountIdAsInt);
+            return results.Where(acl => acl.ServiceAccountId == serviceAccountId);
         }
     }
 }
