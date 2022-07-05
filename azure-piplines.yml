@@ -32,8 +32,8 @@ stages:
           ./alcide.sh k8s/service.yml
         displayName: 'Run Alcide scans'
 
-    #  - task: PublishBuildArtifacts@1
-    #    displayName: "Publish Artifact: k8s manifests"
-    #    inputs:
-    #      PathtoPublish: k8s
-    #      ArtifactName: manifests
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish Artifact: k8s manifests"
+        inputs:
+          PathtoPublish: k8s
+          ArtifactName: manifests
