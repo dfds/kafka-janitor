@@ -12,7 +12,6 @@ namespace KafkaJanitor.RestClient.Features.Topics
     internal class TopicsClient : ITopicsClient
     {
         private readonly HttpClient _httpClient;
-        private const string TOPICS_ROUTE = "api/topics/";
 
         public TopicsClient(HttpClient httpClient)
         {
@@ -30,14 +29,14 @@ namespace KafkaJanitor.RestClient.Features.Topics
             );
 
             await _httpClient.PostAsync(
-                new Uri(TOPICS_ROUTE, UriKind.Relative),
+                new Uri("api/topics/", UriKind.Relative),
                 content
             );
         }
 
         public async Task<IEnumerable<Topic>> GetAllAsync(string clusterId)
         {
-            var uri = new Uri(_httpClient.BaseAddress + TOPICS_ROUTE, UriKind.Absolute);
+            var uri = new Uri(_httpClient.BaseAddress + "api/topics/", UriKind.Absolute);
             var builder = new UriBuilder(uri);
             var query = HttpUtility.ParseQueryString(builder.Query);
             query["clusterId"] = clusterId;
@@ -56,7 +55,7 @@ namespace KafkaJanitor.RestClient.Features.Topics
         
         public async Task<Topic> DescribeAsync(string topicName, string clusterId)
         {
-            var uri = new Uri(TOPICS_ROUTE + topicName, UriKind.Relative);
+            var uri = new Uri($"api/topics/{topicName}", UriKind.Relative);
             var builder = new UriBuilder(uri);
             var query = HttpUtility.ParseQueryString(builder.Query);
             query["clusterId"] = clusterId;
@@ -65,10 +64,10 @@ namespace KafkaJanitor.RestClient.Features.Topics
             var httpResponseMessage = await _httpClient.GetAsync(
                 builder.Uri
             );
+
             httpResponseMessage.EnsureSuccessStatusCode();
 
             var content = await httpResponseMessage.Content.ReadAsStringAsync();
-
             var topicDescription = JsonConvert.DeserializeObject<Topic>(content);
 
             return topicDescription;

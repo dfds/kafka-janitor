@@ -12,7 +12,6 @@ namespace KafkaJanitor.RestClient.Features.Access
     public class AccessClient : IAccessClient
     {
         private readonly HttpClient _httpClient;
-        private const string ACCESS_ROUTE = "api/access/";
 
         public AccessClient(HttpClient httpClient)
         {
@@ -31,7 +30,7 @@ namespace KafkaJanitor.RestClient.Features.Access
             );
 
             var httpResponseMessage = await _httpClient.PostAsync(
-                new Uri($"{ACCESS_ROUTE}request", UriKind.Relative),
+                new Uri("api/access/request", UriKind.Relative),
                 content
             );
 

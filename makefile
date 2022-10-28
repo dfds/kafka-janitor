@@ -28,3 +28,9 @@ container:
 
 release: container
 	chmod +x ./scripts/push_container_image.sh && ./scripts/push_container_image.sh $(IMAGE_NAME) $(BUILD_NUMBER)
+
+newmigration:
+	@echo "Enter name of migration (e.g. add-table-for-xxx):" && read && \
+		echo "-- $(shell date +'%4Y-%m-%d %H:%M:%S') : $$REPLY" > db/migrations/$(shell date +'%4Y%m%d%H%M%S')_$$REPLY.sql
+
+nm: newmigration

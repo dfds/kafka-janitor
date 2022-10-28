@@ -1,0 +1,19 @@
+  User:sa-l6x5nj | DENY       | CREATE           | TOPIC         | '*'                                   | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | READ             | TOPIC         | logistics-customshandl-yvkrg          | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | WRITE            | TOPIC         | logistics-customshandl-yvkrg          | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | CREATE           | TOPIC         | logistics-customshandl-yvkrg          | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | DESCRIBE         | TOPIC         | logistics-customshandl-yvkrg          | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | DESCRIBE_CONFIGS | TOPIC         | logistics-customshandl-yvkrg          | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | READ             | TOPIC         | pub.                                  | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | WRITE            | TOPIC         | pub.logistics-customshandl-yvkrg.     | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | CREATE           | TOPIC         | pub.logistics-customshandl-yvkrg.     | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | READ             | GROUP         | connect-logistics-customshandl-yvkrg  | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | WRITE            | GROUP         | connect-logistics-customshandl-yvkrg  | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | CREATE           | GROUP         | connect-logistics-customshandl-yvkrg  | PREFIXED      
+
+  User:sa-l6x5nj | ALLOW      | READ             | GROUP         | logistics-customshandl-yvkrg          | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | WRITE            | GROUP         | logistics-customshandl-yvkrg          | PREFIXED      
+  User:sa-l6x5nj | ALLOW      | CREATE           | GROUP         | logistics-customshandl-yvkrg          | PREFIXED      
+  User:sa-l6x5nj | DENY       | ALTER            | CLUSTER       | kafka-cluster                         | LITERAL       
+  User:sa-l6x5nj | DENY       | CLUSTER_ACTION   | CLUSTER       | kafka-cluster                         | LITERAL       
+  User:sa-l6x5nj | DENY       | ALTER_CONFIGS    | CLUSTER       | kafka-cluster                         | LITERAL       

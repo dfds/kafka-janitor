@@ -31,13 +31,8 @@ namespace KafkaJanitor.RestApi.Features.Access.Application
         }
 
 
-        public async Task ProvideAccess(
-            Capability capability,
-            string topicPrefix,
-            string clusterId = null
-        )
+        public async Task ProvideAccess(Capability capability, string topicPrefix, string clusterId = null)
         {
-            
             ServiceAccount serviceAccount;
 
             try

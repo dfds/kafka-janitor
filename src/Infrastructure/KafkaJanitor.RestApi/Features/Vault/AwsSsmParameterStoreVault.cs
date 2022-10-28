@@ -27,6 +27,7 @@ namespace KafkaJanitor.RestApi.Features.Vault
                 })
             });
         }
+        
         public async Task AddApiCredentials(Capability capability, ApiCredentials apiCredentials, string clusterId)
         {
             var ssmClient = new AmazonSimpleSystemsManagementClient(RegionEndpoint.EUCentral1);

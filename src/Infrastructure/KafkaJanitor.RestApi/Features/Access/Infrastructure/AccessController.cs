@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KafkaJanitor.RestApi.Features.Access.Infrastructure
 {
-    [Route(Routes.ACCESS_ROUTE)]
+    [Route("api/access/")]
     public class AccessController : ControllerBase
     {
         private readonly IAccessService _accessService;

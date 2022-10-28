@@ -30,17 +30,11 @@ namespace KafkaJanitor.RestApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            
             services.AddTransient<ITopicRepository, TikaTopicRepository>();
-
             services.AddTikaRestClient(Configuration);
-            
             services.AddTransient<IAccessControlListClient, AccessControlListClient>();
-            
             services.AddTransient<IServiceAccountClient, ServiceAccountClient>();
-
             services.AddTransient<IApiKeyClient, ApiKeyClient>();
-
             services.AddTransient<IVault>(o =>
             {
                 var vaultToUse = Configuration["KAFKAJANITOR_VAULT"];
@@ -68,15 +62,10 @@ namespace KafkaJanitor.RestApi
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseForwardedHeaders();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            
             app.UseHttpMetrics();
-            
             app.UsePrometheusHealthCheck();
         }
     }

@@ -7,8 +7,6 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Domain.Models
 {
     public static class AccessControlLists
     {
-          private const string PUB_DOT = "pub.";
-
         public static int AclTemplateCount => GetAllAcls("0", "").Count();
     
         public static IEnumerable<AclCreateDelete> GetAllAcls(string serviceAccountId, string prefix)
@@ -41,8 +39,8 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Domain.Models
         {
             return new[]
             {
-                new AclCreateDelete(serviceAccountId, true, "WRITE", $"{PUB_DOT}{prefix}."),
-                new AclCreateDelete(serviceAccountId, true, "CREATE", $"{PUB_DOT}{prefix}."),
+                new AclCreateDelete(serviceAccountId, true, "WRITE", $"pub.{prefix}."),
+                new AclCreateDelete(serviceAccountId, true, "CREATE", $"pub.{prefix}."),
                 new AclCreateDelete(serviceAccountId, true, "WRITE", prefix),
                 new AclCreateDelete(serviceAccountId, true, "CREATE", prefix),
                 new AclCreateDelete(serviceAccountId, true, "READ", prefix),
@@ -59,7 +57,7 @@ namespace KafkaJanitor.RestApi.Features.AccessControlLists.Domain.Models
                 new AclCreateDelete(serviceAccountId, false, "alter-configs"),
                 new AclCreateDelete(serviceAccountId, false, "cluster-action"),
                 new AclCreateDelete(serviceAccountId, false, "create", "'*'"),
-                new AclCreateDelete(serviceAccountId, true, "READ", PUB_DOT)
+                new AclCreateDelete(serviceAccountId, true, "READ", "pub.")
             };
         }
     }

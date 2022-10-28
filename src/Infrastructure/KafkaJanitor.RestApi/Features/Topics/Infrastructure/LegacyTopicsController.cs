@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KafkaJanitor.RestApi.Features.Topics.Infrastructure
 {
-    [Route(Routes.TOPICS_ROUTE)]
-    public class TopicsController : ControllerBase
+    [Route("api/topics/")]
+    public class LegacyTopicsController : ControllerBase
     {
         private readonly ITopicRepository _topicRepository;
 
 
-        public TopicsController(ITopicRepository topicRepository)
+        public LegacyTopicsController(ITopicRepository topicRepository)
         {
             _topicRepository = topicRepository;
         }
