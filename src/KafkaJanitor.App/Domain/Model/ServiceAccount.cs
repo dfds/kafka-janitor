@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using KafkaJanitor.App.Domain.Events;
 using static KafkaJanitor.App.Domain.Model.ACLEntryOperationType;
 using static KafkaJanitor.App.Domain.Model.ACLEntryPermissionType;
@@ -8,9 +6,12 @@ namespace KafkaJanitor.App.Domain.Model;
 
 public class ServiceAccount : AggregateRoot<ServiceAccountId>
 {
-    private readonly IList<ClusterApiKey> _clusterApiKeys = new List<ClusterApiKey>();
+    private readonly List<ClusterApiKey> _clusterApiKeys = null!;
+    private readonly List<AccessControlListEntry> _accessControlList = null!;
 
-    public ServiceAccount(ServiceAccountId id, CapabilityRootId capabilityRootId, IEnumerable<AccessControlListEntry> accessControlList) : base(id)
+    private ServiceAccount() { }
+
+    public ServiceAccount(ServiceAccountId id, CapabilityRootId capabilityRootId, IEnumerable<AccessControlListEntry> accessControlList, IEnumerable<ClusterApiKey> clusterApiKeys) : base(id)
     {
         if (capabilityRootId == null)
         {
@@ -18,11 +19,13 @@ public class ServiceAccount : AggregateRoot<ServiceAccountId>
         }
 
         CapabilityRootId = capabilityRootId;
-        AccessControlList = accessControlList;
+        _accessControlList = new List<AccessControlListEntry>(accessControlList);
+        _clusterApiKeys = new List<ClusterApiKey>(clusterApiKeys);
     }
 
-    public CapabilityRootId CapabilityRootId { get; private set; }
-    public IEnumerable<AccessControlListEntry> AccessControlList { get; private set; }
+    public CapabilityRootId CapabilityRootId { get; private set; } = null!;
+
+    public IEnumerable<AccessControlListEntry> AccessControlList => _accessControlList;
     public IEnumerable<ClusterApiKey> ClusterApiKeys => _clusterApiKeys;
 
     public bool HasApiKeyFor(ClusterId cluster) 
@@ -119,7 +122,8 @@ public class ServiceAccount : AggregateRoot<ServiceAccountId>
         var serviceAccount = new ServiceAccount(
             id: id,
             capabilityRootId: capabilityRootId,
-            accessControlList: acl
+            accessControlList: acl,
+            clusterApiKeys: Enumerable.Empty<ClusterApiKey>()
         );
 
         serviceAccount.Raise(new ServiceAccountHasBeenDefined
@@ -130,199 +134,61 @@ public class ServiceAccount : AggregateRoot<ServiceAccountId>
         return serviceAccount;
     }
 
-    private static IEnumerable<AccessControlListEntry> CreateDefaultAccessControlList(CapabilityRootId capabilityRootId)
+    public static AccessControlListEntry[] CreateDefaultAccessControlList(CapabilityRootId capabilityRootId)
     {
-        // deny create operations on all resource types
-        yield return AccessControlListEntry.CreateForTopicPrefix("'*'", Create, Deny);
-
-        // for all private topics
-        yield return AccessControlListEntry.CreateForTopicPrefix(capabilityRootId.ToString(), Read, Allow);
-        yield return AccessControlListEntry.CreateForTopicPrefix(capabilityRootId.ToString(), Write, Allow);
-        yield return AccessControlListEntry.CreateForTopicPrefix(capabilityRootId.ToString(), Create, Allow);
-        yield return AccessControlListEntry.CreateForTopicPrefix(capabilityRootId.ToString(), Describe, Allow);
-        yield return AccessControlListEntry.CreateForTopicPrefix(capabilityRootId.ToString(), DescribeConfigs, Allow);
-
-        // for all public topics
-        yield return AccessControlListEntry.CreateForTopicPrefix("pub.", Read, Allow);
-
-        // for own public topics
-        yield return AccessControlListEntry.CreateForTopicPrefix($"pub.{capabilityRootId}.", Write, Allow);
-        yield return AccessControlListEntry.CreateForTopicPrefix($"pub.{capabilityRootId}.", Create, Allow);
-
-        // for all connect groups
-        yield return AccessControlListEntry.CreateForGroupPrefix($"connect-{capabilityRootId}", Read, Allow);
-        yield return AccessControlListEntry.CreateForGroupPrefix($"connect-{capabilityRootId}", Write, Allow);
-        yield return AccessControlListEntry.CreateForGroupPrefix($"connect-{capabilityRootId}", Create, Allow);
-
-        // for all capability groups
-        yield return AccessControlListEntry.CreateForGroupPrefix(capabilityRootId.ToString(), Read, Allow);
-        yield return AccessControlListEntry.CreateForGroupPrefix(capabilityRootId.ToString(), Write, Allow);
-        yield return AccessControlListEntry.CreateForGroupPrefix(capabilityRootId.ToString(), Create, Allow);
-
-        // for cluster
-        yield return AccessControlListEntry.Create(
-            resourceType: ACLEntryResourceType.Cluster,
-            resourceName: "kafka-cluster",
-            patternType: ACLEntryPatternType.Literal,
-            operationType: Alter,
-            permissionType: Deny
-        );
-
-        yield return AccessControlListEntry.Create(
-            resourceType: ACLEntryResourceType.Cluster,
-            resourceName: "kafka-cluster",
-            patternType: ACLEntryPatternType.Literal,
-            operationType: AlterConfigs, 
-            permissionType: Deny
-        );
-
-        yield return AccessControlListEntry.Create(
-            resourceType: ACLEntryResourceType.Cluster,
-            resourceName: "kafka-cluster",
-            patternType: ACLEntryPatternType.Literal,
-            operationType: ClusterAction,
-            permissionType: Deny
-        );
-    }
-}
-
-public class ApiKeyHasBeenStoredInVault : IDomainEvent
-{
-    public string? ServiceAccountId { get; set; }
-    public string? ClusterApiKeyId { get; set; }
-}
-
-public class ClusterApiKey : Entity<ClusterApiKeyId>
-{
-    public ClusterApiKey(ClusterApiKeyId id, string userName, string password, string passwordChecksum, ClusterId clusterId, bool isStoredInVault) : base(id)
-    {
-        UserName = userName;
-        Password = password;
-        PasswordChecksum = passwordChecksum;
-        ClusterId = clusterId;
-        IsStoredInVault = isStoredInVault;
-    }
-
-    public string UserName { get; private set; }
-    public string Password { get; private set; }
-    public string PasswordChecksum { get; private set; }
-    public ClusterId ClusterId { get; private set; }
-    public bool IsStoredInVault { get; private set; }
-
-    public void Anonymize() => Password = "***";
-
-    public void MarkAsStoredInVault() => IsStoredInVault = true;
-
-    public ClusterApiKeyDescriptor ToDescriptor() 
-        => new ClusterApiKeyDescriptor(ClusterId, UserName, Password);
-
-    public static ClusterApiKey Create(string userName, string password, ClusterId clusterId)
-    {
-        var hash = SHA1.HashData(Encoding.UTF8.GetBytes(password));
-        var checksum = BitConverter
-            .ToString(hash)
-            .Replace("-", "");
-
-        return new ClusterApiKey(
-            id: ClusterApiKeyId.New(),
-            userName: userName,
-            password: password,
-            passwordChecksum: checksum,
-            clusterId: clusterId,
-            isStoredInVault: false
-        );
-    }
-}
-
-public class ClusterApiKeyId : ValueObject
-{
-    private readonly Guid _value;
-
-    private ClusterApiKeyId(Guid value)
-    {
-        _value = value;
-    }
-
-    protected override IEnumerable<object> GetEqualityComponents()
-    {
-        yield return _value;
-    }
-
-    public override string ToString() 
-        => _value.ToString();
-
-    public static ClusterApiKeyId Parse(string? text)
-    {
-        if (TryParse(text, out var id))
+        return new[]
         {
-            return id;
-        }
+            // deny create operations on all resource types
+            AccessControlListEntry.CreateForTopicPrefix("'*'", Create, Deny),
 
-        throw new FormatException($"Value \"{text}\" is not a valid api key id");
+            // for all private topics
+            AccessControlListEntry.CreateForTopicPrefix(capabilityRootId.ToString(), Read, Allow),
+            AccessControlListEntry.CreateForTopicPrefix(capabilityRootId.ToString(), Write, Allow),
+            AccessControlListEntry.CreateForTopicPrefix(capabilityRootId.ToString(), Create, Allow),
+            AccessControlListEntry.CreateForTopicPrefix(capabilityRootId.ToString(), Describe, Allow),
+            AccessControlListEntry.CreateForTopicPrefix(capabilityRootId.ToString(), DescribeConfigs, Allow),
+
+            // for all public topics
+            AccessControlListEntry.CreateForTopicPrefix("pub.", Read, Allow),
+
+            // for own public topics
+            AccessControlListEntry.CreateForTopicPrefix($"pub.{capabilityRootId}.", Write, Allow),
+            AccessControlListEntry.CreateForTopicPrefix($"pub.{capabilityRootId}.", Create, Allow),
+
+            // for all connect groups
+            AccessControlListEntry.CreateForGroupPrefix($"connect-{capabilityRootId}", Read, Allow),
+            AccessControlListEntry.CreateForGroupPrefix($"connect-{capabilityRootId}", Write, Allow),
+            AccessControlListEntry.CreateForGroupPrefix($"connect-{capabilityRootId}", Create, Allow),
+
+            // for all capability groups
+            AccessControlListEntry.CreateForGroupPrefix(capabilityRootId.ToString(), Read, Allow),
+            AccessControlListEntry.CreateForGroupPrefix(capabilityRootId.ToString(), Write, Allow),
+            AccessControlListEntry.CreateForGroupPrefix(capabilityRootId.ToString(), Create, Allow),
+
+            // for cluster
+            AccessControlListEntry.Create(
+                resourceType: ACLEntryResourceType.Cluster,
+                resourceName: "kafka-cluster",
+                patternType: ACLEntryPatternType.Literal,
+                operationType: Alter,
+                permissionType: Deny
+            ),
+
+            AccessControlListEntry.Create(
+                resourceType: ACLEntryResourceType.Cluster,
+                resourceName: "kafka-cluster",
+                patternType: ACLEntryPatternType.Literal,
+                operationType: AlterConfigs,
+                permissionType: Deny
+            ),
+
+            AccessControlListEntry.Create(
+                resourceType: ACLEntryResourceType.Cluster,
+                resourceName: "kafka-cluster",
+                patternType: ACLEntryPatternType.Literal,
+                operationType: ClusterAction,
+                permissionType: Deny
+            ),
+        };
     }
-
-    public static bool TryParse(string? text, out ClusterApiKeyId id)
-    {
-        if (Guid.TryParse(text, out var value))
-        {
-            id = new ClusterApiKeyId(value);
-            return true;
-        }
-
-        id = null!;
-        return false;
-    }
-
-    public static ClusterApiKeyId New() => new ClusterApiKeyId(Guid.NewGuid());
-
-    public static implicit operator Guid(ClusterApiKeyId id)
-        => id._value;
-
-    public static implicit operator ClusterApiKeyId(Guid id)
-        => new ClusterApiKeyId(id);
 }
-
-public class ClusterApiKeyHasBeenAssigned : IDomainEvent
-{
-    public string? ServiceAccountId { get; set; }
-    public string? ClusterApiKeyId { get; set; }
-}
-
-public class ClusterApiKeyDescriptor : ValueObject
-{
-    public ClusterApiKeyDescriptor(ClusterId clusterId, string userName, string password)
-    {
-        if (ClusterId is null)
-        {
-            throw new ArgumentNullException(nameof(password));
-        }
-
-        if (string.IsNullOrWhiteSpace(userName))
-        {
-            throw new ArgumentException("Value cannot be null or whitespace.", nameof(userName));
-        }
-
-        if (string.IsNullOrWhiteSpace(password))
-        {
-            throw new ArgumentException("Value cannot be null or whitespace.", nameof(password));
-        }
-
-        ClusterId = clusterId;
-        UserName = userName;
-        Password = password;
-    }
-
-    public string UserName { get; }
-    public string Password { get; }
-    public ClusterId ClusterId { get; }
-
-    protected override IEnumerable<object> GetEqualityComponents()
-    {
-        yield return ClusterId;
-        yield return UserName;
-        yield return Password;
-    }
-
-    public override string ToString() => $"{ClusterId}:{UserName}";
-}
-

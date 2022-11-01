@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.18.2" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -28,7 +29,9 @@
 
   <ItemGroup>
     <Folder Include="Builders\" />
+    <Folder Include="Comparers\" />
     <Folder Include="Domain\Model\" />
+    <Folder Include="Infrastructure\" />
     <Folder Include="Routes\" />
   </ItemGroup>
 

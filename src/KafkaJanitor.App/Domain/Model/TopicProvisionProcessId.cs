@@ -2,6 +2,7 @@ namespace KafkaJanitor.App.Domain.Model;
 
 public class TopicProvisionProcessId : ValueObject
 {
+    public static readonly TopicProvisionProcessId None = new TopicProvisionProcessId(Guid.Empty);
     private readonly Guid _value;
 
     private TopicProvisionProcessId(Guid value)

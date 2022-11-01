@@ -41,4 +41,10 @@ public class AccessControlListEntryId : ValueObject
 
     public static AccessControlListEntryId New()
         => new AccessControlListEntryId(Guid.NewGuid());
+
+    public static implicit operator AccessControlListEntryId(Guid value)
+        => new AccessControlListEntryId(value);
+
+    public static implicit operator Guid(AccessControlListEntryId id)
+        => id._value;
 }

@@ -69,7 +69,7 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
         _logger.LogDebug("Registering that service account {ServiceAccountId} has been created on all provisioning processes for a specific capability", serviceAccountId);
 
         var serviceAccount = await _serviceAccountRepository.Get(serviceAccountId);
-        var processes = await _provisioningProcessRepository.FindAllBy(serviceAccount.CapabilityRootId);
+        var processes = await _provisioningProcessRepository.FindAllActiveBy(serviceAccount.CapabilityRootId);
 
         // NOTE [jandr@2022-10-26]: this potentially mutates multiple aggregates withing the same transaction - but they are of the same type and as a compromise will do for now
         foreach (var process in processes)
@@ -104,7 +104,7 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
         // TODO [jandr@2022-10-26]: log
 
         var serviceAccount = await _serviceAccountRepository.Get(serviceAccountId);
-        var processes = await _provisioningProcessRepository.FindAllBy(serviceAccount.CapabilityRootId);
+        var processes = await _provisioningProcessRepository.FindAllActiveBy(serviceAccount.CapabilityRootId);
 
         // NOTE [jandr@2022-10-26]: this potentially mutates multiple aggregates withing the same transaction - but they are of the same type and as a compromise it will do for now
         foreach (var process in processes)

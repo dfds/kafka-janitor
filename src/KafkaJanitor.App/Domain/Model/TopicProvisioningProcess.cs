@@ -4,7 +4,7 @@ namespace KafkaJanitor.App.Domain.Model;
 
 public class TopicProvisioningProcess : AggregateRoot<TopicProvisionProcessId>
 {
-    public TopicProvisioningProcess(TopicProvisionProcessId id, TopicName requestedTopic, ClusterId clusterId, TopicPartition partitions, 
+    public TopicProvisioningProcess(TopicProvisionProcessId id, TopicName requestedTopic, CapabilityRootId capabilityRootId, ClusterId clusterId, TopicPartition partitions, 
         TopicRetention retention, bool isServiceAccountCreated, bool isServiceAccountGrantedAccess, bool isTopicProvisioned, bool isApiKeysCreated,
         bool areAllApiKeysStoredInVault, bool isCompleted) : base(id)
     {
@@ -16,6 +16,11 @@ public class TopicProvisioningProcess : AggregateRoot<TopicProvisionProcessId>
         if (requestedTopic == null)
         {
             throw new ArgumentNullException(nameof(requestedTopic));
+        }
+
+        if (capabilityRootId == null)
+        {
+            throw new ArgumentNullException(nameof(capabilityRootId));
         }
 
         if (clusterId == null)
@@ -34,6 +39,7 @@ public class TopicProvisioningProcess : AggregateRoot<TopicProvisionProcessId>
         }
 
         RequestedTopic = requestedTopic;
+        CapabilityRootId = capabilityRootId;
         ClusterId = clusterId;
         Partitions = partitions;
         Retention = retention;
@@ -50,7 +56,7 @@ public class TopicProvisioningProcess : AggregateRoot<TopicProvisionProcessId>
     public TopicPartition Partitions { get; private set; }
     public TopicRetention Retention { get; private set; }
     
-    public CapabilityRootId CapabilityRootId => RequestedTopic.CapabilityRootId;
+    public CapabilityRootId CapabilityRootId { get; private set; }
 
     public bool IsServiceAccountCreated { get; private set; }
     public bool IsServiceAccountGrantedAccess { get; private set; }
@@ -111,6 +117,7 @@ public class TopicProvisioningProcess : AggregateRoot<TopicProvisionProcessId>
         var instance = new TopicProvisioningProcess(
             id: TopicProvisionProcessId.New(),
             requestedTopic: requestedTopic,
+            capabilityRootId: requestedTopic.CapabilityRootId,
             clusterId: clusterId,
             partitions: partitions,
             retention: retention,

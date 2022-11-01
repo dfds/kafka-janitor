@@ -21,6 +21,7 @@
   <ItemGroup>
     <Folder Include="Configurations\" />
     <Folder Include="Domain\Application\" />
+    <Folder Include="Domain\Exceptions\" />
     <Folder Include="Infrastructure\Api\" />
   </ItemGroup>
 

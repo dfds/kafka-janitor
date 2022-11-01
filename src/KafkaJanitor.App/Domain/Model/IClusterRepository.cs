@@ -1,6 +1,4 @@
-﻿using KafkaJanitor.App.Domain.Application;
-
-namespace KafkaJanitor.App.Domain.Model;
+﻿namespace KafkaJanitor.App.Domain.Model;
 
 public interface IClusterRepository
 {

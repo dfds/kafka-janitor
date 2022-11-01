@@ -4,6 +4,11 @@ namespace KafkaJanitor.App.Domain.Model;
 
 public class AccessControlListEntryDescriptor : ValueObject
 {
+    private AccessControlListEntryDescriptor()
+    {
+        
+    }
+
     public AccessControlListEntryDescriptor(ACLEntryResourceType resourceType, string resourceName, ACLEntryPatternType patternType, 
         ACLEntryOperationType operationType, ACLEntryPermissionType permissionType)
     {

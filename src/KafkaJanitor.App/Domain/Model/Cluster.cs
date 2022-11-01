@@ -10,4 +10,9 @@ public class Cluster : AggregateRoot<ClusterId>
 
     public string Name { get; private set; }
     public string BootstrapEndpoint { get; private set; }
+
+    public override string ToString()
+    {
+        return Id.ToString();
+    }
 }

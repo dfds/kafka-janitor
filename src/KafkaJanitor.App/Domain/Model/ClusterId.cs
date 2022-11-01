@@ -1,6 +1,6 @@
 ﻿namespace KafkaJanitor.App.Domain.Model;
 
-public class ClusterId : ValueObject
+public class ClusterId : ValueObject, IComparable<ClusterId?>
 {
     private const string ValueOfNone = ":none:";
     public static readonly ClusterId None = new ClusterId(ValueOfNone);
@@ -50,5 +50,20 @@ public class ClusterId : ValueObject
         }
 
         return true;
+    }
+
+    public int CompareTo(ClusterId? other)
+    {
+        if (ReferenceEquals(this, other))
+        {
+            return 0;
+        }
+
+        if (ReferenceEquals(null, other))
+        {
+            return 1;
+        }
+
+        return string.Compare(_value, other._value, StringComparison.Ordinal);
     }
 }
