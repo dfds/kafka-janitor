@@ -1,5 +1,6 @@
 ﻿using Dafda.Consuming;
 using KafkaJanitor.App.Domain.Application;
+using KafkaJanitor.App.Domain.Events;
 using KafkaJanitor.App.Domain.Model;
 
 namespace KafkaJanitor.App.Domain.Policies;

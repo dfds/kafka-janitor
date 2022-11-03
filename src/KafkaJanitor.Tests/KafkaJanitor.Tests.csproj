@@ -31,7 +31,7 @@
     <Folder Include="Builders\" />
     <Folder Include="Comparers\" />
     <Folder Include="Domain\Model\" />
-    <Folder Include="Infrastructure\" />
+    <Folder Include="Infrastructure\ConfluentCloud\" />
     <Folder Include="Routes\" />
   </ItemGroup>
 

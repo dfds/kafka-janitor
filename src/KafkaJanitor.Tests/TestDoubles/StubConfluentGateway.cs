@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using KafkaJanitor.App.Domain.Model;
 
@@ -21,20 +22,20 @@ public class StubConfluentGateway : IConfluentGateway
         throw new System.NotImplementedException();
     }
 
-    public Task CreateTopic(ClusterId clusterId, TopicName topic, TopicPartition partition, TopicRetention retention)
+    public Task CreateTopic(ClusterId clusterId, TopicName topic, TopicPartition partition, TopicRetention retention, CancellationToken cancellationToken)
         => Task.CompletedTask;
 
-    public Task<ServiceAccountId> CreateServiceAccount(string name, string description)
+    public Task<ServiceAccountId> CreateServiceAccount(string name, string description, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task CreateACLEntry(ServiceAccountId serviceAccountId, AccessControlListEntryDescriptor entry)
+    public Task CreateACLEntry(ServiceAccountId serviceAccountId, AccessControlListEntryDescriptor entry, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<ClusterApiKeyDescriptor> CreateApiKey(ClusterId clusterId, ServiceAccountId serviceAccountId)
+    public Task<ClusterApiKeyDescriptor> CreateApiKey(ClusterId clusterId, ServiceAccountId serviceAccountId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
@@ -61,20 +62,20 @@ public class FakeConfluentGateway : IConfluentGateway
         return Task.FromResult(result);
     }
 
-    public Task CreateTopic(ClusterId clusterId, TopicName topic, TopicPartition partition, TopicRetention retention) 
+    public Task CreateTopic(ClusterId clusterId, TopicName topic, TopicPartition partition, TopicRetention retention, CancellationToken cancellationToken) 
         => Task.CompletedTask;
 
-    public Task<ServiceAccountId> CreateServiceAccount(string name, string description)
+    public Task<ServiceAccountId> CreateServiceAccount(string name, string description, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task CreateACLEntry(ServiceAccountId serviceAccountId, AccessControlListEntryDescriptor entry)
+    public Task CreateACLEntry(ServiceAccountId serviceAccountId, AccessControlListEntryDescriptor entry, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<ClusterApiKeyDescriptor> CreateApiKey(ClusterId clusterId, ServiceAccountId serviceAccountId)
+    public Task<ClusterApiKeyDescriptor> CreateApiKey(ClusterId clusterId, ServiceAccountId serviceAccountId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

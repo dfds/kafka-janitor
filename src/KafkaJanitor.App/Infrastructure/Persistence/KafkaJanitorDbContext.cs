@@ -40,10 +40,6 @@ public class KafkaJanitorDbContext : DbContext
             .HaveConversion<CapabilityRootIdConverter>();
 
         configurationBuilder
-            .Properties<GrantCapabilityAccessProcessId>()
-            .HaveConversion<GrantCapabilityAccessProcessIdConverter>();
-
-        configurationBuilder
             .Properties<TopicPartition>()
             .HaveConversion<TopicPartitionConverter>();
 
@@ -58,6 +54,10 @@ public class KafkaJanitorDbContext : DbContext
         configurationBuilder
             .Properties<ClusterId>()
             .HaveConversion<ClusterIdConverter>();
+
+        configurationBuilder
+            .Properties<ClusterAccessId>()
+            .HaveConversion<ClusterAccessIdConverter>();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -116,6 +116,7 @@ public class KafkaJanitorDbContext : DbContext
 
             cfg.Property(x => x.Name);
             cfg.Property(x => x.BootstrapEndpoint);
+            cfg.Property(x => x.AdminApiEndpoint);
         });
     }
 }

@@ -41,4 +41,7 @@ public class TopicNameBuilder
             isPublic: _isPublic
         );
     }
+
+    public static implicit operator TopicName(TopicNameBuilder builder)
+        => builder.Build();
 }

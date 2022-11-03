@@ -192,3 +192,15 @@ public class ServiceAccount : AggregateRoot<ServiceAccountId>
         };
     }
 }
+
+public class ClusterAccess : AggregateRoot<ClusterAccessId>
+{
+    private readonly List<AccessControlListEntry> _accessControlList = null!;
+
+
+
+    public ClusterId Cluster { get; private set; }
+    public ServiceAccountId ServiceAccount { get; private set; }
+
+    public IEnumerable<AccessControlListEntry> AccessControlList => _accessControlList;
+}

@@ -51,7 +51,8 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
         {
             var serviceAccountId = await _confluentGateway.CreateServiceAccount(
                 process.CapabilityRootId.ToString(),
-                "Created using Kafka Janitor"
+                "Created using Kafka Janitor",
+                CancellationToken.None
             );
 
             // TODO [jandr@2022-10-26]: handle that the service account already exists in confluent
@@ -93,7 +94,7 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
         _logger.LogDebug("Service account {ServiceAccountId} has an unassigned acl entry of {AccessControlListEntry}", serviceAccountId, entry);
         
         _logger.LogDebug("Creating acl entry in confluent");
-        await _confluentGateway.CreateACLEntry(serviceAccount.Id, entry.Descriptor);
+        await _confluentGateway.CreateACLEntry(serviceAccount.Id, entry.Descriptor, CancellationToken.None);
 
         _logger.LogDebug("Registering acl entry has been assigned");
         serviceAccount.RegisterAccessControlListEntryAsAssigned(entry.Id);
@@ -125,7 +126,7 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
         if (nextCluster is not null)
         {
             _logger.LogDebug("Creating api key in Confluent for {ServiceAccountId} for cluster {ClusterId}", serviceAccountId, nextCluster.Id);
-            var apiKey = await _confluentGateway.CreateApiKey(nextCluster.Id, serviceAccount.Id);
+            var apiKey = await _confluentGateway.CreateApiKey(nextCluster.Id, serviceAccount.Id, CancellationToken.None);
 
             _logger.LogDebug("Assigning api key {ApiKey} to service account {ServiceAccountId} for cluster {ClusterId}", apiKey.UserName, serviceAccountId, nextCluster.Id);
             serviceAccount.AssignClusterApiKey(apiKey.ClusterId, apiKey.UserName, apiKey.Password);
@@ -215,7 +216,8 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
             clusterId: process.ClusterId, 
             topic: process.RequestedTopic,
             partition: process.Partitions,
-            retention: process.Retention
+            retention: process.Retention,
+            cancellationToken: CancellationToken.None
         );
 
         process.RegisterTopicAsProvisioned();

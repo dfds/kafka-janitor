@@ -1,4 +1,6 @@
-namespace KafkaJanitor.App.Domain.Model;
+using KafkaJanitor.App.Domain.Model;
+
+namespace KafkaJanitor.App.Domain.Events;
 
 public class ApiKeyHasBeenStoredInVault : IDomainEvent
 {
