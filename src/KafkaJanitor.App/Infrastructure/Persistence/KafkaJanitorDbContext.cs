@@ -14,6 +14,7 @@ public class KafkaJanitorDbContext : DbContext
     public DbSet<ServiceAccount> ServiceAccounts { get; set; } = null!;
     public DbSet<TopicProvisioningProcess> TopicProvisioningProcesses { get; set; } = null!;
     public DbSet<Cluster> Clusters { get; set; } = null!;
+    public DbSet<ClusterAccessDefinition> ClusterAccessDefinitions { get; set; } = null!;
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
@@ -56,8 +57,8 @@ public class KafkaJanitorDbContext : DbContext
             .HaveConversion<ClusterIdConverter>();
 
         configurationBuilder
-            .Properties<ClusterAccessId>()
-            .HaveConversion<ClusterAccessIdConverter>();
+            .Properties<ClusterAccessDefinitionId>()
+            .HaveConversion<ClusterAccessDefinitionIdConverter>();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -102,10 +103,9 @@ public class KafkaJanitorDbContext : DbContext
             cfg.Property(x => x.CapabilityRootId);
             
             cfg.Property(x => x.IsServiceAccountCreated);
-            cfg.Property(x => x.IsServiceAccountGrantedAccess);
+            cfg.Property(x => x.IsServiceAccountGrantedAccessToCluster);
             cfg.Property(x => x.IsTopicProvisioned);
-            cfg.Property(x => x.IsApiKeysCreated);
-            cfg.Property(x => x.AreAllApiKeysStoredInVault);
+            cfg.Property(x => x.IsApiKeyStoredInVault);
             cfg.Property(x => x.IsCompleted);
         });
 
@@ -117,6 +117,16 @@ public class KafkaJanitorDbContext : DbContext
             cfg.Property(x => x.Name);
             cfg.Property(x => x.BootstrapEndpoint);
             cfg.Property(x => x.AdminApiEndpoint);
+        });
+
+        modelBuilder.Entity<ClusterAccessDefinition>(cfg =>
+        {
+            cfg.ToTable("ClusterAccessDefinition");
+            cfg.HasKey(x => x.Id);
+
+            cfg.Property(x => x.Cluster);
+            cfg.Property(x => x.ServiceAccount);
+            cfg.HasMany(x => x.AccessControlList);
         });
     }
 }

@@ -33,10 +33,9 @@ public class TopicProvisioningProcessComparer : IEqualityComparer<TopicProvision
                x.Partitions.Equals(y.Partitions) &&
                x.Retention.Equals(y.Retention) &&
                x.IsServiceAccountCreated == y.IsServiceAccountCreated &&
-               x.IsServiceAccountGrantedAccess == y.IsServiceAccountGrantedAccess &&
+               x.IsServiceAccountGrantedAccessToCluster == y.IsServiceAccountGrantedAccessToCluster &&
                x.IsTopicProvisioned == y.IsTopicProvisioned &&
-               x.IsApiKeysCreated == y.IsApiKeysCreated &&
-               x.AreAllApiKeysStoredInVault == y.AreAllApiKeysStoredInVault &&
+               x.IsApiKeyStoredInVault == y.IsApiKeyStoredInVault &&
                x.IsCompleted == y.IsCompleted;
     }
 
@@ -48,10 +47,9 @@ public class TopicProvisioningProcessComparer : IEqualityComparer<TopicProvision
         hashCode.Add(obj.Partitions);
         hashCode.Add(obj.Retention);
         hashCode.Add(obj.IsServiceAccountCreated);
-        hashCode.Add(obj.IsServiceAccountGrantedAccess);
+        hashCode.Add(obj.IsServiceAccountGrantedAccessToCluster);
         hashCode.Add(obj.IsTopicProvisioned);
-        hashCode.Add(obj.IsApiKeysCreated);
-        hashCode.Add(obj.AreAllApiKeysStoredInVault);
+        hashCode.Add(obj.IsApiKeyStoredInVault);
         hashCode.Add(obj.IsCompleted);
         return hashCode.ToHashCode();
     }

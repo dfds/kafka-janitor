@@ -30,7 +30,9 @@ public class StubConfluentGateway : IConfluentGateway
         throw new NotImplementedException();
     }
 
-    public Task CreateACLEntry(ServiceAccountId serviceAccountId, AccessControlListEntryDescriptor entry, CancellationToken cancellationToken)
+    public Task CreateACLEntry(ClusterId clusterId, ServiceAccountId serviceAccountId,
+        AccessControlListEntryDescriptor entry,
+        CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
@@ -70,7 +72,9 @@ public class FakeConfluentGateway : IConfluentGateway
         throw new NotImplementedException();
     }
 
-    public Task CreateACLEntry(ServiceAccountId serviceAccountId, AccessControlListEntryDescriptor entry, CancellationToken cancellationToken)
+    public Task CreateACLEntry(ClusterId clusterId, ServiceAccountId serviceAccountId,
+        AccessControlListEntryDescriptor entry,
+        CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

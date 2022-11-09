@@ -28,7 +28,7 @@ public class WhenProvisioningProcessHasStartedThenCreateTopicInCluster : IMessag
             return; // skipping!
         }
 
-        await _applicationService.CreateTopicFrom(processId);
+        await _applicationService.ProvisionTopicFrom(processId);
 
         // TODO [jandr@2022-10-14]: catch exceptions...!
     }

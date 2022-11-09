@@ -1,10 +1,10 @@
 namespace KafkaJanitor.App.Domain.Model;
 
-public class ClusterAccessId : ValueObject
+public class ClusterAccessDefinitionId : ValueObject
 {
     private readonly Guid _value;
 
-    private ClusterAccessId(Guid value)
+    private ClusterAccessDefinitionId(Guid value)
     {
         _value = value;
     }
@@ -17,7 +17,7 @@ public class ClusterAccessId : ValueObject
     public override string ToString()
         => _value.ToString();
 
-    public static ClusterAccessId Parse(string? text)
+    public static ClusterAccessDefinitionId Parse(string? text)
     {
         if (TryParse(text, out var id))
         {
@@ -27,11 +27,11 @@ public class ClusterAccessId : ValueObject
         throw new FormatException($"Value \"{text}\" is not a valid cluster access id");
     }
 
-    public static bool TryParse(string? text, out ClusterAccessId id)
+    public static bool TryParse(string? text, out ClusterAccessDefinitionId id)
     {
         if (Guid.TryParse(text, out var value))
         {
-            id = new ClusterAccessId(value);
+            id = new ClusterAccessDefinitionId(value);
             return true;
         }
 
@@ -39,11 +39,11 @@ public class ClusterAccessId : ValueObject
         return false;
     }
 
-    public static ClusterAccessId New() => new ClusterAccessId(Guid.NewGuid());
+    public static ClusterAccessDefinitionId New() => new ClusterAccessDefinitionId(Guid.NewGuid());
 
-    public static implicit operator Guid(ClusterAccessId id)
+    public static implicit operator Guid(ClusterAccessDefinitionId id)
         => id._value;
 
-    public static implicit operator ClusterAccessId(Guid id)
-        => new ClusterAccessId(id);
+    public static implicit operator ClusterAccessDefinitionId(Guid id)
+        => new ClusterAccessDefinitionId(id);
 }

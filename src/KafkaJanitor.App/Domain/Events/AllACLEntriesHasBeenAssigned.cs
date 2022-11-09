@@ -4,5 +4,5 @@ namespace KafkaJanitor.App.Domain.Events;
 
 public class AllACLEntriesHasBeenAssigned : IDomainEvent
 {
-    public string? ServiceAccountId { get; set; }
+    public string? ClusterAccessDefinitionId { get; set; }
 }

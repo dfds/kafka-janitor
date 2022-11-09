@@ -61,10 +61,9 @@ public class TopicProvisioningProcessBuilder
             partitions: _partitions,
             retention: _retention,
             isServiceAccountCreated: _isServiceAccountCreated,
-            isServiceAccountGrantedAccess: _isServiceAccountGrantedAccess,
+            isServiceAccountGrantedAccessToCluster: _isServiceAccountGrantedAccess,
             isTopicProvisioned: _isTopicProvisioned,
-            isApiKeysCreated: _isApiKeysCreated,
-            areAllApiKeysStoredInVault: _areAllApiKeysStoredInVault,
+            isApiKeyStoredInVault: _areAllApiKeysStoredInVault,
             isCompleted: _isCompleted
         );
     }

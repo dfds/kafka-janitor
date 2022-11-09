@@ -19,6 +19,9 @@ public class WhenAllApiKeysHasBeenStoredInVaultThenUpdateProcess : IMessageHandl
 
     public async Task Handle(ApiKeyHasBeenStoredInVault message, MessageHandlerContext context)
     {
+        using var _ = _logger.BeginScope("{MessageType} {MessageId} {CorrelationId} {CausationId}",
+            context.MessageType, context.MessageId, context.CorrelationId, context.CausationId);
+
         if (!ServiceAccountId.TryParse(message.ServiceAccountId, out var serviceAccountId))
         {
             _logger.LogError("Unable to parse a valid service account id from {ServiceAccountId} - skipping {MessageType}", 
@@ -26,6 +29,6 @@ public class WhenAllApiKeysHasBeenStoredInVaultThenUpdateProcess : IMessageHandl
             return;
         }
 
-        await _applicationService.UpdateProcessWhenAllApiKeysAreStoredInVault(serviceAccountId);
+        await _applicationService.UpdateProcessWhenApiKeyIsStoredInVault(serviceAccountId);
     }
 }

@@ -22,14 +22,14 @@ public class WhenAllACLEntriesHasBeenAssignedThenRegisterThatCapabilityIsGranted
         using var _ = _logger.BeginScope("{MessageType} {MessageId} {CorrelationId} {CausationId}",
             context.MessageType, context.MessageId, context.CorrelationId, context.CausationId);
 
-        if (!ServiceAccountId.TryParse(message.ServiceAccountId, out var serviceAccountId))
+        if (!ClusterAccessDefinitionId.TryParse(message.ClusterAccessDefinitionId, out var accessId))
         {
-            _logger.LogError("Unable to parse a valid service account id from \"{ServiceAccountId}\" - skipping {MessageType}!",
-                message.ServiceAccountId, context.MessageType);
+            _logger.LogError("Unable to parse a valid cluster access definition id from \"{ClusterAccessDefinitionId}\" - skipping {MessageType}!",
+                message.ClusterAccessDefinitionId, context.MessageType);
 
             return;
         }
 
-        await _applicationService.RegisterServiceAccountHasAccess(serviceAccountId);
+        await _applicationService.RegisterServiceAccountHasAccess(accessId);
     }
 }

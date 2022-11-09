@@ -25,7 +25,10 @@ public class ServiceAccount : AggregateRoot<ServiceAccountId>
 
     public CapabilityRootId CapabilityRootId { get; private set; } = null!;
 
+    [Obsolete("will become its own aggregate")]
     public IEnumerable<AccessControlListEntry> AccessControlList => _accessControlList;
+
+    [Obsolete("will become its own aggregate")]
     public IEnumerable<ClusterApiKey> ClusterApiKeys => _clusterApiKeys;
 
     public bool HasApiKeyFor(ClusterId cluster) 
@@ -58,8 +61,18 @@ public class ServiceAccount : AggregateRoot<ServiceAccountId>
         return true;
     }
 
-    public IEnumerable<ClusterApiKey> FindApiKeysBy(ClusterId clusterId) 
-        => _clusterApiKeys.Where(x => x.ClusterId == clusterId);
+    public bool FindApiKeyBy(ClusterId clusterId, out ClusterApiKey apiKey)
+    {
+        var key = _clusterApiKeys.SingleOrDefault(x => x.ClusterId == clusterId);
+        if (key is null)
+        {
+            apiKey = null!;
+            return false;
+        }
+
+        apiKey = key;
+        return true;
+    }
 
     public void RegisterApiKeyAsStoredInVault(ClusterApiKeyId apiKeyId)
     {
@@ -75,44 +88,6 @@ public class ServiceAccount : AggregateRoot<ServiceAccountId>
             ServiceAccountId = Id.ToString(),
             ClusterApiKeyId = apiKey.Id.ToString()
         });
-    }
-
-    public bool TryGetUnAssignedAccessControlEntry(out AccessControlListEntry entry)
-    {
-        var unApplied = AccessControlList.FirstOrDefault(x => !x.IsApplied);
-
-        entry = unApplied!;
-        return unApplied is not null;
-    }
-
-    public void RegisterAccessControlListEntryAsAssigned(AccessControlListEntryId entryId)
-    {
-        var entry = AccessControlList.SingleOrDefault(x => x.Id == entryId);
-        if (entry is null)
-        {
-            throw new Exception($"Access control list entry \"{entryId}\" does not belong to service account \"{Id}\".");
-        }
-
-        if (entry.IsApplied)
-        {
-            return;
-        }
-
-        entry.RegisterAsAssigned();
-
-        Raise(new ACLEntryHasBeenAssigned
-        {
-            ServiceAccountId = Id.ToString(),
-            AccessControlListEntryId = entry.Id.ToString()
-        });
-
-        if (AccessControlList.All(x => x.IsApplied))
-        {
-            Raise(new AllACLEntriesHasBeenAssigned
-            {
-                ServiceAccountId = Id.ToString()
-            });
-        }
     }
 
     public static ServiceAccount DefineNew(ServiceAccountId id, CapabilityRootId capabilityRootId)
@@ -134,6 +109,7 @@ public class ServiceAccount : AggregateRoot<ServiceAccountId>
         return serviceAccount;
     }
 
+    [Obsolete]
     public static AccessControlListEntry[] CreateDefaultAccessControlList(CapabilityRootId capabilityRootId)
     {
         return new[]
@@ -191,16 +167,4 @@ public class ServiceAccount : AggregateRoot<ServiceAccountId>
             ),
         };
     }
-}
-
-public class ClusterAccess : AggregateRoot<ClusterAccessId>
-{
-    private readonly List<AccessControlListEntry> _accessControlList = null!;
-
-
-
-    public ClusterId Cluster { get; private set; }
-    public ServiceAccountId ServiceAccount { get; private set; }
-
-    public IEnumerable<AccessControlListEntry> AccessControlList => _accessControlList;
 }

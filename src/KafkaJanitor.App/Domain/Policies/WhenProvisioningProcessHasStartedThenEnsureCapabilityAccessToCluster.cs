@@ -28,7 +28,7 @@ public class WhenProvisioningProcessHasStartedThenEnsureCapabilityAccessToCluste
             return; // skipping!
         }
 
-        await _applicationService.CreateServiceAccount(processId);
+        await _applicationService.EnsureCapabilityHasServiceAccount(processId);
 
         // TODO [jandr@2022-10-24]: catch exceptions...!
     }

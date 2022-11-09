@@ -1,0 +1,79 @@
+using KafkaJanitor.App.Domain.Events;
+
+namespace KafkaJanitor.App.Domain.Model;
+
+public class ClusterAccessDefinition : AggregateRoot<ClusterAccessDefinitionId>
+{
+    private readonly List<AccessControlListEntry> _accessControlList = null!;
+    private readonly ClusterId _cluster = null!;
+    private readonly ServiceAccountId _serviceAccount = null!;
+
+    private ClusterAccessDefinition() { }
+
+    public ClusterAccessDefinition(ClusterAccessDefinitionId id, ClusterId cluster, ServiceAccountId serviceAccount, IEnumerable<AccessControlListEntry> accessControlList) : base(id)
+    {
+        _cluster = cluster;
+        _serviceAccount = serviceAccount;
+        _accessControlList = new List<AccessControlListEntry>(accessControlList);
+    }
+
+    public ClusterId Cluster => _cluster;
+    public ServiceAccountId ServiceAccount => _serviceAccount;
+    public IEnumerable<AccessControlListEntry> AccessControlList => _accessControlList;
+
+    public bool IsFullyApplied => _accessControlList.All(x => x.IsApplied);
+
+    public AccessControlListEntry? FindNextUnAppliedAccessControlListEntry()
+    {
+        return AccessControlList.FirstOrDefault(x => !x.IsApplied);
+    }
+
+    public void RegisterAccessControlListEntryAsApplied(AccessControlListEntryId entryId)
+    {
+        var entry = AccessControlList.SingleOrDefault(x => x.Id == entryId);
+        if (entry is null)
+        {
+            throw new Exception($"Access control list entry \"{entryId}\" does not belong to cluster access definition \"{Id}\".");
+        }
+
+        if (entry.IsApplied)
+        {
+            return;
+        }
+
+        entry.RegisterAsApplied();
+
+        Raise(new ACLEntryHasBeenAssigned
+        {
+            ClusterAccessDefinitionId = Id.ToString(),
+            AccessControlListEntryId = entry.Id.ToString()
+        });
+
+        if (IsFullyApplied)
+        {
+            Raise(new AllACLEntriesHasBeenAssigned
+            {
+                ClusterAccessDefinitionId = Id.ToString()
+            });
+        }
+    }
+
+    public static ClusterAccessDefinition DefineNew(ServiceAccountId serviceAccountId, ClusterId clusterId, IEnumerable<AccessControlListEntry> acl)
+    {
+        var instance = new ClusterAccessDefinition(
+            id: ClusterAccessDefinitionId.New(),
+            cluster: clusterId,
+            serviceAccount: serviceAccountId,
+            accessControlList: acl.ToArray()
+        );
+
+        instance.Raise(new NewClusterAccessDefinitionHasBeenDefined
+        {
+            ClusterAccessDefinitionId = instance.Id.ToString(),
+            ClusterId = clusterId.ToString(),
+            ServiceAccountId = serviceAccountId.ToString()
+        });
+
+        return instance;
+    }
+}

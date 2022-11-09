@@ -4,9 +4,9 @@ public class ClusterApiKeyDescriptor : ValueObject
 {
     public ClusterApiKeyDescriptor(ClusterId clusterId, string userName, string password)
     {
-        if (ClusterId is null)
+        if (clusterId is null)
         {
-            throw new ArgumentNullException(nameof(password));
+            throw new ArgumentNullException(nameof(clusterId));
         }
 
         if (string.IsNullOrWhiteSpace(userName))

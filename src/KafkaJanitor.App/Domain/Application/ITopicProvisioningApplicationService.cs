@@ -5,12 +5,13 @@ namespace KafkaJanitor.App.Domain.Application;
 public interface ITopicProvisioningApplicationService
 {
     Task<TopicProvisionProcessId> StartProvisioningProcess(TopicName requestedTopic, ClusterId clusterId, TopicPartition partitions, TopicRetention retention);
-    Task CreateTopicFrom(TopicProvisionProcessId processId);
-    Task CreateServiceAccount(TopicProvisionProcessId processId);
-    Task RegisterServiceAccountForProcess(ServiceAccountId serviceAccountId);
-    Task CreateMissingACLEntry(ServiceAccountId serviceAccountId);
-    Task RegisterServiceAccountHasAccess(ServiceAccountId serviceAccountId);
-    Task AssignNextMissingApiKeyForServiceAccount(ServiceAccountId serviceAccountId);
+    Task ProvisionTopicFrom(TopicProvisionProcessId processId);
+    Task EnsureCapabilityHasServiceAccount(TopicProvisionProcessId processId);
+    Task RegisterNewServiceAccountIsDefined(ServiceAccountId serviceAccountId);
+    Task ApplyNextMissingACLEntry(ClusterAccessDefinitionId clusterAccessDefinitionId);
+    Task RegisterServiceAccountHasAccess(ClusterAccessDefinitionId clusterAccessDefinitionId);
+    Task EnsureServiceAccountHasApiKey(TopicProvisionProcessId processId);
     Task StoreApiKeyInVault(ServiceAccountId serviceAccountId, ClusterApiKeyId apiKeyId);
-    Task UpdateProcessWhenAllApiKeysAreStoredInVault(ServiceAccountId serviceAccountId);
+    Task UpdateProcessWhenApiKeyIsStoredInVault(ServiceAccountId serviceAccountId);
+    Task EnsureClusterAccess(TopicProvisionProcessId processId);
 }

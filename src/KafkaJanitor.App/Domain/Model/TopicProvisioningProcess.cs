@@ -4,9 +4,9 @@ namespace KafkaJanitor.App.Domain.Model;
 
 public class TopicProvisioningProcess : AggregateRoot<TopicProvisionProcessId>
 {
-    public TopicProvisioningProcess(TopicProvisionProcessId id, TopicName requestedTopic, CapabilityRootId capabilityRootId, ClusterId clusterId, TopicPartition partitions, 
-        TopicRetention retention, bool isServiceAccountCreated, bool isServiceAccountGrantedAccess, bool isTopicProvisioned, bool isApiKeysCreated,
-        bool areAllApiKeysStoredInVault, bool isCompleted) : base(id)
+    public TopicProvisioningProcess(TopicProvisionProcessId id, TopicName requestedTopic, CapabilityRootId capabilityRootId, ClusterId clusterId, 
+        TopicPartition partitions, TopicRetention retention, bool isServiceAccountCreated, bool isServiceAccountGrantedAccessToCluster, 
+        bool isTopicProvisioned, bool isApiKeyStoredInVault, bool isCompleted) : base(id)
     {
         if (id == null)
         {
@@ -44,10 +44,9 @@ public class TopicProvisioningProcess : AggregateRoot<TopicProvisionProcessId>
         Partitions = partitions;
         Retention = retention;
         IsServiceAccountCreated = isServiceAccountCreated;
-        IsServiceAccountGrantedAccess = isServiceAccountGrantedAccess;
+        IsServiceAccountGrantedAccessToCluster = isServiceAccountGrantedAccessToCluster;
         IsTopicProvisioned = isTopicProvisioned;
-        IsApiKeysCreated = isApiKeysCreated;
-        AreAllApiKeysStoredInVault = areAllApiKeysStoredInVault;
+        IsApiKeyStoredInVault = isApiKeyStoredInVault;
         IsCompleted = isCompleted;
     }
 
@@ -59,37 +58,34 @@ public class TopicProvisioningProcess : AggregateRoot<TopicProvisionProcessId>
     public CapabilityRootId CapabilityRootId { get; private set; }
 
     public bool IsServiceAccountCreated { get; private set; }
-    public bool IsServiceAccountGrantedAccess { get; private set; }
+    public bool IsServiceAccountGrantedAccessToCluster { get; private set; }
     public bool IsTopicProvisioned { get; private set; }
-    public bool IsApiKeysCreated { get; private set; }
-    public bool AreAllApiKeysStoredInVault { get; private set; }
+    public bool IsApiKeyStoredInVault { get; private set; }
     public bool IsCompleted { get; private set; }
 
     public void RegisterThatCapabilityHasServiceAccount()
     {
         IsServiceAccountCreated = true;
-        CheckProcessStatus();
+
+        Raise(new CapabilityHasServiceAccount
+        {
+            ProcessId = Id.ToString(),
+        });
     }
 
-    public void RegisterThatServiceAccountHasAccess()
+    public void RegisterThatServiceAccountHasAccessToCluster()
     {
-        IsServiceAccountGrantedAccess = true;
+        IsServiceAccountGrantedAccessToCluster = true;
         CheckProcessStatus();
     }
 
-    public void RegisterThatServiceAccountHasAllApiKeys()
+    public void RegisterThatApiKeyIsStoredInVault()
     {
-        IsApiKeysCreated = true;
+        IsApiKeyStoredInVault = true;
         CheckProcessStatus();
     }
 
-    public void RegisterThatAllApiKeysAreStoredInVault()
-    {
-        AreAllApiKeysStoredInVault = true;
-        CheckProcessStatus();
-    }
-
-    public void RegisterTopicAsProvisioned()
+    public void RegisterThatTopicIsProvisioned()
     {
         IsTopicProvisioned = true;
         CheckProcessStatus();
@@ -102,7 +98,7 @@ public class TopicProvisioningProcess : AggregateRoot<TopicProvisionProcessId>
             return; // already completed - nothing to do!
         }
 
-        if (IsServiceAccountCreated && IsServiceAccountGrantedAccess && IsApiKeysCreated && AreAllApiKeysStoredInVault && IsTopicProvisioned)
+        if (IsServiceAccountCreated && IsServiceAccountGrantedAccessToCluster && IsApiKeyStoredInVault && IsApiKeyStoredInVault && IsTopicProvisioned)
         {
             IsCompleted = true;
             Raise(new TopicProvisioningProcessHasCompleted
@@ -122,10 +118,9 @@ public class TopicProvisioningProcess : AggregateRoot<TopicProvisionProcessId>
             partitions: partitions,
             retention: retention,
             isServiceAccountCreated: false,
-            isServiceAccountGrantedAccess: false,
+            isServiceAccountGrantedAccessToCluster: false,
             isTopicProvisioned: false,
-            isApiKeysCreated: false,
-            areAllApiKeysStoredInVault: false,
+            isApiKeyStoredInVault: false,
             isCompleted: false
         );
 

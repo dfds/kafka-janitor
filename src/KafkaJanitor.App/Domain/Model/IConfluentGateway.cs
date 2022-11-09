@@ -10,6 +10,7 @@ public interface IConfluentGateway
 
     Task CreateTopic(ClusterId clusterId, TopicName topic, TopicPartition partition, TopicRetention retention, CancellationToken cancellationToken);
     Task<ServiceAccountId> CreateServiceAccount(string name, string description, CancellationToken cancellationToken);
-    Task CreateACLEntry(ServiceAccountId serviceAccountId, AccessControlListEntryDescriptor entry, CancellationToken cancellationToken);
+    Task CreateACLEntry(ClusterId clusterId, ServiceAccountId serviceAccountId, AccessControlListEntryDescriptor entry,
+        CancellationToken cancellationToken);
     Task<ClusterApiKeyDescriptor> CreateApiKey(ClusterId clusterId, ServiceAccountId serviceAccountId, CancellationToken cancellationToken);
 }

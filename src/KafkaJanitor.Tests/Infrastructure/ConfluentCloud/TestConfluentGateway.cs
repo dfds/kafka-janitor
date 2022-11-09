@@ -56,11 +56,9 @@ public class TestConfluentGateway
         using var externalApi = new FakeExternalApiBuilder()
             .WithEndpoint(x => x.MapPost(
                 pattern: "iam/v2/service-accounts",
-                handler: () => Results.Content(
-                    content: $@"{{ ""id"": ""{expected}"" }}",
-                    contentType: "application/json",
-                    contentEncoding: Encoding.UTF8
-                )))
+                handler: () => A.ServiceAccountResponse
+                    .WithId(expected)
+                    .Build()))
             .Build();
 
         var sut = A.ConfluentGateway
@@ -92,12 +90,7 @@ public class TestConfluentGateway
                 handler: ([FromBody] Dictionary<string, string> payload) =>
                 {
                     sentDisplayName = payload["display_name"];
-
-                    return Results.Content(
-                        content: $@"{{ ""id"": ""dummy"" }}",
-                        contentType: "application/json",
-                        contentEncoding: Encoding.UTF8
-                    );
+                    return A.ServiceAccountResponse.Build();
                 }
             ))
             .Build();
@@ -131,12 +124,7 @@ public class TestConfluentGateway
                 handler: ([FromBody] Dictionary<string, string> payload) =>
                 {
                     sentDescription = payload["description"];
-
-                    return Results.Content(
-                        content: $@"{{ ""id"": ""dummy"" }}",
-                        contentType: "application/json",
-                        contentEncoding: Encoding.UTF8
-                    );
+                    return A.ServiceAccountResponse.Build();
                 }
             ))
             .Build();
@@ -196,11 +184,7 @@ public class TestConfluentGateway
                 handler: ([FromHeader] string? authorization) =>
                 {
                     sentHeader = authorization;
-                    return Results.Content(
-                        content: $@"{{ ""id"": ""dummy"" }}",
-                        contentType: "application/json",
-                        contentEncoding: Encoding.UTF8
-                    );
+                    return A.ServiceAccountResponse.Build();
                 }
             ))
             .Build();
@@ -232,11 +216,7 @@ public class TestConfluentGateway
                 handler: (HttpRequest request) =>
                 {
                     usedHost = $"{request.Scheme}://{request.Host}";
-                    return Results.Content(
-                        content: $@"{{ ""id"": ""dummy"" }}",
-                        contentType: "application/json",
-                        contentEncoding: Encoding.UTF8
-                    );
+                    return A.ServiceAccountResponse.Build();
                 }
             ))
             .Build();
@@ -641,8 +621,11 @@ public class TestConfluentGateway
 
     #region create acl entry
 
-    [Fact]
-    public async Task create_acl_entry_sends_expected_resource_type()
+    [Theory]
+    [InlineData(ACLEntryResourceType.Topic, "TOPIC")]
+    [InlineData(ACLEntryResourceType.Cluster, "CLUSTER")]
+    [InlineData(ACLEntryResourceType.Group, "GROUP")]
+    public async Task create_acl_entry_sends_expected_resource_type_for_topic(ACLEntryResourceType resourceType, string expected)
     {
         var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         var sentValue = (string?)null;
@@ -663,35 +646,623 @@ public class TestConfluentGateway
             .Build();
 
         await sut.CreateACLEntry(
-            A.ServiceAccountId,
-            A.AccessControlListEntryDescriptor,
-            cancellationTokenSource.Token
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            entry: A.AccessControlListEntryDescriptor.WithResourceType(resourceType),
+            cancellationToken: cancellationTokenSource.Token
         );
 
-        Assert.Equal("TOPIC", sentValue);
+        Assert.Equal(expected, sentValue);
     }
 
+    [Theory]
+    [InlineData("foo")]
+    [InlineData("bar")]
+    [InlineData("baz")]
+    [InlineData("qux")]
+    public async Task create_acl_entry_sends_expected_resource_name(string expected)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var sentValue = (string?)null;
 
-    // test: create acl entry (resource type)
-    // test: create acl entry (resource name)
-    // test: create acl entry (pattern type)
-    // test: create acl entry (principal/service account)
-    // test: create acl entry (host)
-    // test: create acl entry (operation)
-    // test: create acl entry (permission)
-    // test: using expected api key
-    // test: uses expected host in url
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "kafka/v3/clusters/{clusterId}/acls",
+                handler: ([FromBody] Dictionary<string, string> payload) =>
+                {
+                    sentValue = payload["resource_name"];
+                    return Results.NoContent();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        await sut.CreateACLEntry(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            entry: A.AccessControlListEntryDescriptor.WithResourceName(expected),
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal(expected, sentValue);
+    }
+
+    [Theory]
+    [InlineData(ACLEntryPatternType.Literal, "LITERAL")]
+    [InlineData(ACLEntryPatternType.Prefix, "PREFIXED")]
+    public async Task create_acl_entry_sends_expected_pattern_type(ACLEntryPatternType patternType, string expected)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var sentValue = (string?)null;
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "kafka/v3/clusters/{clusterId}/acls",
+                handler: ([FromBody] Dictionary<string, string> payload) =>
+                {
+                    sentValue = payload["pattern_type"];
+                    return Results.NoContent();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        await sut.CreateACLEntry(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            entry: A.AccessControlListEntryDescriptor.WithPatternType(patternType),
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal(expected, sentValue);
+    }
+
+    [Theory]
+    [InlineData("foo")]
+    [InlineData("bar")]
+    [InlineData("baz")]
+    [InlineData("qux")]
+    public async Task create_acl_entry_sends_expected_principal(string stubServiceAccountId)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var sentValue = (string?)null;
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "kafka/v3/clusters/{clusterId}/acls",
+                handler: ([FromBody] Dictionary<string, string> payload) =>
+                {
+                    sentValue = payload["principal"];
+                    return Results.NoContent();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        await sut.CreateACLEntry(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountIdFrom(stubServiceAccountId),
+            entry: A.AccessControlListEntryDescriptor,
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal($"User:{stubServiceAccountId}", sentValue);
+    }
+
+    [Fact]
+    public async Task create_acl_entry_sends_expected_host_in_payload()
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var sentValue = (string?)null;
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "kafka/v3/clusters/{clusterId}/acls",
+                handler: ([FromBody] Dictionary<string, string> payload) =>
+                {
+                    sentValue = payload["host"];
+                    return Results.NoContent();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        await sut.CreateACLEntry(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            entry: A.AccessControlListEntryDescriptor,
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal($"*", sentValue);
+    }
+
+    [Theory]
+    [InlineData(ACLEntryOperationType.Read, "READ")]
+    [InlineData(ACLEntryOperationType.Write, "WRITE")]
+    [InlineData(ACLEntryOperationType.Create, "CREATE")]
+    [InlineData(ACLEntryOperationType.Alter, "ALTER")]
+    [InlineData(ACLEntryOperationType.Describe, "DESCRIBE")]
+    [InlineData(ACLEntryOperationType.ClusterAction, "CLUSTER_ACTION")]
+    [InlineData(ACLEntryOperationType.DescribeConfigs, "DESCRIBE_CONFIGS")]
+    [InlineData(ACLEntryOperationType.AlterConfigs, "ALTER_CONFIGS")]
+    public async Task create_acl_entry_sends_expected_operation(ACLEntryOperationType operationType, string expected)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var sentValue = (string?)null;
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "kafka/v3/clusters/{clusterId}/acls",
+                handler: ([FromBody] Dictionary<string, string> payload) =>
+                {
+                    sentValue = payload["operation"];
+                    return Results.NoContent();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        await sut.CreateACLEntry(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            entry: A.AccessControlListEntryDescriptor.WithOperationType(operationType),
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal(expected, sentValue);
+    }
+
+    [Theory]
+    [InlineData(ACLEntryPermissionType.Allow, "ALLOW")]
+    [InlineData(ACLEntryPermissionType.Deny, "DENY")]
+    public async Task create_acl_entry_sends_expected_permission(ACLEntryPermissionType permissionType, string expected)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var sentValue = (string?)null;
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "kafka/v3/clusters/{clusterId}/acls",
+                handler: ([FromBody] Dictionary<string, string> payload) =>
+                {
+                    sentValue = payload["permission"];
+                    return Results.NoContent();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        await sut.CreateACLEntry(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            entry: A.AccessControlListEntryDescriptor.WithPermissionType(permissionType),
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal(expected, sentValue);
+    }
+
+    [Theory]
+    [InlineData("foo")]
+    [InlineData("bar")]
+    [InlineData("baz")]
+    [InlineData("qux")]
+    public async Task create_acl_entry_uses_expected_api_key(string expectedHeaderValue)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var sentHeader = "...";
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "kafka/v3/clusters/{clusterId}/acls",
+                handler: ([FromHeader] string? authorization) =>
+                {
+                    sentHeader = authorization;
+                    return Results.NoContent();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .WithConfluentCredentialsProvider(new StubConfluentCredentialsProvider(accountApiKey: "not-this-one", clusterApiKey: expectedHeaderValue))
+            .Build();
+
+        await sut.CreateACLEntry(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            entry: A.AccessControlListEntryDescriptor,
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal($"Basic {expectedHeaderValue}", sentHeader);
+    }
+
+    [Fact]
+    public async Task create_acl_entry_throws_expected_exception_when_no_api_key_was_found_for_cluster()
+    {
+        var sut = A.ConfluentGateway
+            .WithConfluentCredentialsProvider(StubConfluentCredentialsProvider.AsEmpty())
+            .Build();
+
+        await Assert.ThrowsAsync<ConfluentGatewayException>(() => sut.CreateACLEntry(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            entry: A.AccessControlListEntryDescriptor,
+            cancellationToken: CancellationToken.None
+        ));
+    }
+
+    [Theory]
+    [InlineData("foo")]
+    [InlineData("bar")]
+    [InlineData("baz")]
+    [InlineData("qux")]
+    public async Task create_acl_entry_uses_expected_host_url(string expectedHost)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        var usedHost = "";
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "kafka/v3/clusters/{clusterId}/acls",
+                handler: (HttpRequest request) =>
+                {
+                    usedHost = $"{request.Scheme}://{request.Host}";
+                    return Results.NoContent();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .WithClusterRepository(A.ClusterRepositoryStub
+                .WithCluster(_ => _
+                    .WithAdminApiEndpoint($"https://{expectedHost}")
+                )
+                .Build()
+            )
+            .Build();
+
+        await sut.CreateACLEntry(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            entry: A.AccessControlListEntryDescriptor,
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal($"https://{expectedHost}", usedHost);
+    }
 
     #endregion
 
     #region create cluster api key
 
-    // test: create expected api key (display name)
-    // test: create expected api key (description)
-    // test: create expected api key (service account)
-    // test: create expected api key (cluster)
-    // test: using expected api key
-    // test: uses expected host in url
+    [Fact]
+    public async Task create_api_key_sends_expected_display_name()
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        var sentElement = (JsonElement?)null;
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "iam/v2/api-keys",
+                handler: ([FromBody] JsonDocument payload) =>
+                {
+                    sentElement = payload.RootElement.GetProperty("spec");
+                    return A.ApiKeyResponse.Build();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        await sut.CreateApiKey(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        var valueElement = sentElement?.GetProperty("display_name");
+        Assert.NotNull(valueElement);
+
+        Assert.Equal(JsonValueKind.String, valueElement?.ValueKind);
+        Assert.Equal("", valueElement?.GetString());
+    }
+
+    [Fact]
+    public async Task create_api_key_sends_expected_description()
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        var sentElement = (JsonElement?)null;
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "iam/v2/api-keys",
+                handler: ([FromBody] JsonDocument payload) =>
+                {
+                    sentElement = payload.RootElement.GetProperty("spec");
+                    return A.ApiKeyResponse.Build();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        await sut.CreateApiKey(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        var valueElement = sentElement?.GetProperty("description");
+        Assert.NotNull(valueElement);
+
+        Assert.Equal(JsonValueKind.String, valueElement?.ValueKind);
+        Assert.Equal("Created by Kafka Janitor", valueElement?.GetString());
+    }
+
+    [Theory]
+    [InlineData("foo")]
+    [InlineData("bar")]
+    [InlineData("baz")]
+    [InlineData("qux")]
+    public async Task create_api_key_sends_expected_owner_id(string expected)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        var sentElement = (JsonElement?)null;
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "iam/v2/api-keys",
+                handler: ([FromBody] JsonDocument payload) =>
+                {
+                    sentElement = payload.RootElement.GetProperty("spec");
+                    return A.ApiKeyResponse.Build();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        await sut.CreateApiKey(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountIdFrom(expected),
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        var ownerElement = sentElement?.GetProperty("owner");
+        var valueElement = ownerElement?.GetProperty("id");
+        Assert.NotNull(valueElement);
+
+        Assert.Equal(JsonValueKind.String, valueElement?.ValueKind);
+        Assert.Equal(expected, valueElement?.GetString());
+    }
+
+    [Theory]
+    [InlineData("foo")]
+    [InlineData("bar")]
+    [InlineData("baz")]
+    [InlineData("qux")]
+    public async Task create_api_key_sends_expected_resource_id(string expected)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        var sentElement = (JsonElement?)null;
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "iam/v2/api-keys",
+                handler: ([FromBody] JsonDocument payload) =>
+                {
+                    sentElement = payload.RootElement.GetProperty("spec");
+                    return A.ApiKeyResponse.Build();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        await sut.CreateApiKey(
+            clusterId: A.ClusterIdFrom(expected),
+            serviceAccountId: A.ServiceAccountId,
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        var ownerElement = sentElement?.GetProperty("resource");
+        var valueElement = ownerElement?.GetProperty("id");
+        Assert.NotNull(valueElement);
+
+        Assert.Equal(JsonValueKind.String, valueElement?.ValueKind);
+        Assert.Equal(expected, valueElement?.GetString());
+    }
+
+    [Theory]
+    [InlineData("foo")]
+    [InlineData("bar")]
+    [InlineData("baz")]
+    [InlineData("qux")]
+    public async Task create_api_key_returns_expected_username(string expected)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "iam/v2/api-keys",
+                handler: () => A.ApiKeyResponse
+                    .WithId(expected)
+                    .Build()))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        var result = await sut.CreateApiKey(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal(expected, result.UserName);
+    }
+
+    [Theory]
+    [InlineData("foo")]
+    [InlineData("bar")]
+    [InlineData("baz")]
+    [InlineData("qux")]
+    public async Task create_api_key_returns_expected_password(string expected)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "iam/v2/api-keys",
+                handler: () => A.ApiKeyResponse
+                    .WithSecret(expected)
+                    .Build()))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        var result = await sut.CreateApiKey(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal(expected, result.Password);
+    }
+
+    [Theory]
+    [InlineData("foo")]
+    [InlineData("bar")]
+    [InlineData("baz")]
+    [InlineData("qux")]
+    public async Task create_api_key_returns_expected_cluster_id(string expected)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "iam/v2/api-keys",
+                handler: () => A.ApiKeyResponse
+                    .WithResourceId(expected)
+                    .Build()))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        var result = await sut.CreateApiKey(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal(expected, result.ClusterId.ToString());
+    }
+
+    [Theory]
+    [InlineData("foo")]
+    [InlineData("bar")]
+    [InlineData("baz")]
+    [InlineData("qux")]
+    public async Task create_api_key_uses_expected_authorization_header(string headerValue)
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var sentHeader = "...";
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "iam/v2/api-keys",
+                handler: ([FromHeader] string? authorization) =>
+                {
+                    sentHeader = authorization;
+                    return A.ApiKeyResponse.Build();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .WithConfluentCredentialsProvider(new StubConfluentCredentialsProvider(accountApiKey: headerValue))
+            .Build();
+
+        await sut.CreateApiKey(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal($"Basic {headerValue}", sentHeader);
+    }
+
+    [Fact]
+    public async Task create_api_key_uses_expected_host_url()
+    {
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        var usedHost = "";
+
+        using var externalApi = new FakeExternalApiBuilder()
+            .WithEndpoint(x => x.MapPost(
+                pattern: "iam/v2/api-keys",
+                handler: (HttpRequest request) =>
+                {
+                    usedHost = $"{request.Scheme}://{request.Host}";
+                    return A.ApiKeyResponse.Build();
+                }
+            ))
+            .Build();
+
+        var sut = A.ConfluentGateway
+            .WithHttpClient(externalApi.CreateClient())
+            .Build();
+
+        await sut.CreateApiKey(
+            clusterId: A.ClusterId,
+            serviceAccountId: A.ServiceAccountId,
+            cancellationToken: cancellationTokenSource.Token
+        );
+
+        Assert.Equal("https://api.confluent.cloud", usedHost);
+    }
 
     #endregion
 }

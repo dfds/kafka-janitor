@@ -13,7 +13,7 @@ public class AccessControlListEntry : Entity<AccessControlListEntryId>
     public AccessControlListEntryDescriptor Descriptor { get; private set; } = null!;
     public bool IsApplied { get; private set; }
 
-    public void RegisterAsAssigned()
+    public void RegisterAsApplied()
     {
         IsApplied = true;
     }

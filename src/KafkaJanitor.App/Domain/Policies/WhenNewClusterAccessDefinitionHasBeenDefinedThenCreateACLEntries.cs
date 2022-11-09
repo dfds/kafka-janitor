@@ -1,32 +1,30 @@
-﻿using Dafda.Consuming;
+using Dafda.Consuming;
 using KafkaJanitor.App.Domain.Application;
 using KafkaJanitor.App.Domain.Events;
 using KafkaJanitor.App.Domain.Model;
 
 namespace KafkaJanitor.App.Domain.Policies;
 
-public class WhenACLEntryHasBeenAssignedThenRegisterMissingEntries : IMessageHandler<ACLEntryHasBeenAssigned>
+public class WhenNewClusterAccessDefinitionHasBeenDefinedThenCreateACLEntries : IMessageHandler<NewClusterAccessDefinitionHasBeenDefined>
 {
-    private readonly ILogger<WhenACLEntryHasBeenAssignedThenRegisterMissingEntries> _logger;
+    private readonly ILogger<WhenNewClusterAccessDefinitionHasBeenDefinedThenCreateACLEntries> _logger;
     private readonly ITopicProvisioningApplicationService _applicationService;
 
-    public WhenACLEntryHasBeenAssignedThenRegisterMissingEntries(ILogger<WhenACLEntryHasBeenAssignedThenRegisterMissingEntries> logger,
+    public WhenNewClusterAccessDefinitionHasBeenDefinedThenCreateACLEntries(ILogger<WhenNewClusterAccessDefinitionHasBeenDefinedThenCreateACLEntries> logger,
         ITopicProvisioningApplicationService applicationService)
     {
         _logger = logger;
         _applicationService = applicationService;
     }
 
-    public async Task Handle(ACLEntryHasBeenAssigned message, MessageHandlerContext context)
+    public async Task Handle(NewClusterAccessDefinitionHasBeenDefined message, MessageHandlerContext context)
     {
         using var _ = _logger.BeginScope("{MessageType} {MessageId} {CorrelationId} {CausationId}",
             context.MessageType, context.MessageId, context.CorrelationId, context.CausationId);
 
         if (!ClusterAccessDefinitionId.TryParse(message.ClusterAccessDefinitionId, out var accessId))
         {
-            _logger.LogError("Unable to parse a valid cluster access definition id from \"{ClusterAccessDefinitionId}\" - skipping {MessageType}!", 
-                message.ClusterAccessDefinitionId, context.MessageType);
-
+            _logger.LogError("Unable to parse a valid cluster access definition id from \"{ClusterAccessDefinitionId}\" - skipping!", message.ClusterAccessDefinitionId);
             return;
         }
 

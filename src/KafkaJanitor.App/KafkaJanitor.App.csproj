@@ -19,8 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="BoundedContexts\Capabilities\Events\" />
     <Folder Include="Configurations\" />
     <Folder Include="Domain\Application\" />
+    <Folder Include="Domain\DomainServices\" />
     <Folder Include="Domain\Exceptions\" />
   </ItemGroup>
 

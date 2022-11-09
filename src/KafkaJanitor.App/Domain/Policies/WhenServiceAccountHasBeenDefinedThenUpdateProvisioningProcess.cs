@@ -30,35 +30,35 @@ public class WhenServiceAccountHasBeenDefinedThenUpdateProvisioningProcess : IMe
             return;
         }
 
-        await _applicationService.RegisterServiceAccountForProcess(serviceAccountId);
+        await _applicationService.RegisterNewServiceAccountIsDefined(serviceAccountId);
     }
 }
 
-public class WhenServiceAccountHasBeenDefinedThenAssignApiKeysToServiceAccount : IMessageHandler<ServiceAccountHasBeenDefined>
+public class WhenCapabilityHasServiceAccountThenAssignApiKeyToServiceAccount : IMessageHandler<CapabilityHasServiceAccount>
 {
-    private readonly ILogger<WhenServiceAccountHasBeenDefinedThenUpdateProvisioningProcess> _logger;
+    private readonly ILogger<WhenCapabilityHasServiceAccountThenAssignApiKeyToServiceAccount> _logger;
     private readonly ITopicProvisioningApplicationService _applicationService;
 
-    public WhenServiceAccountHasBeenDefinedThenAssignApiKeysToServiceAccount(ILogger<WhenServiceAccountHasBeenDefinedThenUpdateProvisioningProcess> logger,
+    public WhenCapabilityHasServiceAccountThenAssignApiKeyToServiceAccount(ILogger<WhenCapabilityHasServiceAccountThenAssignApiKeyToServiceAccount> logger,
         ITopicProvisioningApplicationService applicationService)
     {
         _logger = logger;
         _applicationService = applicationService;
     }
 
-    public async Task Handle(ServiceAccountHasBeenDefined message, MessageHandlerContext context)
+    public async Task Handle(CapabilityHasServiceAccount message, MessageHandlerContext context)
     {
         using var _ = _logger.BeginScope("{MessageType} {MessageId} {CorrelationId} {CausationId}",
             context.MessageType, context.MessageId, context.CorrelationId, context.CausationId);
 
-        if (!ServiceAccountId.TryParse(message.ServiceAccountId, out var serviceAccountId))
+        if (!TopicProvisionProcessId.TryParse(message.ProcessId, out var processId))
         {
-            _logger.LogError("Unable to parse a valid service account id from \"{ServiceAccountId}\" - skipping {MessageType}!",
-                message.ServiceAccountId, context.MessageType);
+            _logger.LogError("Unable to parse a valid topic provisioning process id from \"{TopicProvisioningProcessId}\" - skipping {MessageType}!",
+                message.ProcessId, context.MessageType);
 
             return;
         }
 
-        await _applicationService.AssignNextMissingApiKeyForServiceAccount(serviceAccountId);
+        await _applicationService.EnsureServiceAccountHasApiKey(processId);
     }
 }
