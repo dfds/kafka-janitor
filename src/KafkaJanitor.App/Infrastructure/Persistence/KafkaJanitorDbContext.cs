@@ -1,4 +1,5 @@
-﻿using KafkaJanitor.App.Domain.Model;
+﻿using Dafda.Outbox;
+using KafkaJanitor.App.Domain.Model;
 using KafkaJanitor.App.Infrastructure.Persistence.Converters;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,8 @@ public class KafkaJanitorDbContext : DbContext
     {
 
     }
+
+    public DbSet<OutboxEntry> OutboxEntries { get; set; } = null!;
 
     public DbSet<ServiceAccount> ServiceAccounts { get; set; } = null!;
     public DbSet<TopicProvisioningProcess> TopicProvisioningProcesses { get; set; } = null!;
@@ -59,11 +62,39 @@ public class KafkaJanitorDbContext : DbContext
         configurationBuilder
             .Properties<ClusterAccessDefinitionId>()
             .HaveConversion<ClusterAccessDefinitionIdConverter>();
+
+        configurationBuilder
+            .Properties<ACLEntryOperationType>()
+            .HaveConversion<string>();
+
+        configurationBuilder
+            .Properties<ACLEntryPatternType>()
+            .HaveConversion<string>();
+
+        configurationBuilder
+            .Properties<ACLEntryPermissionType>()
+            .HaveConversion<string>();
+
+        configurationBuilder
+            .Properties<ACLEntryResourceType>()
+            .HaveConversion<string>();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<OutboxEntry>(cfg =>
+        {
+            cfg.ToTable("_outbox");
+            cfg.HasKey(x => x.MessageId);
+            cfg.Property(x => x.MessageId).HasColumnName("Id");
+            cfg.Property(x => x.Topic);
+            cfg.Property(x => x.Key);
+            cfg.Property(x => x.Payload);
+            cfg.Property(x => x.OccurredUtc);
+            cfg.Property(x => x.ProcessedUtc);
+        });
 
         modelBuilder.Entity<ServiceAccount>(cfg =>
         {
@@ -71,7 +102,6 @@ public class KafkaJanitorDbContext : DbContext
             cfg.HasKey(x => x.Id);
             cfg.Property(x => x.CapabilityRootId);
             cfg.HasMany(x => x.ClusterApiKeys);
-            cfg.HasMany(x => x.AccessControlList);
         });
 
         modelBuilder.Entity<AccessControlListEntry>(cfg =>
@@ -124,8 +154,8 @@ public class KafkaJanitorDbContext : DbContext
             cfg.ToTable("ClusterAccessDefinition");
             cfg.HasKey(x => x.Id);
 
-            cfg.Property(x => x.Cluster);
-            cfg.Property(x => x.ServiceAccount);
+            cfg.Property(x => x.ClusterId);
+            cfg.Property(x => x.ServiceAccountId);
             cfg.HasMany(x => x.AccessControlList);
         });
     }

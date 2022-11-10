@@ -21,7 +21,7 @@ public class ClusterAccessDefinitionRepository : IClusterAccessDefinitionReposit
     public async Task<ClusterAccessDefinition?> FindBy(ClusterId clusterId, ServiceAccountId serviceAccountId)
     {
         return await _dbContext.ClusterAccessDefinitions
-            .Where(x => x.Cluster == clusterId && x.ServiceAccount == serviceAccountId)
+            .Where(x => x.ClusterId == clusterId && x.ServiceAccountId == serviceAccountId)
             .SingleOrDefaultAsync();
     }
 

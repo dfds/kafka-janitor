@@ -93,6 +93,13 @@ public class ApiApplication : WebApplicationFactory<Program>
             cfg.Services.AddTransient<ILoggerFactory, NullLoggerFactory>();
         });
 
+        ReplaceConfiguration("DB_CONNECTION_STRING", "dummy value");
+        ReplaceConfiguration("CONFLUENT_CREDENTIALS_FILEPATH", "dummy value");
+
+        builder.UseSetting("DEFAULT_KAFKA_BOOTSTRAP_SERVERS", "dummy value");
+        builder.UseSetting("DEFAULT_KAFKA_GROUP_ID", "dummy value");
+        builder.UseSetting("TOPIC_CAPABILITIES_KAFKATOPIC", "dummy");
+
         builder.ConfigureAppConfiguration(x =>
         {
             x.Sources.Clear();

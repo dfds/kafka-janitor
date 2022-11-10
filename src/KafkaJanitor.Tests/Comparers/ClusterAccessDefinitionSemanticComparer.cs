@@ -28,13 +28,13 @@ public class ClusterAccessDefinitionSemanticComparer : IEqualityComparer<Cluster
             return false;
         }
 
-        return x.Cluster.Equals(y.Cluster) &&
-               x.ServiceAccount.Equals(y.ServiceAccount) &&
+        return x.ClusterId.Equals(y.ClusterId) &&
+               x.ServiceAccountId.Equals(y.ServiceAccountId) &&
                x.AccessControlList.Equals(y.AccessControlList);
     }
 
     public int GetHashCode(ClusterAccessDefinition obj)
     {
-        return HashCode.Combine(obj.Cluster, obj.ServiceAccount, obj.AccessControlList);
+        return HashCode.Combine(obj.ClusterId, obj.ServiceAccountId, obj.AccessControlList);
     }
 }

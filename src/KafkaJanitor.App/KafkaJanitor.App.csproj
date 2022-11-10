@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspectly" Version="1.0.0" />
     <PackageReference Include="Dafda" Version="0.11.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.7" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="6.0.0" />
@@ -20,10 +21,11 @@
 
   <ItemGroup>
     <Folder Include="BoundedContexts\Capabilities\Events\" />
-    <Folder Include="Configurations\" />
+    <Folder Include="Configurations\DomainEventAutoRegistrations\" />
     <Folder Include="Domain\Application\" />
     <Folder Include="Domain\DomainServices\" />
     <Folder Include="Domain\Exceptions\" />
+    <Folder Include="Infrastructure\Messaging\" />
   </ItemGroup>
 
 </Project>

@@ -24,11 +24,11 @@ public static class Serilog
                 .MinimumLevel.Override("Dafda", LogEventLevel.Warning);
 
 
-            if (context.HostingEnvironment.IsProduction())
-            {
-                configuration.WriteTo.Console(new CompactJsonFormatter());
-            }
-            else
+            //if (context.HostingEnvironment.IsProduction())
+            //{
+            //    configuration.WriteTo.Console(new CompactJsonFormatter());
+            //}
+            //else
             {
                 configuration.WriteTo.Console(theme: AnsiConsoleTheme.Code);
             }

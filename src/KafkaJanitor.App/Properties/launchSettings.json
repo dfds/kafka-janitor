@@ -8,7 +8,13 @@
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DB_CONNECTION_STRING": "User ID=postgres;Password=p;Host=localhost;Port=5432;Database=postgres;"
+        "DEFAULT_KAFKA_BOOTSTRAP_SERVERS": "localhost:9092",
+        "DEFAULT_KAFKA_ENABLE_AUTO_COMMIT": "false",
+        "DEFAULT_KAFKA_ALLOW_AUTO_CREATE_TOPICS": "true",
+        "DEFAULT_KAFKA_AUTO_OFFSET_RESET": "earliest",
+        "DB_CONNECTION_STRING": "User ID=postgres;Password=p;Host=localhost;Port=5432;Database=kafkajanitordb;",
+        "CONFLUENT_CREDENTIALS_FILEPATH": "./confluent-clusters.json",
+        "TOPIC_CAPABILITIES_KAFKATOPIC": "build.selfservice.kafkatopic"
       }
     }
   }

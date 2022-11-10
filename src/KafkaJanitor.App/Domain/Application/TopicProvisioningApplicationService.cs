@@ -9,25 +9,24 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
     private readonly ITopicProvisioningProcessRepository _provisioningProcessRepository;
     private readonly IConfluentGateway _confluentGateway;
     private readonly IServiceAccountRepository _serviceAccountRepository;
-    private readonly IClusterRepository _clusterRepository;
     private readonly IPasswordVaultGateway _passwordVaultGateway;
     private readonly IClusterAccessDefinitionRepository _clusterAccessDefinitionRepository;
     private readonly ClusterAccessDomainService _clusterAccessDomainService;
 
     public TopicProvisioningApplicationService(ILogger<TopicProvisioningApplicationService> logger, ITopicProvisioningProcessRepository provisioningProcessRepository,
-        IConfluentGateway confluentGateway, IServiceAccountRepository serviceAccountRepository, IClusterRepository clusterRepository, 
-        IPasswordVaultGateway passwordVaultGateway, IClusterAccessDefinitionRepository clusterAccessDefinitionRepository, ClusterAccessDomainService clusterAccessDomainService)
+        IConfluentGateway confluentGateway, IServiceAccountRepository serviceAccountRepository, IPasswordVaultGateway passwordVaultGateway, 
+        IClusterAccessDefinitionRepository clusterAccessDefinitionRepository, ClusterAccessDomainService clusterAccessDomainService)
     {
         _logger = logger;
         _provisioningProcessRepository = provisioningProcessRepository;
         _confluentGateway = confluentGateway;
         _serviceAccountRepository = serviceAccountRepository;
-        _clusterRepository = clusterRepository;
         _passwordVaultGateway = passwordVaultGateway;
         _clusterAccessDefinitionRepository = clusterAccessDefinitionRepository;
         _clusterAccessDomainService = clusterAccessDomainService;
     }
 
+    [Transactional, Outboxed]
     public async Task<TopicProvisionProcessId> StartProvisioningProcess(TopicName requestedTopic, ClusterId clusterId, TopicPartition partitions, TopicRetention retention)
     {
         _logger.LogDebug("Starting a topic provisioning process for topic {Topic}", requestedTopic);
@@ -40,6 +39,7 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
         return process.Id;
     }
 
+    [Transactional, Outboxed]
     public async Task EnsureCapabilityHasServiceAccount(TopicProvisionProcessId processId)
     {
         _logger.LogTrace("Ensuring capability from topic provisioning process {TopicProvisioningProcessId} has a service account", processId);
@@ -73,6 +73,7 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
         }
     }
 
+    [Transactional, Outboxed]
     public async Task RegisterNewServiceAccountIsDefined(ServiceAccountId serviceAccountId)
     {
         _logger.LogTrace("Registering that new service account {ServiceAccountId} has been created on all provisioning processes for a specific capability", serviceAccountId);
@@ -88,6 +89,7 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
         }
     }
 
+    [Transactional, Outboxed]
     public async Task ApplyNextMissingACLEntry(ClusterAccessDefinitionId clusterAccessDefinitionId)
     {
         _logger.LogTrace("Applying next missing ACL entry for cluster access definition {ClusterAccessDefinitionId}", clusterAccessDefinitionId);
@@ -102,31 +104,33 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
         }
 
         _logger.LogDebug("Service account {ServiceAccountId} has an unassigned acl entry of {AccessControlListEntryId} from cluster access definition {ClusterAccessDefinitionId}", 
-            accessDefinition.ServiceAccount, unAppliedAclEntry.Id, clusterAccessDefinitionId);
+            accessDefinition.ServiceAccountId, unAppliedAclEntry.Id, clusterAccessDefinitionId);
         
         _logger.LogDebug("Creating acl entry {AccessControlListEntryId} in confluent", unAppliedAclEntry.Id);
-        await _confluentGateway.CreateACLEntry(accessDefinition.Cluster, accessDefinition.ServiceAccount, unAppliedAclEntry.Descriptor, CancellationToken.None);
+        await _confluentGateway.CreateACLEntry(accessDefinition.ClusterId, accessDefinition.ServiceAccountId, unAppliedAclEntry.Descriptor, CancellationToken.None);
 
         _logger.LogDebug("Registering acl entry {AccessControlListEntryId} has been applied", unAppliedAclEntry.Id);
         accessDefinition.RegisterAccessControlListEntryAsApplied(unAppliedAclEntry.Id);
     }
 
+    [Transactional, Outboxed]
     public async Task RegisterServiceAccountHasAccess(ClusterAccessDefinitionId clusterAccessDefinitionId)
     {
         _logger.LogTrace("Registering that cluster access definition {ClusterAccessDefinitionId} has completed and service account now has access", clusterAccessDefinitionId);
 
         var accessDefinition = await _clusterAccessDefinitionRepository.Get(clusterAccessDefinitionId);
-        var serviceAccount = await _serviceAccountRepository.Get(accessDefinition.ServiceAccount);
+        var serviceAccount = await _serviceAccountRepository.Get(accessDefinition.ServiceAccountId);
         var processes = await _provisioningProcessRepository.FindAllActiveBy(serviceAccount.CapabilityRootId);
 
         // NOTE [jandr@2022-10-26]: this potentially mutates multiple aggregates withing the same transaction - but they are of the same type and as a compromise it will do for now
         foreach (var process in processes)
         {
-            _logger.LogDebug("Registering service account {ServiceAccountId} for capability {CapabilityRootId} on process {TopicProvisioningProcessId} now has access to cluster {ClusterId}!", serviceAccount.Id, process.CapabilityRootId, process.Id, accessDefinition.Cluster);
+            _logger.LogDebug("Registering service account {ServiceAccountId} for capability {CapabilityRootId} on process {TopicProvisioningProcessId} now has access to cluster {ClusterId}!", serviceAccount.Id, process.CapabilityRootId, process.Id, accessDefinition.ClusterId);
             process.RegisterThatServiceAccountHasAccessToCluster();
         }
     }
 
+    [Transactional, Outboxed]
     public async Task EnsureServiceAccountHasApiKey(TopicProvisionProcessId processId)
     {
         _logger.LogTrace("Ensuring service account for capability on topic provisioning process {TopicProvisioningProcessId} has api key for cluster", processId);
@@ -162,6 +166,7 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
         }
     }
 
+    [Transactional, Outboxed]
     public async Task StoreApiKeyInVault(ServiceAccountId serviceAccountId, ClusterApiKeyId apiKeyId)
     {
         _logger.LogTrace("Storing api key {ClusterApiKeyId} for service account {ServiceAccountId} in vault", apiKeyId, serviceAccountId);
@@ -183,6 +188,7 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
         }
     }
 
+    [Transactional, Outboxed]
     public async Task UpdateProcessWhenApiKeyIsStoredInVault(ServiceAccountId serviceAccountId)
     {
         _logger.LogTrace("Trying to update a provisioning process for service account {ServiceAccountId} with api key stored in vault status", serviceAccountId);
@@ -199,6 +205,7 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
         }
     }
 
+    [Transactional, Outboxed]
     public async Task ProvisionTopicFrom(TopicProvisionProcessId processId)
     {
         _logger.LogTrace("Trying to create topic from topic provisioning process {TopicProvisioningProcessId}", processId);
@@ -222,6 +229,7 @@ public class TopicProvisioningApplicationService : ITopicProvisioningApplication
             process.RequestedTopic, process.CapabilityRootId, process.ClusterId);
     }
 
+    [Transactional, Outboxed]
     public async Task EnsureClusterAccess(TopicProvisionProcessId processId)
     {
         _logger.LogTrace("Ensuring cluster access for topic provisioning process {TopicProvisioningProcessId}", processId);

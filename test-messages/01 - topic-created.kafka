@@ -1,0 +1,15 @@
+PRODUCER json-output
+topic: build.selfservice.kafkatopic
+{
+    "messageId": "1",
+    "type": "kafkatopic-has-been-requested",
+    "data": {
+        "capabilityRootId": "foo",
+        "clusterId": "prod-1",
+        "topicName": "pub.foo.hello",
+        "partitions": 1,
+        "retention": 1
+    }
+}
+
+###

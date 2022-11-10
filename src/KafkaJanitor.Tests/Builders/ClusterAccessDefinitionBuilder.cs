@@ -25,8 +25,8 @@ public class ClusterAccessDefinitionBuilder
     {
         return new ClusterAccessDefinition(
             id: _id,
-            cluster: _cluster,
-            serviceAccount: _serviceAccount,
+            clusterId: _cluster,
+            serviceAccountId: _serviceAccount,
             accessControlList: _accessControlList
         );
     }

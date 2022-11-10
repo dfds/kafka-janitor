@@ -14,7 +14,6 @@ public class ServiceAccountRepository : IServiceAccountRepository
     }
 
     private IQueryable<ServiceAccount> ForCompleteServiceAccount() => _dbContext.ServiceAccounts
-        .Include(x => x.AccessControlList)
         .Include(x => x.ClusterApiKeys);
 
     public async Task<ServiceAccount?> FindBy(CapabilityRootId rootId)

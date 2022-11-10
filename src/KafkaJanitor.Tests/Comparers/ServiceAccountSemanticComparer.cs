@@ -29,12 +29,11 @@ public class ServiceAccountSemanticComparer : IEqualityComparer<ServiceAccount?>
         }
 
         return x.CapabilityRootId.Equals(y.CapabilityRootId) && 
-               x.AccessControlList.Equals(y.AccessControlList) &&
                x.ClusterApiKeys.Equals(y.ClusterApiKeys);
     }
 
     public int GetHashCode(ServiceAccount obj)
     {
-        return HashCode.Combine(obj.CapabilityRootId, obj.AccessControlList, obj.ClusterApiKeys);
+        return HashCode.Combine(obj.CapabilityRootId, obj.ClusterApiKeys);
     }
 }

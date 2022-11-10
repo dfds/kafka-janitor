@@ -10,14 +10,15 @@ public static class Database
         builder.Services.AddDbContext<KafkaJanitorDbContext>((serviceProvider, options) =>
         {
             var connectionString = builder.Configuration["DB_CONNECTION_STRING"];
-            options.UseNpgsql(connectionString);
 
             if (builder.Environment.IsDevelopment())
             {
                 options.EnableDetailedErrors();
             }
+
+            options.UseNpgsql(connectionString);
         });
 
-        //builder.Services.AddTransient<IDbTransactionFacade, RealDbTransactionFacade>();
+        builder.Services.AddTransient<IDbTransactionFacade, RealDbTransactionFacade>();
     }
-}
+} 

@@ -32,33 +32,6 @@ public class TestServiceAccountRepository
 
     [Fact]
     [Trait("Category", "InMemoryDatabase")]
-    public async Task add_also_inserts_expected_acl_into_database()
-    {
-        await using var databaseFactory = new InMemoryDatabaseFactory();
-        var dbContext = await databaseFactory.CreateDbContext();
-
-        var stub = new ServiceAccountBuilder()
-            .WithAccessControlList(ServiceAccount.CreateDefaultAccessControlList(CapabilityRootId.Parse("foo")))
-            .Build();
-
-        // guard assert
-        Assert.NotEmpty(stub.AccessControlList);
-
-        var sut = new ServiceAccountRepositoryBuilder()
-            .WithDbContext(dbContext)
-            .Build();
-
-        await sut.Add(stub);
-        await dbContext.SaveChangesAsync();
-
-        var inserted = Assert.Single(await dbContext.ServiceAccounts.ToListAsync());
-
-        Assert.NotEmpty(inserted.AccessControlList);
-        Assert.Equal(stub.AccessControlList, inserted.AccessControlList);
-    }
-
-    [Fact]
-    [Trait("Category", "InMemoryDatabase")]
     public async Task add_also_inserts_expected_apikeys_into_database()
     {
         await using var databaseFactory = new InMemoryDatabaseFactory();

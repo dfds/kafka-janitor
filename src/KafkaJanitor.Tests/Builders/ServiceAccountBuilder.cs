@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using KafkaJanitor.App.Domain.Model;
 
 namespace KafkaJanitor.Tests.Builders;
@@ -8,14 +7,12 @@ public class ServiceAccountBuilder
 {
     private ServiceAccountId _id;
     private CapabilityRootId _capabilityRootId;
-    private IEnumerable<AccessControlListEntry> _accessControlList;
     private IEnumerable<ClusterApiKey> _clusterApiKeys;
 
     public ServiceAccountBuilder()
     {
         _id = ServiceAccountId.Parse("foo");
         _capabilityRootId = CapabilityRootId.Parse("bar");
-        _accessControlList = ServiceAccount.CreateDefaultAccessControlList(_capabilityRootId);
         _clusterApiKeys = new[] { A.ClusterApiKey.Build() };
     }
 
@@ -37,15 +34,9 @@ public class ServiceAccountBuilder
         return this;
     }
 
-    public ServiceAccountBuilder WithAccessControlList(IEnumerable<AccessControlListEntry> accessControlList)
-    {
-        _accessControlList = accessControlList;
-        return this;
-    }
-
     public ServiceAccount Build()
     {
-        return new ServiceAccount(_id, _capabilityRootId, _accessControlList.ToArray(), _clusterApiKeys);
+        return new ServiceAccount(_id, _capabilityRootId, _clusterApiKeys);
     }
 
     public static implicit operator ServiceAccount(ServiceAccountBuilder builder)

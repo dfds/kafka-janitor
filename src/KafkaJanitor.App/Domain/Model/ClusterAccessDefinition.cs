@@ -5,20 +5,20 @@ namespace KafkaJanitor.App.Domain.Model;
 public class ClusterAccessDefinition : AggregateRoot<ClusterAccessDefinitionId>
 {
     private readonly List<AccessControlListEntry> _accessControlList = null!;
-    private readonly ClusterId _cluster = null!;
-    private readonly ServiceAccountId _serviceAccount = null!;
+    private readonly ClusterId _clusterId = null!;
+    private readonly ServiceAccountId _serviceAccountId = null!;
 
     private ClusterAccessDefinition() { }
 
-    public ClusterAccessDefinition(ClusterAccessDefinitionId id, ClusterId cluster, ServiceAccountId serviceAccount, IEnumerable<AccessControlListEntry> accessControlList) : base(id)
+    public ClusterAccessDefinition(ClusterAccessDefinitionId id, ClusterId clusterId, ServiceAccountId serviceAccountId, IEnumerable<AccessControlListEntry> accessControlList) : base(id)
     {
-        _cluster = cluster;
-        _serviceAccount = serviceAccount;
+        _clusterId = clusterId;
+        _serviceAccountId = serviceAccountId;
         _accessControlList = new List<AccessControlListEntry>(accessControlList);
     }
 
-    public ClusterId Cluster => _cluster;
-    public ServiceAccountId ServiceAccount => _serviceAccount;
+    public ClusterId ClusterId => _clusterId;
+    public ServiceAccountId ServiceAccountId => _serviceAccountId;
     public IEnumerable<AccessControlListEntry> AccessControlList => _accessControlList;
 
     public bool IsFullyApplied => _accessControlList.All(x => x.IsApplied);
@@ -62,8 +62,8 @@ public class ClusterAccessDefinition : AggregateRoot<ClusterAccessDefinitionId>
     {
         var instance = new ClusterAccessDefinition(
             id: ClusterAccessDefinitionId.New(),
-            cluster: clusterId,
-            serviceAccount: serviceAccountId,
+            clusterId: clusterId,
+            serviceAccountId: serviceAccountId,
             accessControlList: acl.ToArray()
         );
 
