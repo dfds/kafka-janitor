@@ -1,0 +1,132 @@
+# Default values for kafka-janitor.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+kafkaJanitor:
+  vault:
+    healthCheckEnabled: "false"
+    type: "INMEMORY"
+  tika:
+    multiClusterEnabled: "true"
+    apiEndpoint: "http://tika-lkc-0000:3000"
+
+replicaCount: 1
+
+tika:
+  image:
+    repository: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/tika
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "$(Build.BuildId)"
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "128Mi"
+      cpu: "700m"
+  instances:
+    # - name: dev01
+    #   apiImplementation: "notconnected" # connected OR notconnected
+    #   environmentId: "0"
+    #   clusterId: "0"
+    #   user:
+    #     secretKeyRef:
+    #       name: "x"
+    #       key: "x"
+    #   password:
+    #     secretKeyRef:
+    #       name: "x"
+    #       key: "x"
+    # - name: dev02
+    #   apiImplementation: "connected" # connected OR notconnected
+    #   environmentId: "1"
+    #   clusterId: "1"
+    #   user:
+    #     secretKeyRef:
+    #       name: "x"
+    #       key: "x"
+    #   password:
+    #     secretKeyRef:
+    #       name: "x"
+    #       key: "x"
+
+
+global:
+  labels:
+    department: devex
+    project: selfservice
+image:
+  repository: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/ded/kafka-janitor
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "$(Build.BuildId)"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+healthCheck:
+  enabled: "true"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+priorityClass:
+  enabled: true
+  name: selfservice
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext:
+  runAsUser: 10001
+  runAsGroup: 3000
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+
+# resources: {}
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "100m"
+  limits:
+    memory: "128Mi"
+    cpu: "200m"
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

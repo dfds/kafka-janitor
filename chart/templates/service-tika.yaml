@@ -1,0 +1,26 @@
+{{- range .Values.tika.instances }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: tika-{{ .name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- with $.Values.global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end}}
+    app: tika-{{ .name }}
+    component: tika
+    cluster: "{{ .clusterId }}"
+    environment: "{{ .environmentId }}"
+    scrape-service-metrics: "true"
+spec:
+  ports:
+  - name: metrics
+    port: 3000
+    targetPort: 3000
+  selector:
+    app: tika-{{ .name }}
+    cluster: "{{ .clusterId }}"
+    environment: "{{ .environmentId }}"
+---
+{{- end }}

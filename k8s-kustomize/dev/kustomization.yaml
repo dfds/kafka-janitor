@@ -1,0 +1,43 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+helmGlobals:
+  chartHome: ../..
+resources:
+- secret.yaml
+helmCharts:
+  - releaseName: kafka-janitor
+    name: chart
+    namespace: selfservice
+    valuesInline:
+      image:
+        repository: ce/kafka-janitor
+        tag: "latest"
+      tika:
+        image:
+          repository: ce/tika
+          tag: "latest"
+        instances:
+          - name: lkc-a9lz
+            apiImplementation: "notconnected"
+            environmentId: "env-iv8am"
+            clusterId: "lkc-a9lz"
+            user:
+              secretKeyRef:
+                name: "confluent-creds"
+                key: "user"
+            password:
+              secretKeyRef:
+                name: "confluent-creds"
+                key: "pass"
+          - name: lkc-f3oz
+            apiImplementation: "notconnected"
+            environmentId: "env-iv8am"
+            clusterId: "lkc-f3oz"
+            user:
+              secretKeyRef:
+                name: "confluent-creds"
+                key: "user"
+            password:
+              secretKeyRef:
+                name: "confluent-creds"
+                key: "pass"

@@ -1,0 +1,78 @@
+{{- range .Values.tika.instances }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tika-{{ .name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- with $.Values.global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end}}
+    app: tika-{{ .name }}
+    component: tika
+    cluster: "{{ .clusterId }}"
+    environment: "{{ .environmentId }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tika-{{ .name }}
+      cluster: "{{ .clusterId }}"
+      environment: "{{ .environmentId }}"
+  template:
+    metadata:
+      labels:
+        {{- with $.Values.global.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end}}
+        app: tika-{{ .name }}
+        cluster: "{{ .clusterId }}"
+        environment: "{{ .environmentId }}"
+        logging_dfds_cloud_format_json: "false"
+    spec:
+      {{- if $.Values.priorityClass.enabled }}
+      priorityClassName: {{ $.Values.priorityClass.name }}
+      {{- end }}
+      containers:
+      - name: tika-{{ .name }}
+        image: "{{ $.Values.tika.image.repository}}:{{ $.Values.tika.image.tag }}"
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+        resources:
+          {{- toYaml $.Values.tika.resources | nindent 10 }}
+        env:
+        - name: TIKA_CCLOUD_ENVIRONMENT_ID
+          value: "{{ .environmentId }}"
+        - name: TIKA_CCLOUD_CLUSTER_ID
+          value: "{{ .clusterId }}"
+        - name: TIKA_API_IMPLEMENTATION
+          value: {{ .apiImplementation }}
+        - name: TIKA_CC_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .user.secretKeyRef.name }}
+              key: {{ .user.secretKeyRef.key }}
+        - name: TIKA_CC_PASS
+          valueFrom:
+            secretKeyRef:
+              name: {{ .password.secretKeyRef.name }}
+              key: {{ .password.secretKeyRef.key }}
+        livenessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 60
+          timeoutSeconds: 5
+          httpGet:
+            port: 3000
+            path: /healthz
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
+          httpGet:
+            port: 3000
+            path: /healthz
+---
+{{- end }}

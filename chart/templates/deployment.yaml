@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kafkajanitor.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- with .Values.global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end}}
+    app: {{ include "kafkajanitor.fullname" . }}
+    component: kafka-janitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "kafkajanitor.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "kafkajanitor.fullname" . }}
+        {{- with .Values.global.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end}}
+        logging_dfds_cloud_format_json: "true"
+    spec:
+      {{- if .Values.priorityClass.enabled }}
+      priorityClassName: {{ .Values.priorityClass.name }}
+      {{- end }}
+      serviceAccount: {{ include "kafkajanitor.fullname" . }}-sa
+      containers:
+      - name: kafka-janitor
+        image: "{{ .Values.image.repository}}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        ports:
+        - containerPort: 5000
+          name: web
+        - containerPort: 8080
+          name: metrics
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        env:
+        - name: "KAFKAJANITOR_VAULT_HEALTHCHECK"
+          value: "{{ .Values.kafkaJanitor.vault.healthCheckEnabled }}"
+        - name: TIKA_ENABLE_MULTI_CLUSTER
+          value: "{{ .Values.kafkaJanitor.tika.multiClusterEnabled }}"
+        - name: "TIKA_API_ENDPOINT"
+          value: {{ .Values.kafkaJanitor.tika.apiEndpoint }}
+        - name: KAFKAJANITOR_VAULT
+          value: {{ .Values.kafkaJanitor.vault.type }}
+        - name: ASPNETCORE_URLS
+          value: http://+:5000
+        {{- if .Values.healthCheck.enabled }}
+        livenessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 60
+          timeoutSeconds: 5
+          httpGet:
+            port: web
+            path: /healthz
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
+          httpGet:
+            port: web
+            path: /healthz
+        {{- end }}
