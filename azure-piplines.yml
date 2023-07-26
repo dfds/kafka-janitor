@@ -21,7 +21,7 @@ stages:
           version: 3.1.100
           installationPath: $(Agent.ToolsDirectory)/dotnet
       - bash: |
-          make release BUILD_NUMBER=$(Build.BuildId)
+          make container BUILD_NUMBER=$(Build.BuildId)
         env:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         displayName: 'Build, create and upload container image'
